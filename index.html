@@ -1,0 +1,4011 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Yallah Click — Premium Video Editing &amp; Content Growth</title>
+<link rel="icon" href="images/Mini logo.ico">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&family=Montserrat:wght@600;800;900&display=swap" rel="stylesheet">
+<style>
+  /* ========== THEME SYSTEM ========== */
+  :root{
+    --red:#e4212c;
+    --red-dark:#b71a23;
+    --red-glow:rgba(228,33,44,0.35);
+    --transition-speed:0.4s;
+  }
+
+  [data-theme="dark"]{
+    --black:#0a0a0b;
+    --black-soft:#141416;
+    --charcoal:#1c1c1f;
+    --white:#f7f5f2;
+    --gray:#8c8b90;
+    --line:rgba(247,245,242,0.1);
+    --card-bg:#141416;
+    --card-border:rgba(247,245,242,0.1);
+    --nav-bg:rgba(10,10,11,0.85);
+    --hero-stroke-color:var(--white);
+    --hero-stroke:1.5px var(--white);
+    --grid-line:rgba(247,245,242,0.025);
+    --spotlight-color:rgba(228,33,44,0.14);
+    --avatar-border:#0a0a0b;
+    --avatar-bg:linear-gradient(135deg,#1c1c1f,#2b2b2f);
+    --dot-color:#3a3a3e;
+    --waveform-bg:#1c1c1f;
+    --scrub-bg:#1c1c1f;
+    --form-bg:#0a0a0b;
+    --form-input-bg:#141416;
+    --duration-bg:rgba(0,0,0,0.65);
+    --work-thumb-gradient:linear-gradient(135deg,#1a1a1d,#0c0c0d);
+    --work-thumb-overlay:repeating-linear-gradient(115deg,rgba(247,245,242,0.03) 0px,rgba(247,245,242,0.03) 1px,transparent 1px,transparent 5px);
+    --cta-section-bg:#141416;
+    --placeholder:#5c5b5f;
+    --filter-active-bg:rgba(228,33,44,0.08);
+    --scrim-bg:rgba(0,0,0,0.6);
+    --workspace-shadow:0 30px 80px -20px rgba(0,0,0,0.7);
+    --glow-intensity:0.14;
+    --body-bg:#0a0a0b;
+    --body-color:#f7f5f2;
+  }
+
+  [data-theme="light"]{
+    --black:#f0eeeb;
+    --black-soft:#ffffff;
+    --charcoal:#e4e2df;
+    --white:#1a1a1d;
+    --gray:#6b6a6f;
+    --line:rgba(26,26,29,0.1);
+    --card-bg:#ffffff;
+    --card-border:rgba(26,26,29,0.1);
+    --nav-bg:rgba(240,238,235,0.88);
+    --hero-stroke-color:#1a1a1d;
+    --hero-stroke:1.5px #1a1a1d;
+    --grid-line:rgba(26,26,29,0.04);
+    --spotlight-color:rgba(228,33,44,0.08);
+    --avatar-border:#ffffff;
+    --avatar-bg:linear-gradient(135deg,#e4e2df,#d4d2cf);
+    --dot-color:#c8c6c3;
+    --waveform-bg:#e4e2df;
+    --scrub-bg:#e4e2df;
+    --form-bg:#ffffff;
+    --form-input-bg:#f0eeeb;
+    --duration-bg:rgba(255,255,255,0.8);
+    --work-thumb-gradient:linear-gradient(135deg,#e8e6e3,#d8d6d3);
+    --work-thumb-overlay:repeating-linear-gradient(115deg,rgba(26,26,29,0.03) 0px,rgba(26,26,29,0.03) 1px,transparent 1px,transparent 5px);
+    --cta-section-bg:#ffffff;
+    --placeholder:#9a9a9a;
+    --filter-active-bg:rgba(228,33,44,0.1);
+    --scrim-bg:rgba(0,0,0,0.3);
+    --workspace-shadow:0 30px 80px -20px rgba(0,0,0,0.12);
+    --glow-intensity:0.08;
+    --body-bg:#f0eeeb;
+    --body-color:#1a1a1d;
+  }
+
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;overflow-x:hidden;}
+
+  body{
+    background:var(--body-bg);
+    color:var(--body-color);
+    font-family:'Inter',sans-serif;
+    overflow-x:hidden;
+    width:100%;
+    position:relative;
+    transition:background var(--transition-speed) ease, color var(--transition-speed) ease;
+  }
+
+  body::before{
+    content:"";
+    position:fixed;inset:0;
+    z-index:9999;
+    pointer-events:none;
+    opacity:0.04;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+  [data-theme="light"] body::before{opacity:0.02;}
+
+  body::after{
+    content:"";
+    position:fixed;inset:0;
+    z-index:-1;
+    pointer-events:none;
+    background-image:
+      linear-gradient(var(--grid-line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+    background-size:64px 64px;
+    mask-image:radial-gradient(ellipse 80% 60% at 50% 0%, black 20%, transparent 75%);
+  }
+
+  .hero{--mx:50%;--my:50%;}
+  .hero .spotlight{
+    position:absolute;inset:0;
+    pointer-events:none;
+    background:radial-gradient(420px circle at var(--mx) var(--my), var(--spotlight-color), transparent 70%);
+    z-index:0;
+    transition:opacity .3s;
+  }
+
+  .reveal{opacity:0;transform:translateY(28px);transition:opacity .7s cubic-bezier(.16,.8,.3,1), transform .7s cubic-bezier(.16,.8,.3,1);}
+  .reveal.in{opacity:1;transform:translateY(0);}
+  .reveal-stagger > *{opacity:0;transform:translateY(24px);transition:opacity .6s cubic-bezier(.16,.8,.3,1), transform .6s cubic-bezier(.16,.8,.3,1);}
+  .reveal-stagger.in > *{opacity:1;transform:translateY(0);}
+  .reveal-stagger.in > *:nth-child(1){transition-delay:.04s;}
+  .reveal-stagger.in > *:nth-child(2){transition-delay:.11s;}
+  .reveal-stagger.in > *:nth-child(3){transition-delay:.18s;}
+  .reveal-stagger.in > *:nth-child(4){transition-delay:.25s;}
+  .reveal-stagger.in > *:nth-child(5){transition-delay:.32s;}
+  .reveal-stagger.in > *:nth-child(6){transition-delay:.39s;}
+
+  ::selection{background:var(--red);color:#fff;}
+
+  a{color:inherit;text-decoration:none;}
+
+  .display{font-family:'Anton',sans-serif;font-weight:400;letter-spacing:0.01em;text-transform:uppercase;}
+  .mono{font-family:'JetBrains Mono',monospace;}
+
+  .wrap{max-width:1200px;margin:0 auto;padding:0 32px;}
+
+  .timecode{font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:0.08em;color:var(--gray);}
+  .timecode .red{color:var(--red);}
+
+  /* ========== NAV ========== */
+  header{
+    position:fixed;top:0;left:0;right:0;
+    z-index:1000;
+    background:var(--nav-bg);
+    backdrop-filter:blur(14px);
+    border-bottom:1px solid var(--line);
+    transition:background var(--transition-speed) ease, border-color var(--transition-speed) ease;
+  }
+  .nav-inner{
+    max-width:1200px;margin:0 auto;padding:18px 32px;
+    display:flex;align-items:center;justify-content:space-between;
+  }
+  .logo{
+    display:flex;align-items:center;gap:10px;
+    font-family:'Anton',sans-serif;
+    font-size:20px;letter-spacing:0.02em;text-transform:uppercase;
+  }
+  .logo img{display:block;}
+  .logo .logo-dark{display:none;}
+  .logo .logo-light{display:block;}
+  [data-theme="light"] .logo .logo-dark{display:block;}
+  [data-theme="light"] .logo .logo-light{display:none;}
+  .rec-dot{
+    width:9px;height:9px;border-radius:50%;
+    background:var(--red);
+    box-shadow:0 0 0 0 var(--red-glow);
+    animation:pulse 1.6s infinite;
+  }
+  @keyframes pulse{
+    0%{box-shadow:0 0 0 0 var(--red-glow);}
+    70%{box-shadow:0 0 0 8px rgba(228,33,44,0);}
+    100%{box-shadow:0 0 0 0 rgba(228,33,44,0);}
+  }
+  nav ul{display:flex;gap:36px;list-style:none;}
+  nav ul li a{
+    font-size:13px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;
+    color:var(--gray);
+    transition:color .2s;
+    position:relative;
+  }
+  nav ul li a::after{
+    content:"";position:absolute;left:0;bottom:-4px;
+    width:0;height:2px;background:var(--red);
+    transition:width .3s cubic-bezier(.16,.8,.3,1);
+  }
+  nav ul li a:hover{color:var(--white);}
+  nav ul li a:hover::after{width:100%;}
+  .nav-cta{
+    background:var(--red);
+    color:#fff;
+    padding:11px 22px;
+    font-size:13px;font-weight:700;letter-spacing:0.04em;text-transform:uppercase;
+    border-radius:2px;
+    transition:background .2s, transform .2s, box-shadow .2s;
+  }
+  .nav-cta:hover{background:var(--red-dark);transform:translateY(-1px);box-shadow:0 6px 20px rgba(228,33,44,0.3);}
+  .nav-links-wrap{display:flex;align-items:center;gap:24px;}
+
+  /* Theme Toggle */
+  .theme-toggle{
+    width:40px;height:40px;
+    border-radius:50%;
+    border:1px solid var(--line);
+    background:transparent;
+    cursor:pointer;
+    display:flex;align-items:center;justify-content:center;
+    transition:all .3s ease;
+    position:relative;
+    overflow:hidden;
+  }
+  .theme-toggle:hover{border-color:var(--red);background:rgba(228,33,44,0.08);}
+  .theme-toggle svg{width:18px;height:18px;transition:transform .4s cubic-bezier(.16,.8,.3,1), opacity .3s;}
+  .theme-toggle .icon-sun{display:none;color:var(--white);}
+  .theme-toggle .icon-moon{display:block;color:var(--white);}
+  [data-theme="light"] .theme-toggle .icon-sun{display:block;color:var(--white);}
+  [data-theme="light"] .theme-toggle .icon-moon{display:none;}
+  .theme-toggle:active svg{transform:rotate(90deg) scale(0.8);}
+
+  .burger{
+    display:none;
+    flex-direction:column;justify-content:center;gap:5px;
+    width:36px;height:36px;
+    background:none;border:1px solid var(--line);border-radius:3px;
+    cursor:pointer;
+  }
+  .burger span{width:16px;height:1.5px;background:var(--white);margin:0 auto;transition:transform .25s, opacity .25s;}
+  .burger.open span:nth-child(1){transform:translateY(6.5px) rotate(45deg);}
+  .burger.open span:nth-child(2){opacity:0;}
+  .burger.open span:nth-child(3){transform:translateY(-6.5px) rotate(-45deg);}
+
+  .mobile-drawer{
+    position:fixed;top:0;right:0;
+    height:100vh;width:min(320px,80vw);
+    background:var(--black-soft);
+    border-left:1px solid var(--line);
+    z-index:1200;
+    padding:100px 32px 40px;
+    transform:translateX(100%);
+    transition:transform .35s cubic-bezier(.16,.8,.3,1), background var(--transition-speed) ease;
+    display:flex;flex-direction:column;gap:28px;
+  }
+  .mobile-drawer.open{transform:translateX(0);}
+  .mobile-drawer a{
+    font-size:16px;font-weight:600;text-transform:uppercase;letter-spacing:0.04em;color:var(--white);
+    transition:color .2s;
+  }
+  .mobile-drawer a:hover{color:var(--red);}
+  .drawer-scrim{
+    position:fixed;inset:0;background:var(--scrim-bg);
+    z-index:1100;opacity:0;pointer-events:none;transition:opacity .3s;
+  }
+  .drawer-scrim.open{opacity:1;pointer-events:auto;}
+
+  /* ========== HERO ========== */
+  .hero{padding:180px 0 90px;position:relative;}
+  .hero::after{
+    content:"";
+    position:absolute;top:0;right:-10%;
+    width:60%;height:100%;
+    background:radial-gradient(ellipse at top right, var(--red-glow) 0%, transparent 60%);
+    opacity:0.5;pointer-events:none;z-index:0;
+  }
+  .badge{
+    display:inline-flex;align-items:center;gap:8px;
+    border:1px solid var(--line);
+    padding:7px 14px;border-radius:100px;
+    font-size:12px;color:var(--gray);
+    margin-bottom:28px;
+    transition:border-color var(--transition-speed) ease;
+  }
+  .badge .dot{width:6px;height:6px;border-radius:50%;background:var(--red);}
+
+  .hero-grid{
+    display:grid;grid-template-columns:1.1fr 0.9fr;
+    gap:60px;align-items:center;
+    position:relative;z-index:1;
+  }
+
+  h1.hero-title{
+    font-size:clamp(42px, 5.6vw, 74px);
+    line-height:0.96;margin-bottom:26px;
+  }
+  h1.hero-title .stroke{
+    -webkit-text-stroke:var(--hero-stroke);
+    color:transparent;
+    transition:-webkit-text-stroke var(--transition-speed) ease;
+  }
+  h1.hero-title .red-fill{color:var(--red);}
+
+  .hero-sub{font-size:17px;color:var(--gray);max-width:480px;line-height:1.65;margin-bottom:38px;}
+
+  .hero-actions{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:56px;}
+
+  .btn-primary{
+    background:var(--red);color:#fff;
+    padding:16px 30px;
+    font-size:14px;font-weight:700;letter-spacing:0.03em;text-transform:uppercase;
+    border-radius:2px;
+    display:inline-flex;align-items:center;gap:10px;
+    transition:background .2s, transform .2s, box-shadow .2s;
+    border:none;cursor:pointer;
+    font-family:'Inter',sans-serif;
+  }
+  .btn-primary:hover{background:var(--red-dark);transform:translateY(-2px);box-shadow:0 8px 25px rgba(228,33,44,0.3);}
+
+  .btn-ghost{
+    border:1px solid var(--line);
+    color:var(--white);
+    padding:16px 30px;
+    font-size:14px;font-weight:700;letter-spacing:0.03em;text-transform:uppercase;
+    border-radius:2px;
+    display:inline-flex;align-items:center;gap:10px;
+    transition:border-color .2s, background .2s, transform .2s;
+    background:transparent;
+    cursor:pointer;
+    font-family:'Inter',sans-serif;
+  }
+  .btn-ghost:hover{border-color:var(--red);background:rgba(228,33,44,0.06);transform:translateY(-2px);}
+
+  .btn-ghost .play-ico{
+    width:20px;height:20px;border-radius:50%;
+    background:var(--red);
+    display:flex;align-items:center;justify-content:center;
+    font-size:9px;color:#fff;
+    transition:transform .2s;
+  }
+  .btn-ghost:hover .play-ico{transform:scale(1.1);}
+
+  .client-row{display:flex;align-items:center;gap:18px;}
+  .avatars{display:flex;}
+  .avatar{
+    width:36px;height:36px;border-radius:50%;
+    border:2px solid var(--avatar-border);
+    background:var(--avatar-bg);
+    margin-left:-10px;
+    display:flex;align-items:center;justify-content:center;
+    font-size:10px;color:var(--gray);
+    transition:border-color var(--transition-speed) ease, background var(--transition-speed) ease;
+  }
+  .avatar:first-child{margin-left:0;}
+  .client-row span{font-size:13px;color:var(--gray);}
+  .client-row strong{color:var(--white);}
+
+  /* workspace mockup */
+  .workspace{
+    background:var(--card-bg);
+    border:1px solid var(--card-border);
+    border-radius:6px;
+    overflow:hidden;
+    box-shadow:var(--workspace-shadow);
+    animation:floatY 6s ease-in-out infinite;
+    transition:background var(--transition-speed) ease, border-color var(--transition-speed) ease, box-shadow var(--transition-speed) ease;
+  }
+  .workspace-topbar{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:12px 16px;
+    border-bottom:1px solid var(--line);
+    background:var(--charcoal);
+    transition:background var(--transition-speed) ease, border-color var(--transition-speed) ease;
+  }
+  .workspace-topbar .dots{display:flex;gap:6px;}
+  .workspace-topbar .dots span{width:9px;height:9px;border-radius:50%;background:var(--dot-color);transition:background var(--transition-speed) ease;}
+  .workspace-file{font-size:11px;color:var(--gray);}
+  .workspace-badge{
+    font-size:10px;font-weight:700;color:var(--red);
+    border:1px solid var(--red);
+    padding:2px 8px;border-radius:2px;letter-spacing:0.05em;
+  }
+  .workspace-screen{
+    aspect-ratio:16/10;
+    background:
+      radial-gradient(circle at 30% 30%, rgba(228,33,44,var(--glow-intensity)), transparent 55%),
+      var(--work-thumb-gradient);
+    position:relative;
+    display:flex;align-items:center;justify-content:center;
+    transition:background var(--transition-speed) ease;
+  }
+  .play-btn{
+    width:64px;height:64px;border-radius:50%;
+    background:rgba(228,33,44,0.9);
+    display:flex;align-items:center;justify-content:center;
+    color:#fff;font-size:20px;
+    cursor:pointer;
+    box-shadow:0 0 0 12px rgba(228,33,44,0.12);
+    transition:transform .2s, box-shadow .2s;
+  }
+  .play-btn:hover{transform:scale(1.08);box-shadow:0 0 0 16px rgba(228,33,44,0.18);}
+  .workspace-tags{
+    position:absolute;bottom:14px;left:14px;right:14px;
+    display:flex;justify-content:space-between;
+    font-size:10px;color:var(--gray);
+  }
+  .workspace-timeline{padding:14px 16px 18px;background:var(--card-bg);transition:background var(--transition-speed) ease;}
+  .waveform{display:flex;align-items:flex-end;gap:2px;height:34px;margin-bottom:10px;}
+  .waveform span{flex:1;background:var(--waveform-bg);border-radius:1px;transition:background var(--transition-speed) ease;}
+  .waveform span.active{background:var(--red);}
+  .scrub-row{display:flex;align-items:center;justify-content:space-between;}
+  .scrub-track{position:relative;flex:1;height:3px;background:var(--scrub-bg);border-radius:2px;margin:0 14px;transition:background var(--transition-speed) ease;}
+  .scrub-fill{position:absolute;left:0;top:0;bottom:0;width:38%;background:var(--red);border-radius:2px;}
+  .scrub-head{
+    position:absolute;left:38%;top:50%;transform:translate(-50%,-50%);
+    width:11px;height:11px;border-radius:50%;background:var(--white);
+    box-shadow:0 0 0 3px rgba(228,33,44,0.4);
+    animation:scrubPulse 2.4s ease-in-out infinite;
+    transition:background var(--transition-speed) ease;
+  }
+  @keyframes scrubPulse{
+    0%,100%{box-shadow:0 0 0 3px rgba(228,33,44,0.4);}
+    50%{box-shadow:0 0 0 6px rgba(228,33,44,0.15);}
+  }
+  .workspace-screen .rec-badge{
+    position:absolute;top:14px;right:14px;
+    display:flex;align-items:center;gap:6px;
+    font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--red);
+    z-index:1;
+  }
+  .workspace-screen .rec-badge .rec-dot{width:6px;height:6px;}
+
+  @keyframes floatY{
+    0%,100%{transform:translateY(0);}
+    50%{transform:translateY(-10px);}
+  }
+
+  /* ========== STATS ========== */
+  .stats-bar{
+    border-top:1px solid var(--line);border-bottom:1px solid var(--line);
+    padding:40px 0;
+    transition:border-color var(--transition-speed) ease;
+  }
+  .stats-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:20px;}
+  .stat{text-align:left;border-left:1px solid var(--line);padding-left:18px;transition:border-color var(--transition-speed) ease;}
+  .stat:first-child{border-left:none;padding-left:0;}
+  .stat-num{
+    font-family:'JetBrains Mono',monospace;
+    font-size:clamp(22px,2.4vw,32px);
+    font-weight:700;color:var(--white);
+    display:flex;align-items:baseline;gap:2px;
+    transition:color var(--transition-speed) ease;
+  }
+  .stat-num .unit{color:var(--red);font-size:0.6em;}
+  .stat-label{font-size:11px;color:var(--gray);text-transform:uppercase;letter-spacing:0.06em;margin-top:6px;}
+
+  /* ========== SECTION SHARED ========== */
+  section{padding:120px 0;position:relative;overflow:hidden;}
+  .eyebrow{
+    font-family:'JetBrains Mono',monospace;
+    font-size:12px;color:var(--red);
+    letter-spacing:0.12em;text-transform:uppercase;
+    display:flex;align-items:center;gap:10px;
+    margin-bottom:18px;
+  }
+  .eyebrow::before{content:"";width:24px;height:1px;background:var(--red);}
+  .section-title{font-size:clamp(32px,4vw,52px);line-height:1.02;max-width:700px;margin-bottom:16px;}
+  .section-desc{color:var(--gray);font-size:15px;max-width:520px;line-height:1.7;}
+  .section-head{
+    display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:24px;
+    margin-bottom:56px;
+  }
+
+  /* ========== WORK FILTER ========== */
+  .filters{display:flex;gap:10px;flex-wrap:wrap;}
+  .filter-btn{
+    font-size:12px;font-weight:600;letter-spacing:0.03em;text-transform:uppercase;
+    padding:10px 18px;
+    border:1px solid var(--line);
+    border-radius:100px;
+    color:var(--gray);
+    cursor:pointer;background:transparent;
+    transition:all .25s ease;
+    font-family:'Inter',sans-serif;
+  }
+  .filter-btn.active,.filter-btn:hover{
+    border-color:var(--red);color:var(--white);background:var(--filter-active-bg);
+  }
+
+  .work-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;}
+  .work-card{
+    background:var(--card-bg);
+    border:1px solid var(--card-border);
+    border-radius:6px;
+    overflow:hidden;cursor:pointer;
+    transition:transform .3s cubic-bezier(.16,.8,.3,1), border-color .3s, box-shadow .3s, background var(--transition-speed) ease;
+  }
+  .work-card:hover{transform:translateY(-6px);border-color:rgba(228,33,44,0.4);box-shadow:0 20px 50px -15px rgba(228,33,44,0.12);}
+  .work-thumb{
+    aspect-ratio:16/10;
+    position:relative;
+    background:var(--work-thumb-gradient);
+    display:flex;align-items:center;justify-content:center;
+    overflow:hidden;
+    transition:background var(--transition-speed) ease;
+  }
+  .work-thumb::before{
+    content:"";position:absolute;inset:0;
+    background:radial-gradient(circle at 70% 20%, rgba(228,33,44,0.25), transparent 60%);
+    transition:transform .5s cubic-bezier(.16,.8,.3,1), opacity .5s;
+  }
+  .work-thumb::after{
+    content:"";position:absolute;inset:0;
+    background-image:var(--work-thumb-overlay);
+    opacity:.5;
+    transition:background-image var(--transition-speed) ease;
+  }
+  .work-card:hover .work-thumb::before{transform:scale(1.35);opacity:1.2;}
+  .work-thumb .glyph{
+    font-size:34px;opacity:0.85;position:relative;z-index:1;
+    transition:transform .5s cubic-bezier(.16,.8,.3,1);
+  }
+  .work-card:hover .work-thumb .glyph{transform:scale(1.15) rotate(-3deg);}
+  .work-thumb .play-mini{
+    position:relative;z-index:1;
+    width:46px;height:46px;border-radius:50%;
+    background:rgba(228,33,44,0.85);
+    display:flex;align-items:center;justify-content:center;
+    font-size:14px;color:#fff;
+    opacity:0;transform:scale(0.7);
+    transition:opacity .3s, transform .3s;
+    margin-left:10px;
+  }
+  .work-card:hover .work-thumb .play-mini{opacity:1;transform:scale(1);}
+  .work-thumb .duration{
+    position:absolute;bottom:10px;right:10px;
+    font-family:'JetBrains Mono',monospace;font-size:11px;
+    background:var(--duration-bg);
+    padding:3px 8px;border-radius:3px;z-index:1;
+    transition:background var(--transition-speed) ease;
+  }
+  .work-thumb .cat-tag{
+    position:absolute;top:10px;left:10px;
+    font-size:10px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;
+    background:var(--red);color:#fff;
+    padding:4px 9px;border-radius:2px;z-index:1;
+  }
+  .work-body{padding:20px;}
+  .work-body h3{font-size:17px;font-weight:700;margin-bottom:8px;line-height:1.3;}
+  .work-body p{font-size:13px;color:var(--gray);line-height:1.6;margin-bottom:16px;}
+  .work-foot{display:flex;justify-content:space-between;align-items:center;}
+  .views-pill{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--red);font-weight:600;}
+  .watch-link{
+    font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;
+    display:flex;align-items:center;gap:6px;
+    color:var(--white);
+    transition:color .2s;
+  }
+  .work-card:hover .watch-link{color:var(--red);}
+
+  .cta-inline{text-align:center;margin-top:56px;color:var(--gray);font-size:14px;}
+  .cta-inline a{color:var(--red);font-weight:600;border-bottom:1px solid var(--red);transition:border-color .2s;}
+  .cta-inline a:hover{border-color:transparent;}
+
+  /* ========== TICKER ========== */
+  .ticker-wrap{
+    border-top:1px solid var(--line);border-bottom:1px solid var(--line);
+    padding:26px 0;overflow:hidden;
+    transition:border-color var(--transition-speed) ease;
+    width:100%;
+  }
+  .ticker{
+    display:flex;gap:60px;white-space:nowrap;
+    animation:scroll 22s linear infinite;
+    width:max-content;
+  }
+  .ticker-wrap:hover .ticker{animation-play-state:paused;}
+  .ticker span{
+    font-family:'Anton',sans-serif;font-size:20px;letter-spacing:0.03em;
+    color:var(--gray);text-transform:uppercase;
+    display:flex;align-items:center;gap:60px;
+    transition:color var(--transition-speed) ease;
+  }
+  .ticker span::after{content:"\25C6";color:var(--red);font-size:10px;margin-left:60px;}
+  @keyframes scroll{
+    from{transform:translateX(0);}
+    to{transform:translateX(-50%);}
+  }
+
+  /* ========== PROCESS ========== */
+  .process-list{display:flex;flex-direction:column;}
+  .process-item{
+    display:grid;grid-template-columns:120px 1fr auto;
+    gap:32px;padding:38px 0;
+    border-top:1px solid var(--line);
+    align-items:center;
+    transition:border-color var(--transition-speed) ease;
+  }
+  .process-list .process-item:last-child{border-bottom:1px solid var(--line);}
+  .process-tc{font-family:'JetBrains Mono',monospace;color:var(--red);font-size:14px;}
+  .process-item h3{font-size:22px;margin-bottom:10px;}
+  .process-item p{color:var(--gray);font-size:14px;line-height:1.6;}
+  .process-tag{
+    justify-self:end;
+    font-size:11px;color:var(--gray);
+    border:1px solid var(--line);padding:6px 12px;border-radius:100px;
+    white-space:nowrap;
+    transition:border-color var(--transition-speed) ease;
+  }
+
+  /* ========== TESTIMONIALS ========== */
+  .testi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;}
+  .testi-card{
+    background:var(--card-bg);
+    border:1px solid var(--card-border);
+    border-radius:6px;padding:32px;
+    display:flex;flex-direction:column;justify-content:space-between;
+    transition:background var(--transition-speed) ease, border-color var(--transition-speed) ease, transform .3s ease, box-shadow .3s ease;
+  }
+  .testi-card:hover{transform:translateY(-4px);box-shadow:0 16px 40px -12px rgba(228,33,44,0.1);}
+  .testi-quote-mark{font-family:'Anton',sans-serif;font-size:44px;color:var(--red);line-height:1;margin-bottom:14px;}
+  .testi-text{font-size:15px;line-height:1.7;color:var(--white);margin-bottom:28px;transition:color var(--transition-speed) ease;}
+  .testi-person{display:flex;align-items:center;gap:12px;}
+  .testi-avatar{
+    width:42px;height:42px;border-radius:50%;
+    background:linear-gradient(135deg,var(--red),var(--red-dark));
+    display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;color:#fff;
+  }
+  .testi-person strong{display:block;font-size:14px;}
+  .testi-person span{font-size:12px;color:var(--gray);}
+
+  /* ========== FAQ ========== */
+  .faq-list{max-width:800px;}
+  .faq-item{border-top:1px solid var(--line);transition:border-color var(--transition-speed) ease;}
+  .faq-list .faq-item:last-child{border-bottom:1px solid var(--line);}
+  .faq-q{
+    display:flex;justify-content:space-between;align-items:center;
+    padding:26px 0;cursor:pointer;
+    font-size:17px;font-weight:600;
+    transition:color .2s;
+  }
+  .faq-q:hover{color:var(--red);}
+  .faq-q .idx{font-family:'JetBrains Mono',monospace;color:var(--red);font-size:13px;margin-right:16px;}
+  .faq-toggle{
+    width:28px;height:28px;border-radius:50%;border:1px solid var(--line);
+    display:flex;align-items:center;justify-content:center;
+    font-size:16px;flex-shrink:0;
+    transition:transform .25s, border-color .25s, color .25s;
+    color:var(--white);
+  }
+  .faq-item.open .faq-toggle{transform:rotate(45deg);border-color:var(--red);color:var(--red);}
+  .faq-a{max-height:0;overflow:hidden;transition:max-height .3s ease;}
+  .faq-item.open .faq-a{max-height:200px;}
+  .faq-a p{padding-bottom:26px;color:var(--gray);font-size:14px;line-height:1.7;max-width:640px;}
+
+  /* ========== CTA / FORM ========== */
+  .cta-section{
+    background:var(--cta-section-bg);
+    border-top:1px solid var(--line);border-bottom:1px solid var(--line);
+    transition:background var(--transition-speed) ease, border-color var(--transition-speed) ease;
+  }
+  .cta-grid{display:grid;grid-template-columns:1fr 1fr;gap:70px;align-items:start;}
+  .cta-perks{list-style:none;margin-top:34px;display:flex;flex-direction:column;gap:14px;}
+  .cta-perks li{display:flex;align-items:center;gap:10px;font-size:14px;color:var(--gray);transition:color .2s;}
+  .cta-perks li::before{content:"";width:6px;height:6px;background:var(--red);flex-shrink:0;}
+  .email-line{
+    margin-top:34px;display:flex;align-items:center;gap:14px;
+    padding:16px 18px;border:1px solid var(--line);border-radius:4px;
+    transition:border-color var(--transition-speed) ease;
+  }
+  .email-line span{font-size:14px;color:var(--white);transition:color var(--transition-speed) ease;}
+  .email-line .mono{font-family:'JetBrains Mono',monospace;}
+  .copy-btn{
+    margin-left:auto;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;
+    color:var(--red);cursor:pointer;background:none;border:none;
+    font-family:'Inter',sans-serif;
+    transition:opacity .2s;
+  }
+  .copy-btn:hover{opacity:0.7;}
+
+  .form-card{
+    background:var(--form-bg);
+    border:1px solid var(--card-border);
+    border-radius:6px;padding:34px;
+    transition:background var(--transition-speed) ease, border-color var(--transition-speed) ease;
+  }
+  .form-card h3{font-size:20px;margin-bottom:22px;}
+  .field{margin-bottom:18px;}
+  .field label{display:block;font-size:12px;color:var(--gray);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:8px;}
+  .field input,.field textarea,.field select{
+    width:100%;
+    background:var(--form-input-bg);
+    border:1px solid var(--line);
+    border-radius:3px;padding:13px 14px;
+    color:var(--white);
+    font-family:'Inter',sans-serif;font-size:14px;
+    transition:background var(--transition-speed) ease, border-color .2s, color var(--transition-speed) ease;
+  }
+  .field input:focus,.field textarea:focus,.field select:focus{outline:none;border-color:var(--red);}
+  .field textarea{resize:vertical;min-height:90px;}
+  .field ::placeholder{color:var(--placeholder);}
+  .field select{-webkit-appearance:none;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%238c8b90'%3E%3Cpath d='M6 8L1 3h10z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;}
+  [data-theme="light"] .field select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%236b6a6f'%3E%3Cpath d='M6 8L1 3h10z'/%3E%3C/svg%3E");}
+  .submit-btn{
+    width:100%;background:var(--red);color:#fff;
+    padding:16px;border:none;border-radius:3px;
+    font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;
+    cursor:pointer;
+    transition:background .2s, transform .2s, box-shadow .2s;
+    font-family:'Inter',sans-serif;
+  }
+  .submit-btn:hover{background:var(--red-dark);transform:translateY(-2px);box-shadow:0 6px 20px rgba(228,33,44,0.25);}
+
+  /* ========== FOOTER ========== */
+  footer{padding:56px 0 40px;}
+  .footer-top{
+    display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:24px;
+    margin-bottom:40px;
+  }
+  footer nav ul{display:flex;gap:30px;}
+  footer nav ul li a{transition:color .2s;}
+  footer nav ul li a:hover{color:var(--red);}
+  .footer-bottom{
+    border-top:1px solid var(--line);padding-top:24px;
+    display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px;
+    font-size:12px;color:var(--gray);
+    transition:border-color var(--transition-speed) ease;
+  }
+  .footer-bottom .legal{display:flex;gap:24px;}
+  .footer-bottom .legal a{transition:color .2s;}
+  .footer-bottom .legal a:hover{color:var(--red);}
+
+  /* ========== FOOTER SOCIAL ========== */
+  .footer-social{display:flex;gap:14px;align-items:center;}
+  .footer-social a{
+    width:38px;height:38px;border-radius:50%;
+    border:1px solid var(--line);
+    display:flex;align-items:center;justify-content:center;
+    transition:border-color .2s, background .2s, transform .2s;
+    color:var(--gray);
+  }
+  .footer-social a:hover{border-color:var(--red);background:var(--filter-active-bg);color:var(--red);transform:translateY(-2px);}
+  .footer-social a svg{width:17px;height:17px;}
+  .footer-bottom{gap:20px;}
+  @media (max-width:640px){
+    .footer-bottom{flex-direction:column;align-items:flex-start;gap:16px;}
+    .footer-social{flex-wrap:wrap;}
+  }
+
+  /* focus */
+  a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visible{
+    outline:2px solid var(--red);outline-offset:2px;
+  }
+
+  /* ========== SCROLL-TO-TOP ========== */
+  .scroll-top{
+    position:fixed;bottom:32px;right:32px;
+    width:48px;height:48px;border-radius:50%;
+    background:var(--red);color:#fff;
+    border:none;cursor:pointer;
+    display:flex;align-items:center;justify-content:center;
+    z-index:900;
+    opacity:0;transform:translateY(20px) scale(0.8);
+    transition:opacity .3s, transform .3s cubic-bezier(.16,.8,.3,1), background .2s, box-shadow .2s;
+    box-shadow:0 4px 20px rgba(228,33,44,0.3);
+    font-size:20px;
+  }
+  .scroll-top.visible{opacity:1;transform:translateY(0) scale(1);}
+  .scroll-top:hover{background:var(--red-dark);box-shadow:0 8px 30px rgba(228,33,44,0.4);transform:translateY(-3px) scale(1);}
+
+  /* ========== TOAST ========== */
+  .toast-container{
+    position:fixed;bottom:90px;right:32px;
+    z-index:9500;
+    display:flex;flex-direction:column;gap:10px;
+    pointer-events:none;
+  }
+  .toast{
+    background:var(--card-bg);border:1px solid var(--card-border);
+    border-left:3px solid var(--red);
+    border-radius:6px;padding:14px 20px;
+    font-size:13px;color:var(--white);
+    box-shadow:0 10px 30px -10px rgba(0,0,0,0.4);
+    transform:translateX(120%);
+    transition:transform .4s cubic-bezier(.16,.8,.3,1), opacity .3s, background var(--transition-speed) ease, border-color var(--transition-speed) ease;
+    pointer-events:auto;
+    max-width:300px;
+  }
+  .toast.show{transform:translateX(0);}
+  .toast.hide{opacity:0;transform:translateX(40px);}
+
+  /* ========== PAGE LOAD ENTRANCE ========== */
+  .page-loader{
+    position:fixed;inset:0;
+    background:var(--body-bg);
+    z-index:99999;
+    display:flex;align-items:center;justify-content:center;
+    flex-direction:column;gap:16px;
+    transition:opacity .6s ease, visibility .6s ease;
+  }
+  .page-loader.done{opacity:0;visibility:hidden;pointer-events:none;}
+  .loader-bar{
+    width:120px;height:2px;background:var(--charcoal);border-radius:2px;overflow:hidden;
+  }
+  .loader-bar-fill{
+    width:0;height:100%;background:var(--red);border-radius:2px;
+    animation:loaderFill .8s ease forwards;
+  }
+  @keyframes loaderFill{to{width:100%;}}
+  .loader-text{
+    font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--gray);letter-spacing:0.1em;text-transform:uppercase;
+  }
+
+  /* ========== CURSOR TRAIL ========== */
+  .cursor-dot{
+    position:fixed;
+    width:8px;height:8px;
+    border-radius:50%;
+    background:var(--red);
+    pointer-events:none;
+    z-index:9998;
+    opacity:0;
+    transition:opacity .3s;
+    mix-blend-mode:screen;
+  }
+  [data-theme="light"] .cursor-dot{mix-blend-mode:multiply;}
+  body:hover .cursor-dot{opacity:0.6;}
+
+  /* ========== PARALLAX ========== */
+  .parallax-wrap{overflow:hidden;}
+  .parallax-inner{will-change:transform;transition:transform .1s linear;}
+
+  /* ========== GRADIENT BORDER (form card) ========== */
+  .form-card{position:relative;background:var(--form-bg);border:none;}
+  .form-card::before{
+    content:"";position:absolute;inset:0;border-radius:6px;
+    padding:1px;
+    background:linear-gradient(135deg,var(--red),transparent 40%,transparent 60%,var(--red));
+    -webkit-mask:linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite:xor;
+    mask-composite:exclude;
+    pointer-events:none;
+    opacity:0.5;
+    transition:opacity .3s;
+  }
+  .form-card:hover::before{opacity:1;}
+
+  /* ========== HERO SHIMMER ========== */
+  .hero-title .shimmer{
+    background:linear-gradient(110deg,var(--red) 0%,#ff6b6b 25%,var(--red) 50%,#ff6b6b 75%,var(--red) 100%);
+    background-size:200% 100%;
+    -webkit-background-clip:text;background-clip:text;
+    -webkit-text-fill-color:transparent;
+    animation:shimmer 4s ease-in-out infinite;
+  }
+  @keyframes shimmer{
+    0%{background-position:200% center;}
+    100%{background-position:-200% center;}
+  }
+
+  /* ========== MAGNETIC BUTTON ========== */
+  .magnetic{position:relative;transition:transform .3s cubic-bezier(.16,.8,.3,1);}
+
+  /* ========== TILT CARD ========== */
+  .tilt-card{
+    transform-style:preserve-3d;
+    perspective:800px;
+    will-change:transform;
+  }
+
+  /* ========== PROGRESS RING ========== */
+  .progress-ring-wrap{
+    position:absolute;
+    width:80px;height:80px;
+    top:50%;left:50%;transform:translate(-50%,-50%);
+    pointer-events:none;
+  }
+  .progress-ring{
+    width:100%;height:100%;
+    transform:rotate(-90deg);
+  }
+  .progress-ring circle{
+    fill:none;stroke-width:2;
+    stroke-linecap:round;
+  }
+  .progress-ring .ring-bg{stroke:rgba(228,33,44,0.2);}
+  .progress-ring .ring-fill{
+    stroke:var(--red);
+    stroke-dasharray:226;
+    stroke-dashoffset:226;
+    transition:stroke-dashoffset 2s cubic-bezier(.16,.8,.3,1);
+  }
+  .play-btn:hover ~ .progress-ring-wrap .ring-fill{stroke-dashoffset:0;}
+
+  /* ========== VIDEO MODAL ========== */
+  .video-modal{
+    position:fixed;inset:0;z-index:10000;
+    display:flex;align-items:center;justify-content:center;
+    opacity:0;pointer-events:none;
+    transition:opacity .35s ease;
+  }
+  .video-modal.open{opacity:1;pointer-events:auto;}
+  .video-modal-scrim{
+    position:absolute;inset:0;
+    background:var(--scrim-bg);
+    backdrop-filter:blur(12px);
+  }
+  .video-modal-content{
+    position:relative;z-index:1;
+    width:min(900px,90vw);
+    background:var(--card-bg);
+    border:1px solid var(--card-border);
+    border-radius:10px;
+    overflow:hidden;
+    transform:scale(0.9) translateY(30px);
+    transition:transform .4s cubic-bezier(.16,.8,.3,1), background var(--transition-speed) ease, border-color var(--transition-speed) ease;
+    box-shadow:0 40px 100px -20px rgba(0,0,0,0.6);
+  }
+  .video-modal.open .video-modal-content{transform:scale(1) translateY(0);}
+  .video-modal-topbar{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:12px 16px;
+    border-bottom:1px solid var(--line);
+    background:var(--charcoal);
+    transition:background var(--transition-speed) ease;
+  }
+  .video-modal-topbar .file-name{font-size:12px;color:var(--gray);font-family:'JetBrains Mono',monospace;}
+  .video-modal-close{
+    width:28px;height:28px;border-radius:50%;
+    border:1px solid var(--line);background:transparent;
+    color:var(--white);cursor:pointer;
+    display:flex;align-items:center;justify-content:center;
+    font-size:14px;
+    transition:border-color .2s, background .2s, color .2s;
+  }
+  .video-modal-close:hover{border-color:var(--red);background:var(--red);color:#fff;}
+  .video-modal-body{position:relative;}
+  .video-modal-body video{
+    width:100%;display:block;
+    background:#000;
+  }
+  .video-modal-controls{
+    display:flex;align-items:center;gap:12px;
+    padding:14px 16px;
+    border-top:1px solid var(--line);
+    background:var(--card-bg);
+    transition:background var(--transition-speed) ease;
+  }
+  .video-modal-play{
+    width:36px;height:36px;border-radius:50%;
+    background:var(--red);border:none;
+    color:#fff;cursor:pointer;
+    display:flex;align-items:center;justify-content:center;
+    font-size:13px;flex-shrink:0;
+    transition:background .2s, transform .2s;
+  }
+  .video-modal-play:hover{background:var(--red-dark);transform:scale(1.08);}
+  .video-modal-track{flex:1;height:3px;background:var(--scrub-bg);border-radius:2px;position:relative;cursor:pointer;}
+  .video-modal-track-fill{position:absolute;left:0;top:0;bottom:0;width:0;background:var(--red);border-radius:2px;}
+  .video-modal-time{font-size:11px;color:var(--gray);font-family:'JetBrains Mono',monospace;white-space:nowrap;}
+
+  .workspace-screen video{
+    position:absolute;inset:0;
+    width:100%;height:100%;
+    object-fit:cover;
+    z-index:0;
+    opacity:0.55;
+  }
+
+  /* ========== ACTIVE NAV ========== */
+  nav ul li a.active-link{color:var(--white);}
+  nav ul li a.active-link::after{width:100%;background:var(--red);}
+
+  /* ========== FORM VALIDATION ========== */
+  .field.error input,.field.error textarea,.field.error select{
+    border-color:#ff4444 !important;
+  }
+  .field-error{
+    font-size:11px;color:#ff4444;margin-top:6px;
+    display:none;
+    font-family:'JetBrains Mono',monospace;
+  }
+  .field.error .field-error{display:block;}
+
+  /* ========== SKELETON ========== */
+  .skeleton{
+    background:linear-gradient(90deg,var(--charcoal) 25%,var(--black-soft) 50%,var(--charcoal) 75%);
+    background-size:200% 100%;
+    animation:skeletonShimmer 1.5s ease-in-out infinite;
+    border-radius:4px;
+  }
+  @keyframes skeletonShimmer{
+    0%{background-position:200% 0;}
+    100%{background-position:-200% 0;}
+  }
+
+  /* ========== IMAGE STYLES ========== */
+  .work-thumb img{
+    position:absolute;inset:0;
+    width:100%;height:100%;
+    object-fit:cover;
+    z-index:0;
+    transition:transform .6s cubic-bezier(.16,.8,.3,1), opacity .5s;
+  }
+  .work-card:hover .work-thumb img{transform:scale(1.08);}
+  .work-thumb .glyph{display:none;}
+
+  .testi-avatar img{
+    width:100%;height:100%;
+    object-fit:cover;
+    border-radius:50%;
+  }
+
+  .client-avatar img{
+    width:100%;height:100%;
+    object-fit:cover;
+    border-radius:50%;
+  }
+
+  /* decorative shapes */
+  .deco-shape{
+    position:absolute;
+    pointer-events:none;
+    z-index:0;
+    opacity:0.07;
+  }
+  .deco-shape.circle-red{
+    border-radius:50%;
+    background:var(--red);
+  }
+  .deco-shape.circle-outline{
+    border-radius:50%;
+    border:1.5px solid var(--red);
+    background:transparent;
+  }
+  .deco-shape.diamond{
+    background:var(--red);
+    transform:rotate(45deg);
+  }
+  .deco-shape.line-h{
+    height:1px;background:var(--red);opacity:0.15;
+  }
+  .deco-shape.line-v{
+    width:1px;background:var(--red);opacity:0.15;
+  }
+
+  /* floating animation for deco */
+  .float-slow{animation:floatSlow 8s ease-in-out infinite;}
+  .float-med{animation:floatMed 5s ease-in-out infinite;}
+  .float-fast{animation:floatFast 3.5s ease-in-out infinite;}
+  @keyframes floatSlow{0%,100%{transform:translateY(0) rotate(0deg);}50%{transform:translateY(-20px) rotate(3deg);}}
+  @keyframes floatMed{0%,100%{transform:translateY(0) rotate(0deg);}50%{transform:translateY(-14px) rotate(-2deg);}}
+  @keyframes floatFast{0%,100%{transform:translateY(0);}50%{transform:translateY(-8px);}}
+
+  /* brand logos in ticker */
+  .brand-logo{
+    display:flex;align-items:center;gap:10px;
+    font-family:'Anton',sans-serif;font-size:18px;letter-spacing:0.04em;
+    color:var(--gray);text-transform:uppercase;
+  }
+  .brand-logo svg{width:28px;height:28px;opacity:0.5;flex-shrink:0;}
+
+  /* hero decorative camera illustration */
+  .hero-deco{
+    position:absolute;right:-5%;top:15%;
+    width:300px;height:300px;
+    opacity:0.04;
+    pointer-events:none;
+    z-index:0;
+  }
+  [data-theme="light"] .hero-deco{opacity:0.06;}
+
+  /* process step icons */
+  .process-icon{
+    width:56px;height:56px;
+    border-radius:12px;
+    background:rgba(228,33,44,0.08);
+    border:1px solid rgba(228,33,44,0.15);
+    display:flex;align-items:center;justify-content:center;
+    flex-shrink:0;
+    transition:background .3s, transform .3s;
+  }
+  .process-item:hover .process-icon{
+    background:rgba(228,33,44,0.15);
+    transform:scale(1.05);
+  }
+  .process-icon svg{width:26px;height:26px;color:var(--red);}
+
+  /* image lazy fade-in */
+  .img-fade{opacity:0;transition:opacity .6s ease;}
+  .img-fade.loaded{opacity:1;}
+
+  /* hero image */
+  .hero-img-wrap{
+    position:absolute;
+    bottom:-40px;left:50%;
+    transform:translateX(-50%);
+    width:120%;height:200px;
+    background:linear-gradient(to bottom,transparent,var(--body-bg));
+    z-index:2;
+    pointer-events:none;
+  }
+
+  /* stats background image */
+  .stats-bg{
+    position:absolute;inset:0;
+    background:url('https://picsum.photos/seed/studio1/1400/400') center/cover no-repeat;
+    opacity:0.03;
+    pointer-events:none;
+    z-index:0;
+  }
+  [data-theme="light"] .stats-bg{opacity:0.05;}
+  .stats-bar{position:relative;overflow:hidden;}
+
+  /* ========== BEFORE / AFTER SLIDER DESIGN (NEW INTERACTIVE CARDS) ========== */
+  .ba-grid-slider {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+  }
+
+  .comparison-card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.035), 0 10px 30px rgba(0,0,0,0.2);
+    transition: transform .3s ease, box-shadow .3s ease;
+  }
+  .comparison-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 16px 40px -10px rgba(228,33,44,0.15);
+  }
+
+  .comparison-container {
+    --position: 50%;
+    position: relative;
+    isolation: isolate;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    background: #111;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: pan-y;
+  }
+
+  .comparison-container .image-layer {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+  }
+
+  .comparison-container .slider-image {
+    position: absolute;
+    inset: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+    max-width: none;
+    object-fit: cover;
+    object-position: center;
+    pointer-events: none;
+  }
+
+  .comparison-container .image-before {
+    z-index: 2;
+    clip-path: inset(0 calc(100% - var(--position)) 0 0);
+    -webkit-clip-path: inset(0 calc(100% - var(--position)) 0 0);
+  }
+
+  .comparison-container .image-after {
+    z-index: 1;
+  }
+
+  .comparison-container .comparison-range {
+    position: absolute;
+    inset: 0;
+    z-index: 10;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: ew-resize;
+    appearance: none;
+    -webkit-appearance: none;
+    touch-action: pan-y;
+  }
+
+  .comparison-container .divider {
+    position: absolute;
+    z-index: 6;
+    top: 0;
+    bottom: 0;
+    left: var(--position);
+    width: 2px;
+    transform: translateX(-50%);
+    background: rgba(255, 255, 255, 0.95);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    pointer-events: none;
+  }
+
+  .comparison-container .handle {
+    position: absolute;
+    z-index: 7;
+    top: 50%;
+    left: var(--position);
+    display: grid;
+    place-items: center;
+    width: 38px;
+    height: 38px;
+    transform: translate(-50%, -50%);
+    border: 2px solid rgba(255, 255, 255, 0.9);
+    border-radius: 50%;
+    color: #111;
+    background: #fff;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+    pointer-events: none;
+  }
+
+  .comparison-container .handle svg {
+    width: 50%;
+    height: 58%;
+  }
+
+  .comparison-container .label {
+    position: absolute;
+    z-index: 5;
+    top: 10px;
+    padding: 4px 10px;
+    border-radius: 4px;
+    color: #fff;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    pointer-events: none;
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+  }
+
+  .comparison-container .label-before {
+    left: 10px;
+    background: rgba(0, 0, 0, 0.65);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .comparison-container .label-after {
+    right: 10px;
+    background: var(--red);
+  }
+
+  .ba-card-info {
+    padding: 14px 18px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid var(--card-border);
+  }
+  .ba-card-info .ba-desc {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--white);
+  }
+  .ba-card-info .ba-tag-sub {
+    font-size: 11px;
+    color: var(--gray);
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  /* Responsive Adjustments for Slider Cards */
+  @media (max-width: 980px) {
+    .ba-grid-slider {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (max-width: 640px) {
+    .ba-grid-slider {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* ========== GALLERY NEW CARDS DESIGN ========== */
+  .gallery-rows{
+    display:flex;
+    flex-direction:column;
+    gap:24px;
+    overflow:hidden;
+    padding:20px 0;
+    mask-image:linear-gradient(to right, rgba(0, 0, 0, 0) 0%, rgb(0, 0, 0) 10%, rgb(0, 0, 0) 90%, rgba(0, 0, 0, 0) 100%);
+    -webkit-mask-image:linear-gradient(to right, rgba(0, 0, 0, 0) 0%, rgb(0, 0, 0) 10%, rgb(0, 0, 0) 90%, rgba(0, 0, 0, 0) 100%);
+  }
+  .gallery-track{
+    display:flex;
+    gap:20px;
+    width:max-content;
+  }
+  .gallery-track.row-left{animation:galleryScrollLeft 35s linear infinite;}
+  .gallery-track.row-right{animation:galleryScrollRight 35s linear infinite;}
+  .gallery-rows:hover .gallery-track{animation-play-state:paused;}
+
+  /* Gallery cards follow the active dark/light theme */
+  .gallery-track .card {
+    width: 360px;
+    background: var(--card-bg);
+    border-radius: 36px;
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    flex-shrink: 0;
+    border: 1px solid var(--card-border);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.22);
+    -webkit-backdrop-filter: blur(16px);
+    backdrop-filter: blur(16px);
+    transition: transform 0.3s ease, background var(--transition-speed) ease,
+                border-color var(--transition-speed) ease, box-shadow 0.3s ease;
+  }
+
+  [data-theme="light"] .gallery-track .card {
+    box-shadow: 0 10px 30px rgba(20, 20, 22, 0.10);
+  }
+
+  .gallery-track .card:hover {
+    transform: translateY(-5px);
+    border-color: rgba(255, 51, 68, 0.32);
+    box-shadow: 0 16px 38px rgba(0, 0, 0, 0.24);
+  }
+
+  [data-theme="light"] .gallery-track .card:hover {
+    box-shadow: 0 16px 38px rgba(20, 20, 22, 0.14);
+  }
+
+  /* Upper Thumbnail Box */
+  .gallery-track .card-thumbnail {
+    width: 100%;
+    height: 210px;
+    border-radius: 26px;
+    overflow: hidden;
+  }
+
+  .gallery-track .card-thumbnail img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  /* Lower Info Box */
+  .gallery-track .card-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 2px 6px 6px 6px;
+  }
+
+  /* Avatar Image */
+  .gallery-track .avatar-wrapper {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 2px solid var(--line);
+    flex-shrink: 0;
+  }
+
+  .gallery-track .avatar-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  /* Text Container */
+  .gallery-track .card-text {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+
+  .gallery-track .card-title {
+    color: var(--white);
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 800;
+    font-size: 14px;
+    line-height: 1.25;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    margin: 0;
+  }
+
+  .gallery-track .card-author {
+    color: var(--gray);
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 600;
+    font-size: 12px;
+    margin: 0;
+  }
+
+  @keyframes galleryScrollLeft{
+    0%{transform:translateX(0);}
+    100%{transform:translateX(-50%);}
+  }
+  @keyframes galleryScrollRight{
+    0%{transform:translateX(-50%);}
+    100%{transform:translateX(0);}
+  }
+
+  /* ========== TOOLS ========== */
+  .tools-grid{
+    display:grid;grid-template-columns:repeat(3,1fr);gap:20px;
+  }
+  .tool-card{
+    background:var(--card-bg);
+    border:1px solid var(--card-border);
+    border-radius:8px;padding:28px;
+    text-align:center;
+    transition:transform .3s ease, box-shadow .3s ease, background var(--transition-speed) ease, border-color var(--transition-speed) ease;
+  }
+  .tool-card:hover{transform:translateY(-4px);box-shadow:0 12px 30px -10px rgba(228,33,44,0.1);}
+  .tool-icon{
+    width:72px;height:72px;
+    min-width:72px;min-height:72px;
+    max-width:72px;max-height:72px;
+    margin:0 auto 16px;
+    display:flex;align-items:center;justify-content:center;
+    border-radius:16px;
+    overflow:hidden;
+    transition:transform .3s;
+  }
+  .tool-card:hover .tool-icon{transform:scale(1.08);}
+  .tool-icon svg{width:100%;height:100%;}
+  .tool-logo{border:none;background:none;}
+  .tool-logo img{
+    width:72px;height:72px;
+    object-fit:contain;
+    display:block;
+    flex-shrink:0;
+  }
+  .tool-card h4{font-size:15px;font-weight:700;margin-bottom:6px;}
+  .tool-card p{font-size:12px;color:var(--gray);line-height:1.5;}
+
+  @media (max-width:980px){
+    .tools-grid{grid-template-columns:repeat(2,1fr);}
+  }
+  @media (max-width:640px){
+    .tools-grid{grid-template-columns:1fr;}
+    .gallery-track .card{width:280px;border-radius:24px;padding:10px;}
+    .gallery-track .card-thumbnail{height:160px;border-radius:18px;}
+  }
+
+  /* ========== REDUCED MOTION ========== */
+  @media (prefers-reduced-motion: reduce){
+    *{animation:none !important;transition:none !important;}
+    .cursor-dot{display:none !important;}
+  }
+
+  /* ========== RESPONSIVE ========== */
+  @media (max-width:980px){
+    .hero-grid{grid-template-columns:1fr;gap:40px;}
+    .stats-grid{grid-template-columns:repeat(3,1fr);}
+    .stat:nth-child(4){border-left:none;padding-left:0;}
+    .work-grid{grid-template-columns:repeat(2,1fr);}
+    .testi-grid{grid-template-columns:1fr;}
+    .cta-grid{grid-template-columns:1fr;gap:40px;}
+    .process-item{grid-template-columns:1fr;gap:8px;}
+    .process-tag{justify-self:start;}
+    .nav-links-wrap nav{display:none;}
+    .burger{display:flex;}
+    .workspace{max-width:540px;margin:0 auto;}
+    .hero-deco{display:none;}
+  }
+  @media (min-width:981px){
+    .mobile-drawer,.drawer-scrim,.burger{display:none !important;}
+  }
+  @media (max-width:640px){
+    .wrap{padding:0 20px;}
+    .nav-inner{padding:14px 20px;}
+    .stats-grid{grid-template-columns:repeat(2,1fr);}
+    .stat{border-left:none;padding-left:0;}
+    .work-grid{grid-template-columns:1fr;}
+    .hero-actions{flex-direction:column;}
+    .btn-primary,.btn-ghost{justify-center;}
+    .hero{padding:140px 0 60px;}
+    .hero-title{font-size:clamp(32px,8vw,48px);}
+    .section-title{font-size:clamp(26px,6vw,40px);}
+    section{padding:80px 0;}
+    .footer-top{flex-direction:column;align-items:flex-start;}
+    footer nav ul{flex-wrap:wrap;gap:16px;}
+  }
+  @media (max-width:420px){
+    .stats-grid{grid-template-columns:1fr 1fr;}
+  }
+
+  /* ========== 2026 PREMIUM REDESIGN ========== */
+  :root{
+    --red:#ff3344;
+    --red-dark:#d81427;
+    --red-glow:rgba(255,51,68,.28);
+    --nav-height:76px;
+    --ease-premium:cubic-bezier(.22,1,.36,1);
+  }
+  [data-theme="dark"]{
+    --black:#070708;
+    --black-soft:#0e0e10;
+    --charcoal:#171719;
+    --white:#f8f7f4;
+    --gray:#98979d;
+    --line:rgba(255,255,255,.09);
+    --card-bg:rgba(20,20,22,.72);
+    --card-border:rgba(255,255,255,.1);
+    --nav-bg:rgba(13,13,15,.72);
+    --body-bg:#080809;
+    --body-color:#f8f7f4;
+  }
+  [data-theme="light"]{
+    --black:#eeece8;
+    --black-soft:#faf9f7;
+    --charcoal:#e3e0db;
+    --white:#171719;
+    --gray:#6e6c72;
+    --line:rgba(20,20,22,.1);
+    --card-bg:rgba(255,255,255,.78);
+    --card-border:rgba(20,20,22,.1);
+    --nav-bg:rgba(250,249,247,.76);
+    --body-bg:#f2f0ec;
+    --body-color:#171719;
+  }
+  html{scroll-padding-top:110px;}
+  body{font-feature-settings:"ss01" 1,"cv02" 1;text-rendering:optimizeLegibility;}
+  body::after{background-size:80px 80px;opacity:.72;}
+  section{position:relative;}
+  .wrap{max-width:1280px;padding-inline:40px;}
+  .display{letter-spacing:-.025em;line-height:.96;}
+
+  header{
+    top:14px;left:16px;right:16px;
+    border:0;background:transparent;
+    pointer-events:none;
+    transform:translateY(0);
+    transition:transform .55s var(--ease-premium),opacity .35s ease;
+  }
+  header.nav-hidden{transform:translateY(calc(-100% - 24px));opacity:0;}
+  header.nav-visible{transform:translateY(0);opacity:1;}
+  .nav-shell{
+    max-width:1280px;margin:0 auto;
+    border:1px solid var(--line);
+    border-radius:18px;
+    background:var(--nav-bg);
+    -webkit-backdrop-filter:blur(22px) saturate(150%);
+    backdrop-filter:blur(22px) saturate(150%);
+    box-shadow:0 18px 60px rgba(0,0,0,.16),inset 0 1px 0 rgba(255,255,255,.04);
+    overflow:hidden;
+    pointer-events:auto;
+    transition:border-color .35s ease,box-shadow .35s ease,background .4s ease,transform .4s var(--ease-premium);
+  }
+  header.is-scrolled .nav-shell{
+    border-color:rgba(255,51,68,.18);
+    box-shadow:0 20px 70px rgba(0,0,0,.24),0 0 0 1px rgba(255,51,68,.04);
+  }
+  .nav-inner{max-width:none;padding:10px 12px 10px 18px;min-height:68px;}
+  .nav-progress{height:2px;width:0;background:linear-gradient(90deg,var(--red),#ff8a74);box-shadow:0 0 18px var(--red-glow);}
+  .logo{min-width:max-content;}
+  .logo img{width:76px;height:42px;object-fit:contain;}
+  .logo-status{
+    display:flex;align-items:center;gap:8px;
+    padding-left:14px;margin-left:4px;border-left:1px solid var(--line);
+    font:600 9px/1 'JetBrains Mono',monospace;letter-spacing:.12em;text-transform:uppercase;color:var(--gray);
+  }
+  .logo-status i{display:block;width:6px;height:6px;border-radius:50%;background:#47d16c;box-shadow:0 0 0 5px rgba(71,209,108,.1);}
+  .nav-links-wrap{gap:10px;}
+  .desktop-nav{display:block;}
+  .desktop-nav ul{
+    gap:4px;padding:5px;border:1px solid var(--line);
+    border-radius:12px;background:rgba(255,255,255,.025);
+  }
+  .desktop-nav ul li a{
+    display:block;padding:10px 13px;border-radius:8px;
+    font-size:11px;letter-spacing:.075em;
+    transition:color .25s ease,background .25s ease,transform .25s var(--ease-premium);
+  }
+  .desktop-nav ul li a::after{display:none;}
+  .desktop-nav ul li a:hover{color:var(--white);background:rgba(255,255,255,.055);transform:translateY(-1px);}
+  .desktop-nav ul li a.active-link,.desktop-nav ul li a[aria-current="page"]{
+    color:#fff;background:var(--red);box-shadow:0 8px 20px rgba(255,51,68,.22);
+  }
+  .nav-cta{
+    min-height:44px;display:inline-flex;align-items:center;gap:10px;
+    border-radius:11px;padding:0 17px;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.25),0 9px 24px rgba(255,51,68,.18);
+  }
+  .nav-cta::after{content:"↗";font-size:14px;transition:transform .25s var(--ease-premium);}
+  .nav-cta:hover::after{transform:translate(2px,-2px);}
+  .theme-toggle,.burger{width:44px;height:44px;border-radius:11px;background:rgba(255,255,255,.025);}
+
+  .mobile-drawer{
+    inset:10px;width:auto;height:auto;
+    border:1px solid var(--line);border-radius:22px;
+    padding:94px 24px 24px;
+    background:color-mix(in srgb,var(--black-soft) 92%,transparent);
+    -webkit-backdrop-filter:blur(26px) saturate(150%);
+    backdrop-filter:blur(26px) saturate(150%);
+    transform:translateY(-18px) scale(.97);
+    transform-origin:top center;
+    opacity:0;visibility:hidden;
+    transition:transform .45s var(--ease-premium),opacity .3s ease,visibility .45s;
+    gap:0;overflow:auto;
+  }
+  .mobile-drawer.open{transform:translateY(0) scale(1);opacity:1;visibility:visible;}
+  .mobile-drawer-head{
+    position:absolute;top:28px;left:24px;right:74px;
+    display:flex;align-items:center;gap:10px;
+    color:var(--gray);font:600 10px/1 'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:.12em;
+  }
+  .mobile-drawer-head::before{content:"";width:7px;height:7px;border-radius:50%;background:#47d16c;box-shadow:0 0 0 5px rgba(71,209,108,.1);}
+  .mobile-drawer a{
+    display:flex;justify-content:space-between;align-items:center;
+    padding:17px 4px;border-bottom:1px solid var(--line);
+    font-family:'Anton',sans-serif;font-size:clamp(26px,8vw,42px);font-weight:400;letter-spacing:-.02em;
+  }
+  .mobile-drawer a::after{content:attr(data-index);font:500 10px/1 'JetBrains Mono',monospace;color:var(--gray);letter-spacing:.1em;}
+  .mobile-drawer .mobile-cta{
+    justify-content:center;margin-top:22px;padding:16px;border:0;border-radius:12px;background:var(--red);color:#fff;
+    font-family:'Inter',sans-serif;font-size:13px;font-weight:800;letter-spacing:.08em;
+  }
+  .mobile-drawer .mobile-cta::after{content:"↗";margin-left:8px;font-size:14px;color:#fff;}
+  .drawer-scrim{background:rgba(0,0,0,.62);-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);}
+  .burger{position:relative;z-index:1301;gap:5px;}
+  .burger span{
+    width:20px;height:2.5px;background:var(--white);border-radius:99px;
+    transition:transform .3s var(--ease-premium),opacity .25s;
+  }
+  .burger span:nth-child(2){
+    width:13px;align-self:flex-end;
+    background:linear-gradient(90deg,var(--red),#ff8a74);
+    box-shadow:0 0 12px var(--red-glow);
+  }
+  .burger.open span:nth-child(1){transform:translateY(7.5px) rotate(45deg);}
+  .burger.open span:nth-child(2){opacity:0;transform:scaleX(.4);}
+  .burger.open span:nth-child(3){transform:translateY(-7.5px) rotate(-45deg);}
+  .burger:active{border-color:var(--red);}
+
+  .hero{padding:190px 0 104px;min-height:94vh;display:flex;align-items:center;}
+  .hero::before{
+    content:"";position:absolute;width:520px;height:520px;border:1px solid rgba(255,51,68,.12);
+    border-radius:50%;right:-180px;top:80px;box-shadow:0 0 0 80px rgba(255,51,68,.025),0 0 0 160px rgba(255,51,68,.015);
+    pointer-events:none;
+  }
+  .badge{border-radius:999px;padding:9px 14px;background:var(--card-bg);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);}
+  .hero-title{font-size:clamp(56px,6.9vw,104px);text-wrap:balance;}
+  .hero-sub{font-size:17px;line-height:1.75;max-width:620px;}
+  .btn-primary,.btn-ghost{border-radius:11px;min-height:54px;display:inline-flex;align-items:center;}
+  .btn-primary{box-shadow:inset 0 1px 0 rgba(255,255,255,.25),0 16px 36px rgba(255,51,68,.2);}
+  .workspace{
+    border-radius:20px;border-color:rgba(255,255,255,.13);
+    box-shadow:0 40px 100px -30px rgba(0,0,0,.75),0 0 80px rgba(255,51,68,.08);
+    transform:perspective(1200px) rotateY(-3deg) rotateX(1deg);
+    transition:transform .7s var(--ease-premium),box-shadow .5s ease;
+  }
+  .workspace:hover{transform:perspective(1200px) rotateY(0) rotateX(0) translateY(-7px);box-shadow:0 50px 120px -30px rgba(0,0,0,.8),0 0 100px rgba(255,51,68,.12);}
+  .work-card,.testi-card,.tool-card,.form-card{
+    border-radius:16px;background:var(--card-bg);
+    -webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.035);
+  }
+  .work-card{overflow:hidden;}
+  .work-thumb{border-radius:12px;}
+  .section-title{font-size:clamp(44px,5vw,72px);}
+  .section-desc{font-size:15px;line-height:1.75;}
+  .filters{padding:5px;border:1px solid var(--line);border-radius:12px;background:var(--card-bg);}
+  .filter-btn{border-radius:8px;}
+  .stats-bar{border-block:1px solid var(--line);}
+  .stat-num{letter-spacing:-.04em;}
+  .cta-section{overflow:hidden;}
+  .cta-section::before{content:"";position:absolute;inset:auto -15% -70% 40%;height:600px;background:radial-gradient(circle,var(--red-glow),transparent 65%);pointer-events:none;}
+  input,select,textarea{border-radius:9px!important;}
+  .submit-btn{border-radius:10px;}
+  .cursor-dot{mix-blend-mode:screen;}
+
+  @media (max-width:1100px){
+    .desktop-nav ul li a{padding-inline:9px;}
+    .logo-status{display:none;}
+  }
+  @media (max-width:980px){
+    :root{--nav-height:68px;}
+    header{top:10px;left:10px;right:10px;}
+    .nav-inner{min-height:62px;padding:8px 9px 8px 14px;}
+    .nav-links-wrap .nav-cta{display:none;}
+    .workspace{transform:none;}
+    .hero{padding-top:150px;}
+  }
+  @media (max-width:640px){
+    .wrap{padding-inline:20px;}
+    .hero{min-height:auto;padding:136px 0 72px;}
+    .hero-title{font-size:clamp(44px,13.5vw,66px);}
+    .hero-sub{font-size:15px;}
+    .hero-actions{gap:10px;}
+    .section-title{font-size:clamp(38px,11vw,52px);}
+    .theme-toggle{display:none;}
+    .logo img{width:70px;}
+    .workspace{border-radius:14px;}
+  }
+
+  /* ========== YOUTUBE WORK GRID FIX ========== */
+  #workGrid .work-card{
+    border-radius:16px;
+    overflow:hidden;
+  }
+
+  #workGrid .work-thumb{
+    aspect-ratio:16 / 9;
+    border-radius:0 !important;
+    background:#000;
+  }
+
+  #workGrid .work-thumb::before,
+  #workGrid .work-thumb::after{
+    content:none !important;
+    display:none !important;
+  }
+
+  #workGrid .work-thumb img{
+    inset:0;
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    border-radius:0 !important;
+  }
+
+
+  /* ========== YOUTUBE SHOWREEL EMBED ========== */
+  .workspace-screen .youtube-preview{
+    position:absolute;
+    inset:0;
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    z-index:0;
+    opacity:.62;
+    filter:saturate(.9) contrast(1.05);
+    transition:transform .55s cubic-bezier(.16,.8,.3,1), opacity .3s ease;
+  }
+  .workspace-screen:hover .youtube-preview{
+    transform:scale(1.035);
+    opacity:.72;
+  }
+  .workspace-screen .youtube-bg{
+    position:absolute;
+    top:-38%;
+    left:50%;
+    width:162%;
+    height:145%;
+    border:0;
+    display:block;
+    z-index:0;
+    pointer-events:none;
+    background:#000;
+    transform:translateX(-50%);
+    transform-origin:center center;
+  }
+  .workspace-screen::after{
+    content:"";
+    position:absolute;
+    inset:0;
+    z-index:0;
+    pointer-events:none;
+    background:linear-gradient(180deg,rgba(0,0,0,.12),rgba(0,0,0,.34));
+  }
+  .workspace-screen .play-btn,
+  .workspace-screen .progress-ring-wrap,
+  .workspace-screen .rec-badge,
+  .workspace-screen .workspace-tags{
+    z-index:2;
+  }
+  .workspace-screen{cursor:pointer;}
+
+  .video-modal-body{
+    background:#000;
+  }
+  .youtube-embed-wrap{
+    position:relative;
+    width:100%;
+    aspect-ratio:16 / 9;
+    background:#000;
+  }
+  .youtube-embed-wrap iframe{
+    position:absolute;
+    inset:0;
+    width:100%;
+    height:100%;
+    border:0;
+    display:block;
+    background:#000;
+  }
+  .video-modal-controls.youtube-controls-hidden{
+    display:none;
+  }
+  .youtube-local-note{
+    display:none;
+    padding:12px 16px;
+    border-top:1px solid var(--line);
+    background:var(--card-bg);
+    color:var(--gray);
+    font-size:12px;
+    line-height:1.6;
+  }
+  .youtube-local-note.show{display:block;}
+
+
+  /* ========== WORKSPACE VIDEO + OVERLAYS PERFECT FIT ========== */
+  .workspace-screen{
+    aspect-ratio:16 / 9 !important;
+    overflow:hidden !important;
+    background:#000 !important;
+  }
+
+  .workspace-screen .youtube-bg{
+    inset:0 !important;
+    top:0 !important;
+    left:0 !important;
+    width:100% !important;
+    height:100% !important;
+    transform:none !important;
+    transform-origin:center !important;
+  }
+
+  .workspace-screen .youtube-preview{
+    inset:0 !important;
+    width:100% !important;
+    height:100% !important;
+    object-fit:cover !important;
+  }
+
+  /* Remove the dark film laid over the whole video. */
+  .workspace-screen::after{
+    content:none !important;
+    display:none !important;
+  }
+
+  /* Keep every HUD element aligned to the real 16:9 video frame. */
+  .workspace-screen .rec-badge{
+    top:3.5% !important;
+    right:3.5% !important;
+    padding:5px 8px;
+    border-radius:4px;
+    background:rgba(8,8,10,.42);
+    -webkit-backdrop-filter:blur(5px);
+    backdrop-filter:blur(5px);
+    text-shadow:0 1px 3px rgba(0,0,0,.85);
+    z-index:5 !important;
+  }
+
+  .workspace-screen .workspace-tags{
+    left:3.5% !important;
+    right:3.5% !important;
+    bottom:3.5% !important;
+    padding:6px 8px;
+    border-radius:4px;
+    background:linear-gradient(90deg,rgba(8,8,10,.48),rgba(8,8,10,.18),rgba(8,8,10,.48));
+    -webkit-backdrop-filter:blur(4px);
+    backdrop-filter:blur(4px);
+    text-shadow:0 1px 3px rgba(0,0,0,.9);
+    z-index:5 !important;
+  }
+
+  .workspace-screen .play-btn,
+  .workspace-screen .progress-ring-wrap{
+    z-index:6 !important;
+  }
+
+
+  /* ========== WORKSPACE LABELS OUTSIDE VIDEO FRAME ========== */
+  .workspace-topbar-meta{
+    display:flex;
+    align-items:center;
+    justify-content:flex-end;
+    gap:12px;
+  }
+
+  .workspace-rec-inline{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    color:var(--red);
+    font-size:10px;
+    letter-spacing:.04em;
+    white-space:nowrap;
+  }
+
+  .workspace-rec-inline .rec-dot{
+    width:6px;
+    height:6px;
+    flex:0 0 6px;
+  }
+
+  .workspace-caption-row{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:18px;
+    padding:10px 16px;
+    background:var(--card-bg);
+    border-top:1px solid var(--line);
+    border-bottom:1px solid var(--line);
+    color:var(--gray);
+    font-size:10px;
+    letter-spacing:.02em;
+    transition:background var(--transition-speed) ease,
+               border-color var(--transition-speed) ease,
+               color var(--transition-speed) ease;
+  }
+
+  @media (max-width:520px){
+    .workspace-topbar-meta{gap:8px;}
+    .workspace-rec-inline{font-size:8px;}
+    .workspace-caption-row{
+      align-items:flex-start;
+      flex-direction:column;
+      gap:5px;
+    }
+  }
+
+</style>
+</head>
+<body>
+
+<header id="siteHeader" class="nav-visible">
+  <div class="nav-shell">
+    <div class="nav-inner">
+      <a href="#" class="logo" aria-label="Yallah Click — Back to top">
+        <img class="logo-light" src="images/Yalah Click WH.png" width="80" alt="Yallah Click">
+        <img class="logo-dark" src="images/yallahclick.png" width="80" alt="Yallah Click">
+        <span class="logo-status"><i></i> Taking projects</span>
+      </a>
+      <div class="nav-links-wrap">
+      <nav class="desktop-nav" aria-label="Primary navigation">
+        <ul>
+          <li><a href="index.html" class="active-link">Home</a></li>
+          <li><a href="ai-prompts.html">AI Prompts</a></li>
+          <li><a href="templates.html">Templates</a></li>
+          <li><a href="video-templates.html">Video Templates</a></li>
+          <li><a href="thumbnail-templates.html">Thumbnails</a></li>
+        </ul>
+      </nav>
+      <a href="#book" class="nav-cta">Book a Call</a>
+      <button class="theme-toggle" id="themeToggle" type="button" aria-label="Switch color theme" title="Switch color theme">
+        <svg class="icon-moon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        <svg class="icon-sun" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+      </button>
+      <button class="burger" id="burgerBtn" type="button" aria-label="Open navigation menu" aria-controls="mobileDrawer" aria-expanded="false"><span></span><span></span><span></span></button>
+      </div>
+    </div>
+    <div class="nav-progress" id="navProgress" aria-hidden="true"></div>
+  </div>
+</header>
+
+<div class="drawer-scrim" id="drawerScrim"></div>
+<nav class="mobile-drawer" id="mobileDrawer" aria-label="Mobile navigation" aria-hidden="true">
+  <div class="mobile-drawer-head">Yallah Click / Menu</div>
+  <a href="index.html" data-index="01">Home</a>
+  <a href="ai-prompts.html" data-index="02">AI Prompts</a>
+  <a href="templates.html" data-index="03">Templates</a>
+  <a href="video-templates.html" data-index="04">Video Templates</a>
+  <a href="thumbnail-templates.html" data-index="05">Thumbnails</a>
+  <a href="#book" class="mobile-cta">Book a Call</a>
+  <button class="theme-toggle mobile-theme-toggle" type="button" aria-label="Switch color theme">
+    <svg class="icon-moon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+    <svg class="icon-sun" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+    <span data-theme-label></span>
+  </button>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="spotlight" id="heroSpotlight"></div>
+  <!-- Decorative shapes -->
+  <div class="deco-shape circle-red float-slow" style="width:180px;height:180px;top:80px;right:12%;"></div>
+  <div class="deco-shape circle-outline float-med" style="width:120px;height:120px;top:200px;left:5%;"></div>
+  <div class="deco-shape diamond float-fast" style="width:40px;height:40px;top:140px;left:45%;opacity:0.05;"></div>
+  <div class="deco-shape line-h float-slow" style="width:200px;top:300px;right:20%;"></div>
+  <!-- Camera illustration SVG -->
+  <svg class="hero-deco" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect x="30" y="50" width="140" height="100" rx="8" stroke="currentColor" stroke-width="2" fill="none" style="color:var(--red)"/>
+    <circle cx="100" cy="100" r="30" stroke="currentColor" stroke-width="2" fill="none" style="color:var(--red)"/>
+    <circle cx="100" cy="100" r="18" stroke="currentColor" stroke-width="1.5" fill="none" style="color:var(--red)"/>
+    <rect x="120" y="40" width="30" height="14" rx="3" stroke="currentColor" stroke-width="1.5" fill="none" style="color:var(--red)"/>
+    <circle cx="145" cy="70" r="4" fill="currentColor" style="color:var(--red)"/>
+    <rect x="40" y="155" width="120" height="3" rx="1.5" fill="currentColor" style="color:var(--red)"/>
+  </svg>
+  <div class="wrap">
+    <div class="badge"><span class="dot"></span> Available for new projects in 2026 — Fast Turnaround</div>
+    <div class="hero-grid">
+      <div>
+        <h1 class="hero-title display">Transforming<br><span class="stroke">Raw Clips</span> Into<br><span class="red-fill shimmer">Viral</span> Masterpieces.</h1>
+        <p class="hero-sub">I help ambitious creators, brands, and agencies scale their reach. Expert cutting, hyper-engaging pacing, cinematic color grading, and algorithm-driven retention strategies.</p>
+        <div class="hero-actions">
+          <a href="#book" class="btn-primary magnetic">Start Your Project &rarr;</a>
+          <a href="#" id="watchShowreel" class="btn-ghost magnetic" data-youtube-id="5bXoUNIjDZo"><span class="play-ico">&#9654;</span> Watch Showreel</a>
+        </div>
+        <div class="client-row">
+          <div class="avatars">
+            <div class="avatar client-avatar"><img src="https://picsum.photos/seed/client1/72/72" alt="Client"></div>
+            <div class="avatar client-avatar"><img src="https://picsum.photos/seed/client2/72/72" alt="Client"></div>
+            <div class="avatar client-avatar"><img src="https://picsum.photos/seed/client3/72/72" alt="Client"></div>
+            <div class="avatar client-avatar"><img src="https://picsum.photos/seed/client4/72/72" alt="Client"></div>
+          </div>
+          <span class="mono">+40</span>
+          <span>Loved by <strong>40+</strong> satisfied creators</span>
+        </div>
+      </div>
+
+      <div class="workspace">
+        <div class="workspace-topbar">
+          <div class="dots"><span></span><span></span><span></span></div>
+          <div class="workspace-file mono">YallahClick — YouTube Showreel</div>
+          <div class="workspace-topbar-meta">
+            <span class="workspace-rec-inline mono"><span class="rec-dot"></span>REC 00:03:41</span>
+            <div class="workspace-badge">YOUTUBE HD</div>
+          </div>
+        </div>
+        <div class="workspace-screen" id="workspaceScreen" data-youtube-id="5bXoUNIjDZo" role="button" tabindex="0" aria-label="Play Yallah Click YouTube showreel">
+          <img class="youtube-preview" src="https://i.ytimg.com/vi/5bXoUNIjDZo/hqdefault.jpg" alt="Yallah Click YouTube showreel preview">
+          <iframe
+            id="workspaceYoutubeBg"
+            class="youtube-bg"
+            title="Yallah Click muted background showreel"
+            src="about:blank"
+            referrerpolicy="strict-origin-when-cross-origin"
+            allow="autoplay; encrypted-media; picture-in-picture"
+            tabindex="-1"
+            aria-hidden="true"></iframe>
+          <div class="play-btn">▶</div>
+          <div class="progress-ring-wrap">
+            <svg class="progress-ring" viewBox="0 0 80 80">
+              <circle class="ring-bg" cx="40" cy="40" r="36"></circle>
+              <circle class="ring-fill" cx="40" cy="40" r="36"></circle>
+            </svg>
+          </div>
+        </div>
+        <div class="workspace-caption-row mono">
+          <span>Video Editing Workspace</span>
+          <span>Click to Play Showreel</span>
+        </div>
+        <div class="workspace-timeline">
+          <div class="waveform" id="waveform"><span class="active" style="height: 33%;"></span><span class="active" style="height: 25%;"></span><span class="active" style="height: 29%;"></span><span class="active" style="height: 39%;"></span><span class="active" style="height: 41%;"></span><span class="active" style="height: 33%;"></span><span class="active" style="height: 30%;"></span><span class="active" style="height: 21%;"></span><span class="active" style="height: 26%;"></span><span class="active" style="height: 21%;"></span><span class="active" style="height: 14%;"></span><span class="active" style="height: 21%;"></span><span class="active" style="height: 20%;"></span><span class="active" style="height: 29%;"></span><span class="active" style="height: 34%;"></span><span class="active" style="height: 38%;"></span><span class="active" style="height: 43%;"></span><span class="active" style="height: 35%;"></span><span style="height: 36%;"></span><span style="height: 30%;"></span><span style="height: 28%;"></span><span style="height: 20%;"></span><span style="height: 21%;"></span><span style="height: 15%;"></span><span style="height: 27%;"></span><span style="height: 28%;"></span><span style="height: 29%;"></span><span style="height: 37%;"></span><span style="height: 41%;"></span><span style="height: 42%;"></span><span style="height: 29%;"></span><span style="height: 28%;"></span><span style="height: 26%;"></span><span style="height: 20%;"></span><span style="height: 23%;"></span><span style="height: 20%;"></span><span style="height: 16%;"></span><span style="height: 17%;"></span><span style="height: 34%;"></span><span style="height: 36%;"></span><span style="height: 41%;"></span><span style="height: 36%;"></span><span style="height: 35%;"></span><span style="height: 33%;"></span><span style="height: 29%;"></span><span style="height: 26%;"></span></div>
+          <div class="scrub-row">
+            <span class="timecode">00:00:12:04</span>
+            <div class="scrub-track"><div class="scrub-fill"></div><div class="scrub-head"></div></div>
+            <span class="timecode">Color Graded / SFX Added</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STATS -->
+<div class="stats-bar">
+  <div class="stats-bg"></div>
+  <div class="wrap">
+    <div class="stats-grid reveal-stagger">
+      <div class="stat">
+        <div class="stat-num"><span class="count" data-target="25">0</span><span class="unit">M+</span></div>
+        <div class="stat-label">Views Generated</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num"><span class="count" data-target="99.4" data-decimals="1">0</span><span class="unit">%</span></div>
+        <div class="stat-label">Retention Rate</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num"><span class="count" data-target="150">0</span><span class="unit">+</span></div>
+        <div class="stat-label">Projects Delivered</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num"><span class="count" data-target="40">0</span><span class="unit">+</span></div>
+        <div class="stat-label">Satisfied Clients</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num"><span class="count" data-target="24">0</span><span class="unit">H</span></div>
+        <div class="stat-label">Average First Draft</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- WORK -->
+<section id="work">
+  <div class="deco-shape circle-outline float-med" style="width:90px;height:90px;top:60px;right:8%;"></div>
+  <div class="deco-shape diamond float-fast" style="width:24px;height:24px;bottom:120px;left:4%;opacity:0.04;"></div>
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div>
+        <div class="eyebrow">Featured Work</div>
+        <h2 class="section-title display">Explore the Cut</h2>
+        <p class="section-desc">Explore my video editing work and projects, from long-form documentaries to high-retention shorts.</p>
+      </div>
+      <div class="filters">
+        <button class="filter-btn active" data-filter="all">All Projects</button>
+        <button class="filter-btn" data-filter="long">YouTube Long-Form</button>
+        <button class="filter-btn" data-filter="shorts">TikTok / Shorts</button>
+        <button class="filter-btn" data-filter="promo">Promos & Gaming</button>
+      </div>
+    </div>
+
+    <div class="work-grid reveal-stagger" id="workGrid">
+      <!-- 1. GAMING -->
+      <a href="https://youtu.be/AGVTfcynmPQ?si=N9lUQX_OgN-5ksm8" target="_blank" rel="noopener noreferrer" class="work-card tilt-card" data-cat="promo" data-yt="https://youtu.be/AGVTfcynmPQ?si=N9lUQX_OgN-5ksm8">
+        <div class="work-thumb">
+          <img class="yt-thumb" src="https://img.youtube.com/vi/AGVTfcynmPQ/hqdefault.jpg" alt="Gaming video thumbnail" loading="lazy">
+          <span class="cat-tag">Gaming</span>
+          <span class="play-mini" aria-hidden="true">&#9654;</span>
+          <span class="duration mono">14:30</span>
+        </div>
+        <div class="work-body">
+          <h3 dir="auto">هاد اللعبة اتخليك بدون أصدقاء 💔❌ - R.E.P.O</h3>
+          <p>Fast pacing, seamless memes, customized green screens, and extreme audio balancing.</p>
+          <div class="work-foot">
+            <span class="views-pill mono">+96K Views</span>
+            <span class="watch-link">Watch Clip &rarr;</span>
+          </div>
+        </div>
+      </a>
+
+      <!-- 2. VLOGS -->
+      <a href="https://youtu.be/l27cFZolLiA?si=ssHn0Ud_O3pS82-c" target="_blank" rel="noopener noreferrer" class="work-card tilt-card" data-cat="long" data-yt="https://youtu.be/l27cFZolLiA?si=ssHn0Ud_O3pS82-c">
+        <div class="work-thumb">
+          <img class="yt-thumb" src="https://img.youtube.com/vi/l27cFZolLiA/hqdefault.jpg" alt="Football vlog thumbnail" loading="lazy">
+          <span class="cat-tag">Vlogs</span>
+          <span class="play-mini" aria-hidden="true">&#9654;</span>
+          <span class="duration mono">10:23</span>
+        </div>
+        <div class="work-body">
+          <h3 dir="auto">أقوى تحديات كرة القدم ⚽️ مع زيك زاك ! 🔥 النتيجة صادمة 🤫</h3>
+          <p>High-energy football challenge vlog with dynamic pacing and sound design.</p>
+          <div class="work-foot">
+            <span class="views-pill mono">+618K Views</span>
+            <span class="watch-link">Watch Clip &rarr;</span>
+          </div>
+        </div>
+      </a>
+
+      <!-- 3. PODCAST -->
+      <a href="https://youtu.be/B-WgShwKsCw?si=Pl1MTdeGRc5Vmixi" target="_blank" rel="noopener noreferrer" class="work-card tilt-card" data-cat="long" data-yt="https://youtu.be/B-WgShwKsCw?si=Pl1MTdeGRc5Vmixi">
+        <div class="work-thumb">
+          <img class="yt-thumb" src="https://img.youtube.com/vi/B-WgShwKsCw/hqdefault.jpg" alt="Podcast thumbnail" loading="lazy">
+          <span class="cat-tag">Podcast</span>
+          <span class="play-mini" aria-hidden="true">&#9654;</span>
+          <span class="duration mono">1:12:15</span>
+        </div>
+        <div class="work-body">
+          <h3 dir="auto">تقنين القنب الهندي، النباتية، عزوف الشباب عن السياسة | Dekka Podcast</h3>
+          <p>Multi-cam podcast studio editing, clear audio balancing, and smooth transitions.</p>
+          <div class="work-foot">
+            <span class="views-pill mono">+70K Views</span>
+            <span class="watch-link">Watch Clip &rarr;</span>
+          </div>
+        </div>
+      </a>
+
+      <!-- 4. BUSINESS -->
+      <a href="https://youtu.be/K_FlEfxhJHg?si=gaxJiUh5V7MoXrHO" target="_blank" rel="noopener noreferrer" class="work-card tilt-card" data-cat="long" data-yt="https://youtu.be/K_FlEfxhJHg?si=gaxJiUh5V7MoXrHO">
+        <div class="work-thumb">
+          <img class="yt-thumb" src="https://img.youtube.com/vi/K_FlEfxhJHg/hqdefault.jpg" alt="Business strategy video thumbnail" loading="lazy">
+          <span class="cat-tag">Business</span>
+          <span class="play-mini" aria-hidden="true">&#9654;</span>
+          <span class="duration mono">10:47</span>
+        </div>
+        <div class="work-body">
+          <h3>$1,100,306 in 90 Days From Klaviyo | Ecom Strategy Breakdown</h3>
+          <p>High retention business breakdown, clean typography, and motion graphics.</p>
+          <div class="work-foot">
+            <span class="views-pill mono">+180 Views</span>
+            <span class="watch-link">Watch Clip &rarr;</span>
+          </div>
+        </div>
+      </a>
+
+      <!-- 5. VLOG -->
+      <a href="https://youtu.be/qKC86Ng3NwY?si=G2tzPcbV7zp01Y46" target="_blank" rel="noopener noreferrer" class="work-card tilt-card" data-cat="long" data-yt="https://youtu.be/qKC86Ng3NwY?si=G2tzPcbV7zp01Y46">
+        <div class="work-thumb">
+          <img class="yt-thumb" src="https://img.youtube.com/vi/qKC86Ng3NwY/hqdefault.jpg" alt="Travel vlog thumbnail" loading="lazy">
+          <span class="cat-tag">Vlog</span>
+          <span class="play-mini" aria-hidden="true">&#9654;</span>
+          <span class="duration mono">14:47</span>
+        </div>
+        <div class="work-body">
+          <h3>$3 Hotel vs Cristiano Ronaldo’s Hotel! ($1,000)</h3>
+          <p>High retention travel vlog, fast pacing, storytelling hooks, and color grading.</p>
+          <div class="work-foot">
+            <span class="views-pill mono">+1.1M Views</span>
+            <span class="watch-link">Watch Clip &rarr;</span>
+          </div>
+        </div>
+      </a>
+
+      <!-- 6. NEWS -->
+      <a href="https://youtu.be/LyAWgQ7cjCY?si=qwwiaE1NdO6W1CNC" target="_blank" rel="noopener noreferrer" class="work-card tilt-card" data-cat="long" data-yt="https://youtu.be/LyAWgQ7cjCY?si=qwwiaE1NdO6W1CNC">
+        <div class="work-thumb">
+          <img class="yt-thumb" src="https://img.youtube.com/vi/LyAWgQ7cjCY/hqdefault.jpg" alt="Moroccan automotive news thumbnail" loading="lazy">
+          <span class="cat-tag">News</span>
+          <span class="play-mini" aria-hidden="true">&#9654;</span>
+          <span class="duration mono">15:42</span>
+        </div>
+        <div class="work-body">
+          <h3 dir="auto">علاش مول مرسيدس جاب BYD للمغرب؟ 🚨😱</h3>
+          <p>Documentary commentary style, animated headlines, and engaging B-roll overlays.</p>
+          <div class="work-foot">
+            <span class="views-pill mono">+387K Views</span>
+            <span class="watch-link">Watch Clip &rarr;</span>
+          </div>
+        </div>
+      </a>
+    </div>
+
+    <div class="cta-inline">Have a specific video style in mind? <a href="#book">Let's discuss it &rarr;</a></div>
+  </div>
+</section>
+
+<!-- TICKER -->
+<div class="ticker-wrap">
+  <div class="ticker">
+    <span>High Audience Retention</span>
+    <span>Cinematic Color Grading</span>
+    <span>Viral Short Form Hooks</span>
+    <span>24-48 Hour Turnaround</span>
+    <span>Immersive Sound Design</span>
+    <span>High Audience Retention</span>
+    <span>Cinematic Color Grading</span>
+    <span>Viral Short Form Hooks</span>
+    <span>24-48 Hour Turnaround</span>
+    <span>Immersive Sound Design</span>
+  </div>
+</div>
+
+<!-- BEFORE / AFTER INTERACTIVE SLIDER SECTION -->
+<section id="beforeafter">
+  <div class="deco-shape circle-red float-slow" style="width:120px;height:120px;top:10%;left:5%;"></div>
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div>
+        <div class="eyebrow">Before &amp; After</div>
+        <h2 class="section-title display">See The Transformation</h2>
+        <p class="section-desc">Drag the interactive slider on each card to compare the raw footage on the left with the final polished edit on the right.</p>
+      </div>
+    </div>
+    
+    <div class="ba-grid-slider reveal-stagger">
+      
+      <!-- CARD 1 -->
+      <div class="comparison-card">
+        <div class="comparison-container">
+          <div class="image-layer">
+            <img class="slider-image image-after" src="images/after1.jpg" alt="After Edit 1" loading="lazy">
+          </div>
+          <div class="image-layer image-before">
+            <img class="slider-image" src="images/before1.jpg" alt="Before Edit 1" loading="lazy">
+          </div>
+          <input type="range" min="0" max="100" value="50" class="comparison-range" aria-label="Compare Before and After">
+          <div class="divider"></div>
+          <div class="handle">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M8 7l-5 5 5 5M16 7l5 5-5 5"/></svg>
+          </div>
+          <span class="label label-before">Before</span>
+          <span class="label label-after">After</span>
+        </div>
+        <div class="ba-card-info">
+          <span class="ba-desc">Color graded + SFX</span>
+          <span class="ba-tag-sub">Unedited RAW clip</span>
+        </div>
+      </div>
+
+      <!-- CARD 2 -->
+      <div class="comparison-card">
+        <div class="comparison-container">
+          <div class="image-layer">
+            <img class="slider-image image-after" src="images/after2.jpg" alt="After Edit 2" loading="lazy">
+          </div>
+          <div class="image-layer image-before">
+            <img class="slider-image" src="images/before2.jpg" alt="Before Edit 2" loading="lazy">
+          </div>
+          <input type="range" min="0" max="100" value="50" class="comparison-range" aria-label="Compare Before and After">
+          <div class="divider"></div>
+          <div class="handle">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M8 7l-5 5 5 5M16 7l5 5-5 5"/></svg>
+          </div>
+          <span class="label label-before">Before</span>
+          <span class="label label-after">After</span>
+        </div>
+        <div class="ba-card-info">
+          <span class="ba-desc">Motion graphics + cuts</span>
+          <span class="ba-tag-sub">No graphics or pacing</span>
+        </div>
+      </div>
+
+      <!-- CARD 3 -->
+      <div class="comparison-card">
+        <div class="comparison-container">
+          <div class="image-layer">
+            <img class="slider-image image-after" src="images/after3.jpg" alt="After Edit 3" loading="lazy">
+          </div>
+          <div class="image-layer image-before">
+            <img class="slider-image" src="images/before3.jpg" alt="Before Edit 3" loading="lazy">
+          </div>
+          <input type="range" min="0" max="100" value="50" class="comparison-range" aria-label="Compare Before and After">
+          <div class="divider"></div>
+          <div class="handle">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M8 7l-5 5 5 5M16 7l5 5-5 5"/></svg>
+          </div>
+          <span class="label label-before">Before</span>
+          <span class="label label-after">After</span>
+        </div>
+        <div class="ba-card-info">
+          <span class="ba-desc">Cinematic grade + VFX</span>
+          <span class="ba-tag-sub">Flat, unprocessed footage</span>
+        </div>
+      </div>
+
+      <!-- CARD 4 -->
+      <div class="comparison-card">
+        <div class="comparison-container">
+          <div class="image-layer">
+            <img class="slider-image image-after" src="images/after4.jpg" alt="After Edit 4" loading="lazy">
+          </div>
+          <div class="image-layer image-before">
+            <img class="slider-image" src="images/before4.jpg" alt="Before Edit 4" loading="lazy">
+          </div>
+          <input type="range" min="0" max="100" value="50" class="comparison-range" aria-label="Compare Before and After">
+          <div class="divider"></div>
+          <div class="handle">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M8 7l-5 5 5 5M16 7l5 5-5 5"/></svg>
+          </div>
+          <span class="label label-before">Before</span>
+          <span class="label label-after">After</span>
+        </div>
+        <div class="ba-card-info">
+          <span class="ba-desc">Retention-optimized cut</span>
+          <span class="ba-tag-sub">Raw, uncut material</span>
+        </div>
+      </div>
+
+      <!-- CARD 5 -->
+      <div class="comparison-card">
+        <div class="comparison-container">
+          <div class="image-layer">
+            <img class="slider-image image-after" src="images/after5.jpg" alt="After Edit 5" loading="lazy">
+          </div>
+          <div class="image-layer image-before">
+            <img class="slider-image" src="images/before5.jpg" alt="Before Edit 5" loading="lazy">
+          </div>
+          <input type="range" min="0" max="100" value="50" class="comparison-range" aria-label="Compare Before and After">
+          <div class="divider"></div>
+          <div class="handle">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M8 7l-5 5 5 5M16 7l5 5-5 5"/></svg>
+          </div>
+          <span class="label label-before">Before</span>
+          <span class="label label-after">After</span>
+        </div>
+        <div class="ba-card-info">
+          <span class="ba-desc">Dynamic Pacing + Sound Design</span>
+          <span class="ba-tag-sub">Uncut Long-form Clip</span>
+        </div>
+      </div>
+
+      <!-- CARD 6 -->
+      <div class="comparison-card">
+        <div class="comparison-container">
+          <div class="image-layer">
+            <img class="slider-image image-after" src="images/after6.jpg" alt="After Edit 6" loading="lazy">
+          </div>
+          <div class="image-layer image-before">
+            <img class="slider-image" src="images/before6.jpg" alt="Before Edit 6" loading="lazy">
+          </div>
+          <input type="range" min="0" max="100" value="50" class="comparison-range" aria-label="Compare Before and After">
+          <div class="divider"></div>
+          <div class="handle">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M8 7l-5 5 5 5M16 7l5 5-5 5"/></svg>
+          </div>
+          <span class="label label-before">Before</span>
+          <span class="label label-after">After</span>
+        </div>
+        <div class="ba-card-info">
+          <span class="ba-desc">High-Impact Visual Hooks</span>
+          <span class="ba-tag-sub">Static Studio Footage</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- BEHIND THE SCENES GALLERY (UPDATED DESIGN) -->
+<section id="gallery">
+  <div class="deco-shape circle-red float-slow" style="width:100px;height:100px;top:30px;right:10%;"></div>
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div>
+        <div class="eyebrow">Behind The Scenes</div>
+        <h2 class="section-title display">Inside The Edit Suite</h2>
+        <p class="section-desc">A peek at the workspace, tools, and creative process behind every project.</p>
+      </div>
+    </div>
+    <div class="gallery-rows">
+      
+      <!-- ROW LEFT -->
+      <div class="gallery-track row-left">
+        
+        <div class="card">
+          <div class="card-thumbnail">
+            <img src="images/thump/Thumbnail CHADIDI 152.jpg" alt="Chadidi 152" loading="lazy">
+          </div>
+          <div class="card-info">
+            <div class="avatar-wrapper">
+              <img src="images/avatars/avatar1.png" alt="Chadidi" loading="lazy">
+            </div>
+            <div class="card-text">
+              <p class="card-title">Chadidi 152 Special Project</p>
+              <p class="card-author">Chadidi</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-thumbnail">
+            <img src="images/thump/Thumbnail CHADIDI 153.jpg" alt="Chadidi 153" loading="lazy">
+          </div>
+          <div class="card-info">
+            <div class="avatar-wrapper">
+              <img src="images/avatars/avatar1.png" alt="Chadidi" loading="lazy">
+            </div>
+            <div class="card-text">
+              <p class="card-title">Chadidi 153 Video Edit</p>
+              <p class="card-author">Chadidi</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-thumbnail">
+            <img src="images/thump/Thumbnail CHADIDI 154.jpg" alt="Chadidi 154" loading="lazy">
+          </div>
+          <div class="card-info">
+            <div class="avatar-wrapper">
+              <img src="images/avatars/avatar1.png" alt="Chadidi" loading="lazy">
+            </div>
+            <div class="card-text">
+              <p class="card-title">Inside The Process 154</p>
+              <p class="card-author">Chadidi</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-thumbnail">
+            <img src="images/thump/Thumbnail CHADIDI 154-2.jpg" alt="Chadidi 154-2" loading="lazy">
+          </div>
+          <div class="card-info">
+            <div class="avatar-wrapper">
+              <img src="images/avatars/avatar1.png" alt="Chadidi" loading="lazy">
+            </div>
+            <div class="card-text">
+              <p class="card-title">Chadidi Episode 154 Part 2</p>
+              <p class="card-author">Chadidi</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-thumbnail">
+            <img src="images/thump/Thumbnail CHADIDI 155.jpg" alt="Chadidi 155" loading="lazy">
+          </div>
+          <div class="card-info">
+            <div class="avatar-wrapper">
+              <img src="images/avatars/avatar1.png" alt="Chadidi" loading="lazy">
+            </div>
+            <div class="card-text">
+              <p class="card-title">Creative Edit 155</p>
+              <p class="card-author">Chadidi</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-thumbnail">
+            <img src="images/thump/Thumbnail CHADIDI 156.jpg" alt="Chadidi 156" loading="lazy">
+          </div>
+          <div class="card-info">
+            <div class="avatar-wrapper">
+              <img src="images/avatars/avatar1.png" alt="Chadidi" loading="lazy">
+            </div>
+            <div class="card-text">
+              <p class="card-title">Masterclass Edit 156</p>
+              <p class="card-author">Chadidi</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-thumbnail">
+            <img src="images/thump/Thumbnail CHADIDI 157.jpg" alt="Chadidi 157" loading="lazy">
+          </div>
+          <div class="card-info">
+            <div class="avatar-wrapper">
+              <img src="images/avatars/avatar1.png" alt="Chadidi" loading="lazy">
+            </div>
+            <div class="card-text">
+              <p class="card-title">The Final Chapter 157</p>
+              <p class="card-author">Chadidi</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-thumbnail">
+            <img src="images/thump/Thumbnail l7or 71.jpg" alt="L7or 71" loading="lazy">
+          </div>
+          <div class="card-info">
+            <div class="avatar-wrapper">
+              <img src="images/avatars/avatar2.png" alt="L7or" loading="lazy">
+            </div>
+            <div class="card-text">
+              <p class="card-title">L7or Official Video Edit 71</p>
+              <p class="card-author">L7or</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-thumbnail">
+            <img src="images/thump/Thumbnail maroune Creative 5.jpg" alt="Maroune Creative 5" loading="lazy">
+          </div>
+          <div class="card-info">
+            <div class="avatar-wrapper">
+              <img src="images/avatars/avatar3.png" alt="Marouane" loading="lazy">
+            </div>
+            <div class="card-text">
+              <p class="card-title">Marouane Creative Series 5</p>
+              <p class="card-author">Marouane Creative</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- REPEAT FOR INFINITE LOOP -->
+        <div class="card">
+          <div class="card-thumbnail">
+            <img src="images/thump/Thumbnail CHADIDI 152.jpg" alt="Chadidi 152" loading="lazy">
+          </div>
+          <div class="card-info">
+            <div class="avatar-wrapper">
+              <img src="images/avatars/avatar1.png" alt="Chadidi" loading="lazy">
+            </div>
+            <div class="card-text">
+              <p class="card-title">Chadidi 152 Special Project</p>
+              <p class="card-author">Chadidi</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-thumbnail">
+            <img src="images/thump/Thumbnail CHADIDI 153.jpg" alt="Chadidi 153" loading="lazy">
+          </div>
+          <div class="card-info">
+            <div class="avatar-wrapper">
+              <img src="images/avatars/avatar1.png" alt="Chadidi" loading="lazy">
+            </div>
+            <div class="card-text">
+              <p class="card-title">Chadidi 153 Video Edit</p>
+              <p class="card-author">Chadidi</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-thumbnail">
+            <img src="images/thump/Thumbnail CHADIDI 154.jpg" alt="Chadidi 154" loading="lazy">
+          </div>
+          <div class="card-info">
+            <div class="avatar-wrapper">
+              <img src="images/avatars/avatar1.png" alt="Chadidi" loading="lazy">
+            </div>
+            <div class="card-text">
+              <p class="card-title">Inside The Process 154</p>
+              <p class="card-author">Chadidi</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-thumbnail">
+            <img src="images/thump/Thumbnail CHADIDI 154-2.jpg" alt="Chadidi 154-2" loading="lazy">
+          </div>
+          <div class="card-info">
+            <div class="avatar-wrapper">
+              <img src="images/avatars/avatar1.png" alt="Chadidi" loading="lazy">
+            </div>
+            <div class="card-text">
+              <p class="card-title">Chadidi Episode 154 Part 2</p>
+              <p class="card-author">Chadidi</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-thumbnail">
+            <img src="images/thump/Thumbnail CHADIDI 155.jpg" alt="Chadidi 155" loading="lazy">
+          </div>
+          <div class="card-info">
+            <div class="avatar-wrapper">
+              <img src="images/avatars/avatar1.png" alt="Chadidi" loading="lazy">
+            </div>
+            <div class="card-text">
+              <p class="card-title">Creative Edit 155</p>
+              <p class="card-author">Chadidi</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-thumbnail">
+            <img src="images/thump/Thumbnail CHADIDI 156.jpg" alt="Chadidi 156" loading="lazy">
+          </div>
+          <div class="card-info">
+            <div class="avatar-wrapper">
+              <img src="images/avatars/avatar1.png" alt="Chadidi" loading="lazy">
+            </div>
+            <div class="card-text">
+              <p class="card-title">Masterclass Edit 156</p>
+              <p class="card-author">Chadidi</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-thumbnail">
+            <img src="images/thump/Thumbnail CHADIDI 157.jpg" alt="Chadidi 157" loading="lazy">
+          </div>
+          <div class="card-info">
+            <div class="avatar-wrapper">
+              <img src="images/avatars/avatar1.png" alt="Chadidi" loading="lazy">
+            </div>
+            <div class="card-text">
+              <p class="card-title">The Final Chapter 157</p>
+              <p class="card-author">Chadidi</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-thumbnail">
+            <img src="images/thump/Thumbnail l7or 71.jpg" alt="L7or 71" loading="lazy">
+          </div>
+          <div class="card-info">
+            <div class="avatar-wrapper">
+              <img src="images/avatars/avatar2.png" alt="L7or" loading="lazy">
+            </div>
+            <div class="card-text">
+              <p class="card-title">L7or Official Video Edit 71</p>
+              <p class="card-author">L7or</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-thumbnail">
+            <img src="images/thump/Thumbnail maroune Creative 5.jpg" alt="Maroune Creative 5" loading="lazy">
+          </div>
+          <div class="card-info">
+            <div class="avatar-wrapper">
+              <img src="images/avatars/avatar3.png" alt="Marouane" loading="lazy">
+            </div>
+            <div class="card-text">
+              <p class="card-title">Marouane Creative Series 5</p>
+              <p class="card-author">Marouane Creative</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ROW RIGHT -->
+      <div class="gallery-track row-right">
+
+        <div class="card">
+          <div class="card-thumbnail">
+            <img src="images/thump/Thumbnail maroune Creative 6.jpg" alt="Maroune Creative 6" loading="lazy">
+          </div>
+          <div class="card-info">
+            <div class="avatar-wrapper">
+              <img src="images/avatars/avatar3.png" alt="Marouane" loading="lazy">
+            </div>
+            <div class="card-text">
+              <p class="card-title">Marouane Creative Series 6</p>
+              <p class="card-author">Marouane Creative</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-thumbnail">
+            <img src="images/thump/Thumbnail Tabi3a 10.jpg" alt="Tabi3a 10" loading="lazy">
+          </div>
+          <div class="card-info">
+            <div class="avatar-wrapper">
+              <img src="images/avatars/avatar4.png" alt="Tabi3a" loading="lazy">
+            </div>
+            <div class="card-text">
+              <p class="card-title">Tabi3a Nature Cinematics 10</p>
+              <p class="card-author">Tabi3a Studio</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-thumbnail">
+            <img src="images/thump/Thumbnail Tabi3a 11.jpg" alt="Tabi3a 11" loading="lazy">
+          </div>
+          <div class="card-info">
+            <div class="avatar-wrapper">
+              <img src="images/avatars/avatar4.png" alt="Tabi3a" loading="lazy">
+            </div>
+            <div class="card-text">
+              <p class="card-title">Tabi3a Nature Cinematics 11</p>
+              <p class="card-author">Tabi3a Studio</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-thumbnail">
+            <img src="images/thump/Thumbnail ZIGZAG 206.jpg" alt="Zigzag 206" loading="lazy">
+          </div>
+          <div class="card-info">
+            <div class="avatar-wrapper">
+              <img src="images/avatars/avatar5.png" alt="Zigzag" loading="lazy">
+            </div>
+            <div class="card-text">
+              <p class="card-title">Zigzag Fast Edit 206</p>
+              <p class="card-author">ZigZag</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-thumbnail">
+            <img src="images/thump/Thumbnail ZIGZAG 207.jpg" alt="Zigzag 207" loading="lazy">
+          </div>
+          <div class="card-info">
+            <div class="avatar-wrapper">
+              <img src="images/avatars/avatar5.png" alt="Zigzag" loading="lazy">
+            </div>
+            <div class="card-text">
+              <p class="card-title">Zigzag Motion Graphics 207</p>
+              <p class="card-author">ZigZag</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-thumbnail">
+            <img src="images/thump/Thumbnail ZIGZAG 209.jpg" alt="Zigzag 209" loading="lazy">
+          </div>
+          <div class="card-info">
+            <div class="avatar-wrapper">
+              <img src="images/avatars/avatar5.png" alt="Zigzag" loading="lazy">
+            </div>
+            <div class="card-text">
+              <p class="card-title">Zigzag Visuals 209</p>
+              <p class="card-author">ZigZag</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-thumbnail">
+            <img src="images/thump/Thumbnail ZIGZAG 210.jpg" alt="Zigzag 210" loading="lazy">
+          </div>
+          <div class="card-info">
+            <div class="avatar-wrapper">
+              <img src="images/avatars/avatar5.png" alt="Zigzag" loading="lazy">
+            </div>
+            <div class="card-text">
+              <p class="card-title">Zigzag Special Edition 210</p>
+              <p class="card-author">ZigZag</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-thumbnail">
+            <img src="images/thump/Thumbnail ZIGZAG 211.jpg" alt="Zigzag 211" loading="lazy">
+          </div>
+          <div class="card-info">
+            <div class="avatar-wrapper">
+              <img src="images/avatars/avatar5.png" alt="Zigzag" loading="lazy">
+            </div>
+            <div class="card-text">
+              <p class="card-title">Zigzag Color Grading 211</p>
+              <p class="card-author">ZigZag</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-thumbnail">
+            <img src="images/thump/Thumbnail ZIGZAG 213.jpg" alt="Zigzag 213" loading="lazy">
+          </div>
+          <div class="card-info">
+            <div class="avatar-wrapper">
+              <img src="images/avatars/avatar5.png" alt="Zigzag" loading="lazy">
+            </div>
+            <div class="card-text">
+              <p class="card-title">Zigzag Finale 213</p>
+              <p class="card-author">ZigZag</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- REPEAT RIGHT FOR INFINITE LOOP -->
+        <div class="card">
+          <div class="card-thumbnail">
+            <img src="images/thump/Thumbnail maroune Creative 6.jpg" alt="Maroune Creative 6" loading="lazy">
+          </div>
+          <div class="card-info">
+            <div class="avatar-wrapper">
+              <img src="images/avatars/avatar3.png" alt="Marouane" loading="lazy">
+            </div>
+            <div class="card-text">
+              <p class="card-title">Marouane Creative Series 6</p>
+              <p class="card-author">Marouane Creative</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-thumbnail">
+            <img src="images/thump/Thumbnail Tabi3a 10.jpg" alt="Tabi3a 10" loading="lazy">
+          </div>
+          <div class="card-info">
+            <div class="avatar-wrapper">
+              <img src="images/avatars/avatar4.png" alt="Tabi3a" loading="lazy">
+            </div>
+            <div class="card-text">
+              <p class="card-title">Tabi3a Nature Cinematics 10</p>
+              <p class="card-author">Tabi3a Studio</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-thumbnail">
+            <img src="images/thump/Thumbnail Tabi3a 11.jpg" alt="Tabi3a 11" loading="lazy">
+          </div>
+          <div class="card-info">
+            <div class="avatar-wrapper">
+              <img src="images/avatars/avatar4.png" alt="Tabi3a" loading="lazy">
+            </div>
+            <div class="card-text">
+              <p class="card-title">Tabi3a Nature Cinematics 11</p>
+              <p class="card-author">Tabi3a Studio</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-thumbnail">
+            <img src="images/thump/Thumbnail ZIGZAG 206.jpg" alt="Zigzag 206" loading="lazy">
+          </div>
+          <div class="card-info">
+            <div class="avatar-wrapper">
+              <img src="images/avatars/avatar5.png" alt="Zigzag" loading="lazy">
+            </div>
+            <div class="card-text">
+              <p class="card-title">Zigzag Fast Edit 206</p>
+              <p class="card-author">ZigZag</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-thumbnail">
+            <img src="images/thump/Thumbnail ZIGZAG 207.jpg" alt="Zigzag 207" loading="lazy">
+          </div>
+          <div class="card-info">
+            <div class="avatar-wrapper">
+              <img src="images/avatars/avatar5.png" alt="Zigzag" loading="lazy">
+            </div>
+            <div class="card-text">
+              <p class="card-title">Zigzag Motion Graphics 207</p>
+              <p class="card-author">ZigZag</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-thumbnail">
+            <img src="images/thump/Thumbnail ZIGZAG 209.jpg" alt="Zigzag 209" loading="lazy">
+          </div>
+          <div class="card-info">
+            <div class="avatar-wrapper">
+              <img src="images/avatars/avatar5.png" alt="Zigzag" loading="lazy">
+            </div>
+            <div class="card-text">
+              <p class="card-title">Zigzag Visuals 209</p>
+              <p class="card-author">ZigZag</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-thumbnail">
+            <img src="images/thump/Thumbnail ZIGZAG 210.jpg" alt="Zigzag 210" loading="lazy">
+          </div>
+          <div class="card-info">
+            <div class="avatar-wrapper">
+              <img src="images/avatars/avatar5.png" alt="Zigzag" loading="lazy">
+            </div>
+            <div class="card-text">
+              <p class="card-title">Zigzag Special Edition 210</p>
+              <p class="card-author">ZigZag</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-thumbnail">
+            <img src="images/thump/Thumbnail ZIGZAG 211.jpg" alt="Zigzag 211" loading="lazy">
+          </div>
+          <div class="card-info">
+            <div class="avatar-wrapper">
+              <img src="images/avatars/avatar5.png" alt="Zigzag" loading="lazy">
+            </div>
+            <div class="card-text">
+              <p class="card-title">Zigzag Color Grading 211</p>
+              <p class="card-author">ZigZag</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-thumbnail">
+            <img src="images/thump/Thumbnail ZIGZAG 213.jpg" alt="Zigzag 213" loading="lazy">
+          </div>
+          <div class="card-info">
+            <div class="avatar-wrapper">
+              <img src="images/avatars/avatar5.png" alt="Zigzag" loading="lazy">
+            </div>
+            <div class="card-text">
+              <p class="card-title">Zigzag Finale 213</p>
+              <p class="card-author">ZigZag</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- TOOLS WE USE -->
+<section id="tools">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div>
+        <div class="eyebrow">Tech Stack</div>
+        <h2 class="section-title display">Tools Of The Trade</h2>
+        <p class="section-desc">Industry-standard software and hardware powering every project.</p>
+      </div>
+    </div>
+    <div class="tools-grid reveal-stagger">
+      <div class="tool-card">
+        <div class="tool-icon tool-logo">
+          <img src="images/AdobePremierePro.png" alt="Adobe Premiere Pro" style="width:250px;">
+        </div>
+        <h4>Adobe Premiere Pro</h4>
+        <p>Primary NLE for all video editing projects</p>
+      </div>
+      <div class="tool-card">
+        <div class="tool-icon tool-logo">
+          <img src="images/AfterEffects.png" alt="After Effects" style="width:250px;">
+        </div>
+        <h4>After Effects</h4>
+        <p>Motion graphics, VFX, and visual storytelling</p>
+      </div>
+      <div class="tool-card">
+        <div class="tool-icon tool-logo">
+          <img src="images/Photoshop.png" alt="Photoshop" style="width:350px;">
+        </div>
+        <h4>Photoshop</h4>
+        <p>Thumbnail design, asset creation, and retouching</p>
+      </div>
+      <div class="tool-card">
+        <div class="tool-icon tool-logo">
+          <img src="images/AdobeIllustrator.png" alt="Adobe Illustrator" style="width:250px;">
+        </div>
+        <h4>Adobe Illustrator</h4>
+        <p>Vector graphics, logo design, and brand assets</p>
+      </div>
+      <div class="tool-card">
+        <div class="tool-icon tool-logo">
+          <img src="images/PremiereRush.png" alt="Premiere Rush" style="width:250px;">
+        </div>
+        <h4>Premiere Rush</h4>
+        <p>Quick mobile edits and social shorts on-the-go</p>
+      </div>
+      <div class="tool-card">
+        <div class="tool-icon tool-logo">
+          <img src="images/MotionArray.png" alt="Motion Array" style="width:250px;">
+        </div>
+        <h4>Motion Array</h4>
+        <p>Premiere Pro & After Effects templates, presets, and stock assets</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROCESS -->
+<section id="process">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div>
+        <div class="eyebrow">Simple Workflow</div>
+        <h2 class="section-title display">Easy 4-Step Process</h2>
+        <p class="section-desc">I respect your time. No complicated onboarding, no endless email threads. Just a streamlined, highly efficient workflow.</p>
+      </div>
+    </div>
+
+    <div class="process-list reveal-stagger">
+      <div class="process-item">
+        <div class="process-tc mono">00:01</div>
+        <div style="display:flex;gap:16px;align-items:flex-start;">
+          <div class="process-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          </div>
+          <div>
+            <h3>Drop Your Footage</h3>
+            <p>Upload your raw clips to our shared Google Drive, Frame.io, Dropbox, or WeTransfer. Provide any specific brief or let me take full creative lead.</p>
+          </div>
+        </div>
+        <div class="process-tag">All RAW formats accepted</div>
+      </div>
+      <div class="process-item">
+        <div class="process-tc mono">00:02</div>
+        <div style="display:flex;gap:16px;align-items:flex-start;">
+          <div class="process-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+          </div>
+          <div>
+            <h3>We Do Our Magic</h3>
+            <p>I expertly trim dead air, craft an addictive intro hook, apply professional color grades, and add motion graphics &amp; immersive sound design.</p>
+          </div>
+        </div>
+        <div class="process-tag">Premium visual assets</div>
+      </div>
+      <div class="process-item">
+        <div class="process-tc mono">00:03</div>
+        <div style="display:flex;gap:16px;align-items:flex-start;">
+          <div class="process-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+          </div>
+          <div>
+            <h3>Feedback? Easy</h3>
+            <p>Review the first draft effortlessly via a simple Frame.io clickable link. Click directly on the video to type any requested adjustments.</p>
+          </div>
+        </div>
+        <div class="process-tag">Fast smooth revisions</div>
+      </div>
+      <div class="process-item">
+        <div class="process-tc mono">00:04</div>
+        <div style="display:flex;gap:16px;align-items:flex-start;">
+          <div class="process-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+          </div>
+          <div>
+            <h3>Upload &amp; Grow</h3>
+            <p>Receive your pristine final Master file in brilliant 4K / 1080p fully optimized for YouTube or TikTok algorithms. Upload, publish, and watch your metrics skyrocket!</p>
+          </div>
+        </div>
+        <div class="process-tag">Algorithm ready</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section id="testimonials">
+  <div class="deco-shape circle-red float-slow" style="width:140px;height:140px;top:40px;left:6%;"></div>
+  <div class="deco-shape line-v float-med" style="height:160px;top:80px;right:15%;"></div>
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div>
+        <div class="eyebrow">Verified Social Proof</div>
+        <h2 class="section-title display">What My Clients Say</h2>
+        <p class="section-desc">Don't just take my word for it. Here's what successful creators and brand founders experience when we partner together.</p>
+      </div>
+    </div>
+
+    <div class="testi-grid reveal-stagger">
+      <div class="testi-card">
+        <div>
+          <div class="testi-quote-mark">&ldquo;</div>
+          <p class="testi-text">Working with Yallah Click has completely transformed our YouTube channel. Our average view duration went from 35% to 62% on our very first video together. Their pacing and storytelling instincts are absolutely unmatched!</p>
+        </div>
+        <div class="testi-person">
+          <div class="testi-avatar"><img src="https://picsum.photos/seed/sarahj/84/84" alt="Sarah Jenkins"></div>
+          <div>
+            <strong>Sarah Jenkins</strong>
+            <span>Tech &amp; AI Creator (450k Subs)</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="testi-card">
+        <div>
+          <div class="testi-quote-mark">&ldquo;</div>
+          <p class="testi-text">The turnaround time is crazy fast, and the quality never drops. We throw hours of messy podcast footage at him, and he delivers beautifully polished, viral-ready episodes and 15 perfect Shorts every single week.</p>
+        </div>
+        <div class="testi-person">
+          <div class="testi-avatar"><img src="https://picsum.photos/seed/marcusv/84/84" alt="Marcus Vance"></div>
+          <div>
+            <strong>Marcus Vance</strong>
+            <span>Founder @ ScaleMedia</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="testi-card">
+        <div>
+          <div class="testi-quote-mark">&ldquo;</div>
+          <p class="testi-text">If you want your videos to actually generate revenue and keep the audience glued, hire Yallah Click. Best investment I've made for my personal brand. Period. Highly recommended!</p>
+        </div>
+        <div class="testi-person">
+          <div class="testi-avatar"><img src="https://picsum.photos/seed/davidk/84/84" alt="David K"></div>
+          <div>
+            <strong>David K.</strong>
+            <span>Finance &amp; Crypto YouTuber</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BRANDS TICKER -->
+<div class="ticker-wrap">
+  <div class="wrap" style="text-align:center;margin-bottom:20px;">
+    <p style="color:var(--gray);font-size:13px;">Trusted by Top YouTube Channels &amp; Brands Across the Globe</p>
+  </div>
+  <div class="ticker">
+    <span class="brand-logo"><svg viewBox="0 0 28 28"><polygon points="14,2 26,26 2,26" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>Hypergrowth</span>
+    <span class="brand-logo"><svg viewBox="0 0 28 28"><circle cx="14" cy="14" r="11" fill="none" stroke="currentColor" stroke-width="1.5"/><line x1="14" y1="3" x2="14" y2="25" stroke="currentColor" stroke-width="1"/></svg>Nextlevel_AI</span>
+    <span class="brand-logo"><svg viewBox="0 0 28 28"><rect x="4" y="4" width="20" height="20" rx="4" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="14" cy="14" r="5" fill="currentColor" opacity="0.3"/></svg>Venture.Pod</span>
+    <span class="brand-logo"><svg viewBox="0 0 28 28"><path d="M4 14 L14 4 L24 14 L14 24 Z" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>Creator_Hub</span>
+    <span class="brand-logo"><svg viewBox="0 0 28 28"><rect x="3" y="8" width="22" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="9" cy="14" r="3" fill="currentColor" opacity="0.3"/><circle cx="19" cy="14" r="3" fill="currentColor" opacity="0.3"/></svg>Media_Nexus</span>
+    <span class="brand-logo"><svg viewBox="0 0 28 28"><polygon points="14,2 26,26 2,26" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>Hypergrowth</span>
+    <span class="brand-logo"><svg viewBox="0 0 28 28"><circle cx="14" cy="14" r="11" fill="none" stroke="currentColor" stroke-width="1.5"/><line x1="14" y1="3" x2="14" y2="25" stroke="currentColor" stroke-width="1"/></svg>Nextlevel_AI</span>
+    <span class="brand-logo"><svg viewBox="0 0 28 28"><rect x="4" y="4" width="20" height="20" rx="4" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="14" cy="14" r="5" fill="currentColor" opacity="0.3"/></svg>Venture.Pod</span>
+    <span class="brand-logo"><svg viewBox="0 0 28 28"><path d="M4 14 L14 4 L24 14 L14 24 Z" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>Creator_Hub</span>
+    <span class="brand-logo"><svg viewBox="0 0 28 28"><rect x="3" y="8" width="22" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="9" cy="14" r="3" fill="currentColor" opacity="0.3"/><circle cx="19" cy="14" r="3" fill="currentColor" opacity="0.3"/></svg>Media_Nexus</span>
+  </div>
+</div>
+
+<!-- FAQ -->
+<section id="faq">
+  <div class="wrap">
+    <div class="eyebrow">Got Questions?</div>
+    <h2 class="section-title display">Frequently Asked Questions</h2>
+    <p class="section-desc" style="margin-bottom:56px;">Everything you need to know about the service, pricing, and our collaboration.</p>
+
+    <div class="faq-list reveal-stagger">
+      <div class="faq-item">
+        <div class="faq-q"><span><span class="idx">01</span>What makes you different from other video editors?</span><span class="faq-toggle">+</span></div>
+        <div class="faq-a"><p>I combine algorithm-driven retention strategy with cinematic craft — every cut is built to hold attention and grow your channel, not just look polished.</p></div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q"><span><span class="idx">02</span>How long does it take to complete a video project?</span><span class="faq-toggle">+</span></div>
+        <div class="faq-a"><p>Most first drafts are delivered within 24-48 hours, depending on footage length and complexity. Recurring clients get priority scheduling.</p></div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q"><span><span class="idx">03</span>Do you offer revisions if I want something changed?</span><span class="faq-toggle">+</span></div>
+        <div class="faq-a"><p>Yes. Revisions are fast and simple through a clickable Frame.io link — just click on the timestamp and leave your note.</p></div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q"><span><span class="idx">04</span>What platforms do you optimize videos for?</span><span class="faq-toggle">+</span></div>
+        <div class="faq-a"><p>YouTube long-form, YouTube Shorts, TikTok, Instagram Reels, and any brand or gaming promo content in between.</p></div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q"><span><span class="idx">05</span>How do we get started?</span><span class="faq-toggle">+</span></div>
+        <div class="faq-a"><p>Book a free 15-minute discovery call, or send your footage straight over — we'll scope the project and get your first draft moving.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA / BOOK -->
+<section class="cta-section" id="book">
+  <div class="deco-shape circle-outline float-fast" style="width:100px;height:100px;top:30px;left:10%;"></div>
+  <div class="deco-shape diamond float-slow" style="width:32px;height:32px;bottom:40px;right:12%;opacity:0.05;"></div>
+  <div class="wrap">
+    <div class="cta-grid reveal-stagger">
+      <div>
+        <div class="eyebrow">Ready to Level Up?</div>
+        <h2 class="section-title display">Let's Build Your Visual Empire Together.</h2>
+        <p class="section-desc">Book a free 15-minute discovery call to discuss your creative vision, monthly editing packages, and custom workflows.</p>
+        <ul class="cta-perks">
+          <li>No Lock-in Contracts</li>
+          <li>Dedicated Private Folder</li>
+          <li>24/7 Priority Support</li>
+          <li>100% Satisfaction Guarantee</li>
+        </ul>
+        <div class="email-line">
+          <span>Prefer direct email?</span>
+          <span class="mono">yallahclick.contact@gmail.com</span>
+          <button class="copy-btn" onclick="copyEmail()">Copy Email</button>
+        </div>
+      </div>
+
+      <div class="form-card">
+        <h3>Quick Project Inquiry</h3>
+        <form id="projectForm"
+              action="https://formsubmit.co/yallahclick.contact@gmail.com"
+              method="POST"
+              onsubmit="return handleSubmit(event)">
+          <input type="hidden" name="_subject" value="New Project Inquiry — Yallah Click">
+          <input type="hidden" name="_template" value="table">
+          <input type="text" name="_honey" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;opacity:0;pointer-events:none;">
+
+          <div class="field" id="fieldName">
+            <label for="name">Your Name / Channel Name *</label>
+            <input type="text" id="name" name="name" placeholder="e.g. MrBeast / Jimmy Donaldson" autocomplete="name" required>
+            <div class="field-error">Please enter your name</div>
+          </div>
+          <div class="field" id="fieldEmail">
+            <label for="email">Email Address *</label>
+            <input type="email" id="email" name="email" placeholder="you@awesomechannel.com" autocomplete="email" required>
+            <div class="field-error">Please enter a valid email</div>
+          </div>
+          <div class="field">
+            <label for="service">What service do you need?</label>
+            <select id="service" name="service">
+              <option value="Video Production">🎬 Video Production</option>
+              <option value="Motion Design">🎨 Motion Design</option>
+              <option value="Graphic Design">🎨 Graphic Design</option>
+              <option value="Marketing">📈 Marketing</option>
+              <option value="Full Creative Service">⭐ Full Creative Service</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="details">Tell us about your project</label>
+            <textarea id="details" name="project_details" placeholder="Paste your YouTube channel link or explain what video style you are aiming for..."></textarea>
+          </div>
+          <button type="submit" class="submit-btn">Send Request &amp; Get Quote</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="wrap">
+    <div class="footer-top">
+      <a href="#" class="logo"><span class="rec-dot"></span> 
+      <img class="logo-light" src="images/Yalah Click WH.png" width="80" alt="Yallah Click">
+      <img class="logo-dark" src="images/yallahclick.png" width="80" alt="Yallah Click"> 
+      </a>
+      <nav>
+        <ul>
+          <li><a href="ai-prompts.html">AI Prompts</a></li>
+          <li><a href="templates.html">Templates</a></li>
+          <li><a href="video-templates.html">Video Templates</a></li>
+          <li><a href="thumbnail-templates.html">Thumbnails</a></li>
+          <li><a href="#book">Book a Call</a></li>
+        </ul>
+      </nav>
+    </div>
+    <div class="footer-bottom">
+      <span>&copy; 2026 Yallah Click. All rights reserved.</span>
+      <div class="footer-social">
+        <a href="https://www.youtube.com/@YallahClick" target="_blank" rel="noopener noreferrer" aria-label="YouTube" title="YouTube">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="5.5" width="19" height="13" rx="4" fill="none" stroke="currentColor" stroke-width="2"/><path d="M10 9l6 3-6 3z" fill="currentColor" stroke="none"/></svg>
+        </a>
+        <a href="https://www.instagram.com/yallah.click/?hl=en" target="_blank" rel="noopener noreferrer" aria-label="Instagram" title="Instagram">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+        </a>
+        <a href="https://www.tiktok.com/@yallah.click" target="_blank" rel="noopener noreferrer" aria-label="TikTok" title="TikTok">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5"/></svg>
+        </a>
+        <a href="https://www.behance.net/yallahclick" target="_blank" rel="noopener noreferrer" aria-label="Behance" title="Behance">
+          <span class="social-letter behance-mark" aria-hidden="true">Bē</span>
+        </a>
+        <a href="https://www.linkedin.com/in/yallah-click-34a897421/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+        </a>
+        <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" aria-label="Facebook" title="Facebook">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+        </a>
+        <a href="https://www.pinterest.com/yallahclick/_profile/" target="_blank" rel="noopener noreferrer" aria-label="Pinterest" title="Pinterest">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.2 20.5c1.1-3.4 1.5-4.7 2.2-7.8-.5-1-.1-3 1.1-3 1 0 1.5.8 1.5 1.8 0 1.1-.7 2.8-1 4.3-.5 1.3.7 2.4 2 2.4 2.4 0 4.1-2.6 4.1-6.2 0-3.2-2.3-5.4-5.7-5.4-3.9 0-6.2 2.9-6.2 5.9 0 1.2.5 2.4 1 3 .1.1.1.3.1.5l-.4 1.7c-.1.5-.5.7-1 .4-2.1-1-3.4-4-3.4-6.4C2.5 6.5 6.4 2 13.4 2 19 2 23 6 23 11.3c0 5.6-3.5 10.1-8.4 10.1-1.6 0-3.2-.9-3.7-1.9l-1 3.8"/></svg>
+        </a>
+        <a href="https://x.com/YallahClick" target="_blank" rel="noopener noreferrer" aria-label="X (Twitter)" title="X (Twitter)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4l16 16M20 4L4 20"/></svg>
+        </a>
+        <a href="https://wa.me/message/I5ZSIR6EPNRON1" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp" title="WhatsApp">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+        </a>
+      </div>
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms of Service</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- PAGE LOADER -->
+<div class="page-loader" id="pageLoader">
+  <div class="loader-bar"><div class="loader-bar-fill"></div></div>
+  <div class="loader-text"><img src="images/Yalah Click WH.png" width="80" alt="Yallah Click"></div>
+</div>
+
+<!-- VIDEO MODAL -->
+<div class="video-modal" id="videoModal">
+  <div class="video-modal-scrim" id="videoModalScrim"></div>
+  <div class="video-modal-content">
+    <div class="video-modal-topbar">
+      <span class="file-name mono">YallahClick — YouTube Showreel</span>
+      <button class="video-modal-close" id="videoModalClose" aria-label="Close video">&times;</button>
+    </div>
+    <div class="video-modal-body">
+      <div class="youtube-embed-wrap">
+        <iframe
+          id="modalYoutube"
+          title="Yallah Click YouTube showreel"
+          src="about:blank"
+          referrerpolicy="strict-origin-when-cross-origin"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          allowfullscreen></iframe>
+      </div>
+      <div class="youtube-local-note" id="youtubeLocalNote">
+        YouTube may block embedded playback when this HTML file is opened directly with <strong>file://</strong>. Open it through a local server or your live website.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SCROLL TO TOP -->
+<button class="scroll-top" id="scrollTop" aria-label="Scroll to top">&uarr;</button>
+
+<!-- TOAST CONTAINER -->
+<div class="toast-container" id="toastContainer"></div>
+
+<!-- CURSOR TRAIL -->
+<div class="cursor-dot" id="cursorDot"></div>
+
+<script>
+  // ========== PAGE LOADER (once per session, not on refresh) ==========
+  window.addEventListener('load', ()=>{
+    const el = document.getElementById('pageLoader');
+    if(el && !el.classList.contains('done')){
+      setTimeout(()=> el.classList.add('done'), 900);
+    }
+  });
+  (function(){
+    const el = document.getElementById('pageLoader');
+    if(!el) return;
+    if(sessionStorage.getItem('yc-loader-shown')){
+      el.classList.add('done');
+    }else{
+      sessionStorage.setItem('yc-loader-shown', '1');
+    }
+  })();
+
+  // ========== THEME TOGGLE ==========
+  const html = document.documentElement;
+  const themeToggle = document.getElementById('themeToggle');
+
+  function getPreferredTheme(){
+    const stored = localStorage.getItem('yc-theme');
+    if(stored) return stored;
+    return window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+  }
+
+  function applyTheme(theme){
+    html.setAttribute('data-theme', theme);
+    localStorage.setItem('yc-theme', theme);
+  }
+
+  applyTheme(getPreferredTheme());
+
+  themeToggle.addEventListener('click', ()=>{
+    const current = html.getAttribute('data-theme');
+    applyTheme(current === 'dark' ? 'light' : 'dark');
+  });
+
+  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e)=>{
+    if(!localStorage.getItem('yc-theme')){
+      applyTheme(e.matches ? 'dark' : 'light');
+    }
+  });
+
+  // ========== WAVEFORM ==========
+  const wf = document.getElementById('waveform');
+  if(wf && wf.children.length === 0){
+    const bars = 46;
+    for(let i = 0; i < bars; i++){
+      const b = document.createElement('span');
+      const h = 20 + Math.round(Math.sin(i * 0.5) * 10 + Math.random() * 14);
+      b.style.height = h + '%';
+      if(i < bars * 0.38) b.classList.add('active');
+      wf.appendChild(b);
+    }
+  }
+
+  // ========== WORK FILTER ==========
+  const filterBtns = document.querySelectorAll('.filter-btn');
+  const cards = document.querySelectorAll('.work-card');
+  filterBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      filterBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const f = btn.dataset.filter;
+      cards.forEach(c => {
+        if(f === 'all' || c.dataset.cat === f){
+          c.style.display = '';
+        } else {
+          c.style.display = 'none';
+        }
+      });
+    });
+  });
+
+  // ========== FAQ ==========
+  document.querySelectorAll('.faq-item').forEach(item => {
+    item.querySelector('.faq-q').addEventListener('click', () => {
+      const isOpen = item.classList.contains('open');
+      document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+      if(!isOpen) item.classList.add('open');
+    });
+  });
+
+  // ========== TOAST ==========
+  function showToast(msg){
+    const container = document.getElementById('toastContainer');
+    const t = document.createElement('div');
+    t.className = 'toast';
+    t.textContent = msg;
+    container.appendChild(t);
+    requestAnimationFrame(()=> t.classList.add('show'));
+    setTimeout(()=>{
+      t.classList.add('hide');
+      setTimeout(()=> t.remove(), 400);
+    }, 2500);
+  }
+
+  // ========== COPY EMAIL ==========
+  function copyEmail(){
+    navigator.clipboard.writeText('yallahclick.contact@gmail.com');
+    showToast('Email copied to clipboard!');
+  }
+
+  // ========== FORM VALIDATION + EMAIL DELIVERY ==========
+  async function handleSubmit(e){
+    e.preventDefault();
+
+    const form = e.target;
+    const nameField = document.getElementById('fieldName');
+    const emailField = document.getElementById('fieldEmail');
+    const nameInput = document.getElementById('name');
+    const emailInput = document.getElementById('email');
+    const btn = form.querySelector('.submit-btn');
+    const original = btn.textContent;
+    let valid = true;
+
+    nameField.classList.remove('error');
+    emailField.classList.remove('error');
+
+    if(!nameInput.value.trim()){
+      nameField.classList.add('error');
+      valid = false;
+    }
+
+    const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if(!emailRe.test(emailInput.value.trim())){
+      emailField.classList.add('error');
+      valid = false;
+    }
+
+    if(!valid) return false;
+
+    btn.disabled = true;
+    btn.textContent = 'Sending...';
+    btn.setAttribute('aria-busy', 'true');
+
+    const payload = {
+      name: nameInput.value.trim(),
+      email: emailInput.value.trim(),
+      service: document.getElementById('service').value,
+      project_details: document.getElementById('details').value.trim(),
+      source_page: window.location.href,
+      _subject: 'New Project Inquiry — Yallah Click',
+      _template: 'table',
+      _honey: form.querySelector('[name="_honey"]').value
+    };
+
+    try{
+      const response = await fetch('https://formsubmit.co/ajax/yallahclick.contact@gmail.com', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify(payload)
+      });
+
+      const data = await response.json().catch(() => ({}));
+      if(!response.ok || data.success === false){
+        throw new Error(data.message || 'Unable to send the request.');
+      }
+
+      btn.textContent = 'Request Sent ✓';
+      btn.style.background = '#5c1015';
+      showToast('Request sent successfully!');
+      form.reset();
+
+      setTimeout(() => {
+        btn.textContent = original;
+        btn.style.background = '';
+        btn.disabled = false;
+        btn.removeAttribute('aria-busy');
+      }, 2500);
+    }catch(error){
+      console.error('Form submission error:', error);
+      btn.textContent = 'Try Again';
+      btn.style.background = '';
+      btn.disabled = false;
+      btn.removeAttribute('aria-busy');
+      showToast('Message not sent. Please try again or email us directly.');
+
+      setTimeout(() => {
+        btn.textContent = original;
+      }, 2500);
+    }
+
+    return false;
+  }
+
+  // inline error clear on input
+  ['name','email'].forEach(id=>{
+    document.getElementById(id).addEventListener('input', function(){
+      this.closest('.field').classList.remove('error');
+    });
+  });
+
+  // ========== PREMIUM NAVIGATION ==========
+  const siteHeader = document.getElementById('siteHeader');
+  const navProgress = document.getElementById('navProgress');
+  const burgerBtn = document.getElementById('burgerBtn');
+  const mobileDrawer = document.getElementById('mobileDrawer');
+  const drawerScrim = document.getElementById('drawerScrim');
+  let drawerLastFocus = null;
+  let lastScrollY = window.scrollY;
+  let navTicking = false;
+
+  function toggleDrawer(open){
+    drawerLastFocus = open ? document.activeElement : drawerLastFocus;
+    burgerBtn.classList.toggle('open', open);
+    mobileDrawer.classList.toggle('open', open);
+    drawerScrim.classList.toggle('open', open);
+    burgerBtn.setAttribute('aria-expanded', String(open));
+    burgerBtn.setAttribute('aria-label', open ? 'Close navigation menu' : 'Open navigation menu');
+    mobileDrawer.setAttribute('aria-hidden', String(!open));
+    document.body.style.overflow = open ? 'hidden' : '';
+    siteHeader.classList.remove('nav-hidden');
+    siteHeader.classList.add('nav-visible');
+    if(open){
+      requestAnimationFrame(() => mobileDrawer.querySelector('a').focus());
+    }else if(drawerLastFocus){
+      drawerLastFocus.focus();
+    }
+  }
+  burgerBtn.addEventListener('click', () => toggleDrawer(!mobileDrawer.classList.contains('open')));
+  drawerScrim.addEventListener('click', () => toggleDrawer(false));
+  mobileDrawer.querySelectorAll('a').forEach(a => a.addEventListener('click', () => toggleDrawer(false)));
+
+  function updateNavigation(){
+    const currentY = Math.max(window.scrollY, 0);
+    const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+    const progress = maxScroll > 0 ? Math.min((currentY / maxScroll) * 100, 100) : 0;
+    navProgress.style.width = progress + '%';
+    siteHeader.classList.toggle('is-scrolled', currentY > 24);
+
+    const goingDown = currentY > lastScrollY;
+    const canHide = currentY > 180 && !mobileDrawer.classList.contains('open');
+    siteHeader.classList.toggle('nav-hidden', canHide && goingDown && currentY - lastScrollY > 2);
+    siteHeader.classList.toggle('nav-visible', !canHide || !goingDown);
+    lastScrollY = currentY;
+    navTicking = false;
+  }
+  window.addEventListener('scroll', () => {
+    if(!navTicking){
+      requestAnimationFrame(updateNavigation);
+      navTicking = true;
+    }
+  }, {passive:true});
+  updateNavigation();
+
+  // ========== HERO SPOTLIGHT ==========
+  const heroEl = document.querySelector('.hero');
+  if(heroEl && window.matchMedia('(hover:hover)').matches){
+    heroEl.addEventListener('mousemove', (e) => {
+      const rect = heroEl.getBoundingClientRect();
+      const x = ((e.clientX - rect.left) / rect.width) * 100;
+      const y = ((e.clientY - rect.top) / rect.height) * 100;
+      heroEl.style.setProperty('--mx', x + '%');
+      heroEl.style.setProperty('--my', y + '%');
+    });
+  }
+
+  // ========== SCROLL REVEAL ==========
+  const revealTargets = document.querySelectorAll('.reveal, .reveal-stagger');
+  const revealObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if(entry.isIntersecting){
+        entry.target.classList.add('in');
+        revealObserver.unobserve(entry.target);
+      }
+    });
+  }, {threshold: 0.15, rootMargin: '0px 0px -60px 0px'});
+  revealTargets.forEach(t => revealObserver.observe(t));
+
+  // ========== COUNT-UP STATS (spring physics) ==========
+  const counters = document.querySelectorAll('.count');
+  const countObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if(!entry.isIntersecting) return;
+      const el = entry.target;
+      const target = parseFloat(el.dataset.target);
+      const decimals = parseInt(el.dataset.decimals || '0');
+      const duration = 1600;
+      const start = performance.now();
+      function step(now){
+        const progress = Math.min((now - start) / duration, 1);
+        const t = progress;
+        const eased = t < 0.5
+          ? 4 * t * t * t
+          : 1 - Math.pow(-2 * t + 2, 3) / 2;
+        const value = target * eased;
+        el.textContent = value.toFixed(decimals);
+        if(progress < 1) requestAnimationFrame(step);
+        else el.textContent = target.toFixed(decimals);
+      }
+      requestAnimationFrame(step);
+      countObserver.unobserve(el);
+    });
+  }, {threshold: 0.5});
+  counters.forEach(c => countObserver.observe(c));
+
+  // ========== SCROLL-TO-TOP ==========
+  const scrollTopBtn = document.getElementById('scrollTop');
+  window.addEventListener('scroll', ()=>{
+    scrollTopBtn.classList.toggle('visible', window.scrollY > 500);
+  }, {passive:true});
+  scrollTopBtn.addEventListener('click', ()=>{
+    window.scrollTo({top:0, behavior:'smooth'});
+  });
+
+  // ========== ACTIVE NAV LINK ==========
+  const navLinks = document.querySelectorAll('.desktop-nav a, .mobile-drawer a[href^="#"]');
+  const sections = document.querySelectorAll('section[id]');
+  function updateActiveNav(){
+    const scrollY = window.scrollY + Math.min(window.innerHeight * .32, 260);
+    let activeId = '';
+    sections.forEach(sec => {
+      const top = sec.offsetTop;
+      const height = sec.offsetHeight;
+      const id = sec.getAttribute('id');
+      if(scrollY >= top && scrollY < top + height){
+        activeId = id;
+      }
+    });
+    navLinks.forEach(a => {
+      const active = a.getAttribute('href') === '#' + activeId;
+      a.classList.toggle('active-link', active);
+      if(active) a.setAttribute('aria-current', 'page');
+      else a.removeAttribute('aria-current');
+    });
+  }
+  window.addEventListener('scroll', updateActiveNav, {passive:true});
+  updateActiveNav();
+
+  // ========== SMOOTH ANCHOR OFFSET ==========
+  document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', function(e){
+      const href = this.getAttribute('href');
+      const target = href === '#' ? document.body : document.querySelector(href);
+      if(target){
+        e.preventDefault();
+        const offset = href === '#' ? 0 : target.offsetTop - 108;
+        window.scrollTo({top:offset, behavior:'smooth'});
+      }
+    });
+  });
+
+  document.addEventListener('keydown', (e)=>{
+    if(e.key === 'Escape' && mobileDrawer.classList.contains('open')){
+      toggleDrawer(false);
+      return;
+    }
+    if(e.key === 'Tab' && mobileDrawer.classList.contains('open')){
+      const focusable = [burgerBtn, ...mobileDrawer.querySelectorAll('a')];
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if(e.shiftKey && document.activeElement === first){
+        e.preventDefault();
+        last.focus();
+      }else if(!e.shiftKey && document.activeElement === last){
+        e.preventDefault();
+        first.focus();
+      }
+    }
+  });
+
+  window.addEventListener('resize', ()=>{
+    if(window.innerWidth > 980 && mobileDrawer.classList.contains('open')) toggleDrawer(false);
+  }, {passive:true});
+
+  // ========== 3D TILT ON WORK CARDS ==========
+  if(window.matchMedia('(hover:hover)').matches){
+    document.querySelectorAll('.tilt-card').forEach(card => {
+      card.addEventListener('mousemove', function(e){
+        const rect = this.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        const centerX = rect.width / 2;
+        const centerY = rect.height / 2;
+        const rotateX = ((y - centerY) / centerY) * -6;
+        const rotateY = ((x - centerX) / centerX) * 6;
+        this.style.transform = 'perspective(800px) rotateX(' + rotateX + 'deg) rotateY(' + rotateY + 'deg) translateY(-6px)';
+      });
+      card.addEventListener('mouseleave', function(){
+        this.style.transform = '';
+      });
+    });
+  }
+
+  // ========== MAGNETIC CURSOR ON BUTTONS ==========
+  if(window.matchMedia('(hover:hover)').matches){
+    document.querySelectorAll('.magnetic').forEach(btn => {
+      btn.addEventListener('mousemove', function(e){
+        const rect = this.getBoundingClientRect();
+        const x = e.clientX - rect.left - rect.width / 2;
+        const y = e.clientY - rect.top - rect.height / 2;
+        this.style.transform = 'translate(' + (x * 0.2) + 'px,' + (y * 0.2) + 'px)';
+      });
+      btn.addEventListener('mouseleave', function(){
+        this.style.transform = '';
+      });
+    });
+  }
+
+  // ========== CURSOR TRAIL ==========
+  const cursorDot = document.getElementById('cursorDot');
+  if(window.matchMedia('(hover:hover)').matches){
+    let mouseX = 0, mouseY = 0;
+    let dotX = 0, dotY = 0;
+    document.addEventListener('mousemove', (e)=>{
+      mouseX = e.clientX;
+      mouseY = e.clientY;
+    });
+    function animateDot(){
+      dotX += (mouseX - dotX) * 0.15;
+      dotY += (mouseY - dotY) * 0.15;
+      cursorDot.style.left = dotX - 4 + 'px';
+      cursorDot.style.top = dotY - 4 + 'px';
+      requestAnimationFrame(animateDot);
+    }
+    animateDot();
+
+    function updateCursorVisibility(){
+      cursorDot.style.display = html.getAttribute('data-theme') === 'dark' ? 'block' : 'none';
+    }
+    updateCursorVisibility();
+    const themeObs = new MutationObserver(updateCursorVisibility);
+    themeObs.observe(html, {attributes:true, attributeFilter:['data-theme']});
+  }
+
+  // ========== YOUTUBE VIDEO MODAL ==========
+  const SHOWREEL_VIDEO_ID = '5bXoUNIjDZo';
+  const videoModal = document.getElementById('videoModal');
+  const videoModalScrim = document.getElementById('videoModalScrim');
+  const videoModalClose = document.getElementById('videoModalClose');
+  const modalYoutube = document.getElementById('modalYoutube');
+  const modalFileName = videoModal?.querySelector('.video-modal-topbar .file-name');
+  const workspaceYoutubeBg = document.getElementById('workspaceYoutubeBg');
+  const youtubeLocalNote = document.getElementById('youtubeLocalNote');
+  const workspaceScreen = document.getElementById('workspaceScreen');
+  const watchShowreel = document.getElementById('watchShowreel');
+
+  function extractYoutubeId(value){
+    const raw = String(value || '').trim();
+    if(/^[A-Za-z0-9_-]{11}$/.test(raw)) return raw;
+
+    try{
+      const url = new URL(raw, window.location.href);
+      const host = url.hostname.replace(/^www\./, '');
+
+      if(host === 'youtu.be'){
+        const id = url.pathname.split('/').filter(Boolean)[0];
+        return /^[A-Za-z0-9_-]{11}$/.test(id || '') ? id : null;
+      }
+
+      if(host === 'youtube.com' || host === 'm.youtube.com' || host === 'music.youtube.com'){
+        const watchId = url.searchParams.get('v');
+        if(/^[A-Za-z0-9_-]{11}$/.test(watchId || '')) return watchId;
+
+        const parts = url.pathname.split('/').filter(Boolean);
+        if(['embed', 'shorts', 'live'].includes(parts[0])){
+          const id = parts[1];
+          return /^[A-Za-z0-9_-]{11}$/.test(id || '') ? id : null;
+        }
+      }
+    }catch(error){
+      // Invalid URL: fall through to the regular-expression fallback.
+    }
+
+    const match = raw.match(/(?:youtu\.be\/|youtube(?:-nocookie)?\.com\/(?:watch\?v=|embed\/|shorts\/|live\/))([A-Za-z0-9_-]{11})/i);
+    return match ? match[1] : null;
+  }
+
+  function safeYoutubeId(value){
+    return extractYoutubeId(value) || SHOWREEL_VIDEO_ID;
+  }
+
+  function buildYoutubeEmbedUrl(videoId, autoplay = true){
+    const id = safeYoutubeId(videoId);
+    const params = new URLSearchParams({
+      autoplay: autoplay ? '1' : '0',
+      playsinline: '1',
+      rel: '0',
+      modestbranding: '1'
+    });
+
+    // YouTube uses the website origin to identify the embedding page.
+    if(location.protocol === 'http:' || location.protocol === 'https:'){
+      params.set('origin', location.origin);
+    }
+
+    return `https://www.youtube.com/embed/${id}?${params.toString()}`;
+  }
+
+  function buildYoutubeBackgroundUrl(videoId){
+    const id = safeYoutubeId(videoId);
+    const params = new URLSearchParams({
+      autoplay: '1',
+      mute: '1',
+      controls: '0',
+      loop: '1',
+      playlist: id,
+      playsinline: '1',
+      rel: '0',
+      modestbranding: '1',
+      disablekb: '1',
+      fs: '0',
+      iv_load_policy: '3'
+    });
+
+    if(location.protocol === 'http:' || location.protocol === 'https:'){
+      params.set('origin', location.origin);
+    }
+
+    return `https://www.youtube.com/embed/${id}?${params.toString()}`;
+  }
+
+  // Autoplay is allowed because this background player is muted.
+  if(workspaceYoutubeBg){
+    workspaceYoutubeBg.src = buildYoutubeBackgroundUrl(
+      workspaceScreen?.dataset.youtubeId || SHOWREEL_VIDEO_ID
+    );
+  }
+
+  function openYoutubeModal(videoId = SHOWREEL_VIDEO_ID, title = 'YallahClick — YouTube Showreel'){
+    const id = safeYoutubeId(videoId);
+    const cleanTitle = String(title || 'YallahClick — YouTube Video').replace(/\s+/g, ' ').trim();
+
+    if(modalFileName) modalFileName.textContent = cleanTitle;
+    if(modalYoutube) modalYoutube.title = cleanTitle;
+
+    videoModal.classList.add('open');
+    videoModal.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+
+    const isDirectFile = location.protocol === 'file:';
+    youtubeLocalNote?.classList.toggle('show', isDirectFile);
+
+    // Setting the src only after a user click improves autoplay reliability.
+    modalYoutube.src = buildYoutubeEmbedUrl(id, true);
+  }
+
+  function closeYoutubeModal(){
+    videoModal.classList.remove('open');
+    videoModal.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+
+    // Resetting the iframe stops playback immediately.
+    modalYoutube.src = 'about:blank';
+  }
+
+  workspaceScreen?.addEventListener('click', () => {
+    openYoutubeModal(workspaceScreen.dataset.youtubeId || SHOWREEL_VIDEO_ID);
+  });
+
+  workspaceScreen?.addEventListener('keydown', (event) => {
+    if(event.key === 'Enter' || event.key === ' '){
+      event.preventDefault();
+      openYoutubeModal(workspaceScreen.dataset.youtubeId || SHOWREEL_VIDEO_ID);
+    }
+  });
+
+  watchShowreel?.addEventListener('click', (event) => {
+    event.preventDefault();
+    openYoutubeModal(
+      watchShowreel.dataset.youtubeId || SHOWREEL_VIDEO_ID,
+      'YallahClick — YouTube Showreel'
+    );
+  });
+
+  // Open every Featured Work video inside the website modal.
+  cards.forEach(card => {
+    card.addEventListener('click', (event) => {
+      // Keep normal browser behavior for right-click and modified clicks.
+      if(event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+
+      const youtubeId = extractYoutubeId(card.dataset.yt || card.getAttribute('href'));
+      if(!youtubeId) return;
+
+      event.preventDefault();
+      const projectTitle = card.querySelector('h3')?.textContent?.trim() || 'YallahClick — Featured Project';
+      openYoutubeModal(youtubeId, projectTitle);
+    });
+  });
+
+  videoModalScrim?.addEventListener('click', closeYoutubeModal);
+  videoModalClose?.addEventListener('click', closeYoutubeModal);
+
+  document.addEventListener('keydown', (event) => {
+    if(event.key === 'Escape' && videoModal.classList.contains('open')){
+      closeYoutubeModal();
+    }
+  });
+
+  // ========== PARALLAX ON SECTIONS ==========
+  const parallaxSections = document.querySelectorAll('.hero, .stats-bar, .cta-section');
+  function updateParallax(){
+    const scrollY = window.scrollY;
+    parallaxSections.forEach(sec => {
+      const rect = sec.getBoundingClientRect();
+      if(rect.top < window.innerHeight && rect.bottom > 0){
+        const offset = (rect.top / window.innerHeight) * 30;
+        sec.style.transform = 'translateY(' + offset + 'px)';
+      }
+    });
+  }
+  window.addEventListener('scroll', updateParallax, {passive:true});
+
+  // ========== BEFORE / AFTER SLIDER LOGIC ==========
+  document.querySelectorAll('.comparison-container').forEach(container => {
+    const range = container.querySelector('.comparison-range');
+    if(range) {
+      range.addEventListener('input', (e) => {
+        container.style.setProperty('--position', `${e.target.value}%`);
+      });
+    }
+  });
+</script>
+
+<!-- ========== YALLAHCLICK EXTENSION: promo popups + ?svc= deep links ========== -->
+<script src="js/shared.js"></script>
+<script src="data/services.js"></script>
+<script src="data/promotions.js"></script>
+<script src="services/storage.js"></script>
+<script src="services/promotionService.js"></script>
+<script src="js/promo-popup.js"></script>
+<script>
+(function(){
+  try{
+    // Preselect the booking service when arriving via ?svc= (e.g. promotion CTA).
+    var svcMatch = window.location.search.match(/[?&]svc=([^&#]+)/);
+    if(svcMatch){
+      var svcId = decodeURIComponent(svcMatch[1]);
+      var service = window.YC && YC.data ? YC.data.getService(svcId) : null;
+      var select = document.getElementById('service');
+      if(service && select){
+        var label = service.short;
+        for(var i = 0; i < select.options.length; i++){
+          if(select.options[i].value === label || select.options[i].textContent === label){
+            select.selectedIndex = i;
+            break;
+          }
+        }
+      }
+    }
+    if(window.YC && YC.PromoPopup) YC.PromoPopup.init();
+  }catch(err){
+    if(window.console) console.error('Extension init failed:', err);
+  }
+})();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,152 @@
+/* ============================================================
+   YallahClick — Promotions (mock data)
+   Structure is backend-ready: swap for GET /api/promotions/active
+   without touching the popup component.
+
+   `promoType` chooses how the offer works:
+     "code"     → visitor copies a promo code (required at checkout)
+     "discount" → direct discount, no code needed, auto-applied
+   ============================================================ */
+window.YC = window.YC || {};
+YC.data = YC.data || {};
+
+(function(){
+  function pad(n){ return (n < 10 ? '0' : '') + n; }
+  function key(d){ return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()); }
+
+  /* The flagship flash-sale window is computed on load so the offer
+     is always live for the next 48 hours after the first visit. */
+  var now = new Date();
+  var start = new Date(now.getTime() - 10 * 60000);      /* already live */
+  var end = new Date(now.getTime() + 48 * 3600 * 1000);  /* 48h window */
+
+  YC.data.promotions = [
+    {
+      id: 1,
+      title: "48H Flash Sale",
+      promoType: "discount",
+      serviceId: "all",
+      servicesLabel: "Editing & Templates",
+      description: "40% off all video editing services and templates — just for the next 48 hours.",
+      discountType: "percentage",
+      discountValue: 40,
+      promoCode: "",
+      destPage: "templates.html",
+      startDate: key(start),
+      endDate: key(end),
+      startTime: "00:00",
+      endTime: "23:59",
+      popupEnabled: true,
+      countdownEnabled: true,
+      popupDelay: 5,
+      showOnce: true,
+      showEveryVisit: false,
+      closeButton: true,
+      ctaText: "Claim 40% Off",
+      popupPosition: "center",
+      featured: true,
+      active: true,
+      createdAt: "2026-08-30T10:00:00Z"
+    },
+    {
+      id: 2,
+      title: "Motion Design Launch",
+      promoType: "code",
+      serviceId: "motion-design",
+      description: "Launch offer — 15% off any motion design project.",
+      discountType: "percentage",
+      discountValue: 15,
+      promoCode: "MOTION15",
+      startDate: "2026-08-25",
+      endDate: "2026-09-30",
+      startTime: "00:00",
+      endTime: "23:59",
+      popupEnabled: false,
+      countdownEnabled: true,
+      popupDelay: 6,
+      showOnce: true,
+      showEveryVisit: false,
+      closeButton: true,
+      ctaText: "Get 15% Off",
+      popupPosition: "center",
+      featured: false,
+      active: true,
+      createdAt: "2026-08-10T12:00:00Z"
+    },
+    {
+      id: 3,
+      title: "Thumbnail Starter",
+      promoType: "code",
+      serviceId: "graphic-design",
+      description: "10% off your first thumbnail design pack.",
+      discountType: "percentage",
+      discountValue: 10,
+      promoCode: "THUMB10",
+      startDate: "2026-09-01",
+      endDate: "2026-09-25",
+      startTime: "09:00",
+      endTime: "23:59",
+      popupEnabled: true,
+      countdownEnabled: false,
+      popupDelay: 4,
+      showOnce: true,
+      showEveryVisit: false,
+      closeButton: true,
+      ctaText: "Get 10% Off",
+      popupPosition: "bottom-right",
+      featured: false,
+      active: true,
+      createdAt: "2026-08-15T09:00:00Z"
+    },
+    {
+      id: 4,
+      title: "Friends & Family",
+      promoType: "code",
+      serviceId: "all",
+      description: "Flat $30 off any service — for returning clients.",
+      discountType: "fixed",
+      discountValue: 30,
+      promoCode: "FAMILY30",
+      startDate: "2026-07-01",
+      endDate: "2026-08-10",
+      startTime: "00:00",
+      endTime: "23:59",
+      popupEnabled: false,
+      countdownEnabled: false,
+      popupDelay: 5,
+      showOnce: true,
+      showEveryVisit: false,
+      closeButton: true,
+      ctaText: "Claim Offer",
+      popupPosition: "center",
+      featured: false,
+      active: true,
+      createdAt: "2026-06-20T09:00:00Z"
+    },
+    {
+      id: 5,
+      title: "Marketing Sprint",
+      promoType: "code",
+      serviceId: "marketing",
+      description: "Seasonal 25% off a marketing growth sprint.",
+      discountType: "percentage",
+      discountValue: 25,
+      promoCode: "MARKET25",
+      startDate: "2026-10-01",
+      endDate: "2026-10-31",
+      startTime: "09:00",
+      endTime: "23:59",
+      popupEnabled: false,
+      countdownEnabled: true,
+      popupDelay: 5,
+      showOnce: true,
+      showEveryVisit: false,
+      closeButton: true,
+      ctaText: "Get 25% Off",
+      popupPosition: "center",
+      featured: false,
+      active: false,
+      createdAt: "2026-08-05T09:00:00Z"
+    }
+  ];
+})();

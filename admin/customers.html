@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Customers — YallahClick Admin</title>
+<link rel="icon" type="image/x-icon" href="../images/Mini logo.ico">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&family=Montserrat:wght@600;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/shared.css">
+<link rel="stylesheet" href="../css/admin.css">
+</head>
+<body data-page="customers" class="admin-body">
+<div class="admin-shell">
+  <aside class="admin-sidebar" id="adminSidebar">
+    <button type="button" class="sidebar-close" aria-label="Close menu">&#10005;</button>
+    <div class="admin-brand">
+      <img class="logo-light" src="../images/Yalah Click WH.png" alt="Yallah Click">
+      <img class="logo-dark" src="../images/yallahclick.png" alt="Yallah Click">
+      <span class="brand-badge" style="margin-left:auto">Admin</span>
+    </div>
+    <nav class="admin-nav" id="adminSidebarNav"></nav>
+    <div class="admin-sidebar-foot">
+      <div class="fw"><i></i><b>Studio online</b></div>
+      YallahClick Admin &middot; v1.0
+    </div>
+  </aside>
+  <div class="admin-sidebar-scrim" id="adminScrim"></div>
+  <main class="admin-main">
+    <header class="admin-topbar">
+      <button type="button" class="burger-admin theme-toggle" id="adminBurger" aria-label="Open menu">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      </button>
+      <h1><span class="crumb" id="topbarCrumb">Admin</span><span id="topbarTitle"></span></h1>
+      <div class="grow"></div>
+      <a class="btn btn-ghost btn-sm view-btn" href="../index.html">
+        <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></span>
+        View site
+      </a>
+      <button type="button" class="theme-toggle" aria-label="Toggle theme" title="Toggle theme">
+        <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+      </button>
+      <div class="admin-user" id="adminUser"></div>
+    </header>
+
+    <div class="admin-content">
+      <div class="page-intro">
+        <div>
+          <span class="overline" style="color:var(--red)">Operations</span>
+          <h2>Customers</h2>
+          <p>Every client and their booking history in one view — enable, disable or extend profiles.</p>
+        </div>
+        <button type="button" class="btn btn-primary" id="btnNewCustomer">
+          <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span>
+          New customer
+        </button>
+      </div>
+
+      <div class="stat-grid" id="statGrid"></div>
+
+      <div class="toolbar">
+        <div class="search-box">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="text" id="searchCustomers" placeholder="Search customers…">
+        </div>
+        <div class="spacer"></div>
+      </div>
+
+      <div id="customersTable"></div>
+    </div>
+  </main>
+</div>
+
+<script src="../js/shared.js"></script>
+<script src="../data/services.js"></script>
+<script src="../data/promotions.js"></script>
+<script src="../data/bookings.js"></script>
+<script src="../data/customers.js"></script>
+<script src="../data/aiPrompts.js"></script>
+<script src="../data/templates.js"></script>
+<script src="../data/videoTemplates.js"></script>
+<script src="../data/thumbnailTemplates.js"></script>
+<script src="../data/files.js"></script>
+<script src="../data/categories.js"></script>
+<script src="../services/storage.js"></script>
+<script src="../services/bookingService.js"></script>
+<script src="../services/customerService.js"></script>
+<script src="../services/promptService.js"></script>
+<script src="../services/templateService.js"></script>
+<script src="../services/promotionService.js"></script>
+<script src="../js/admin-common.js"></script>
+<script src="../js/admin-app.js"></script>
+<script>YC.admin.boot({ crumb: 'Operations', title: 'Customers' });</script>
+</body>
+</html>

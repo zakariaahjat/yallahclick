@@ -1,0 +1,37 @@
+/* ============================================================
+   YallahClick — Admin accounts (mock data)
+   Backend-ready: swap for GET /api/users without touching the
+   admin Users page or the login flow.
+   ============================================================ */
+window.YC = window.YC || {};
+YC.data = YC.data || {};
+
+YC.data.admins = [
+  {
+    id: 1,
+    name: "YallahClick Admin",
+    email: "admin@yallahclick.com",
+    password: "admin123",
+    role: "owner",
+    status: "active",
+    createdAt: "2026-08-01T10:00:00Z"
+  },
+  {
+    id: 2,
+    name: "Sarah K.",
+    email: "sarah@yallahclick.com",
+    password: "yallah123",
+    role: "admin",
+    status: "active",
+    createdAt: "2026-08-12T09:30:00Z"
+  },
+  {
+    id: 3,
+    name: "Omar B.",
+    email: "omar@yallahclick.com",
+    password: "yallah123",
+    role: "admin",
+    status: "active",
+    createdAt: "2026-08-18T14:00:00Z"
+  }
+];
