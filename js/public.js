@@ -12,6 +12,19 @@ document.addEventListener('DOMContentLoaded', function(){
     YC.buildChrome({ active: active });
 
     if(YC.ambience) YC.ambience.init();
+
+    /* command palette (Cmd/Ctrl+K) + cross-page transitions */
+    if(YC.palette) YC.palette.init();
+    document.addEventListener('click', function(e){
+      var a = e.target.closest ? e.target.closest('a[href]') : null;
+      if(!a) return;
+      var href = a.getAttribute('href');
+      if(!href || href.charAt(0) === '#' || /^(https?:)?\/\//.test(href) || href.indexOf('mailto:') === 0) return;
+      if(a.target && a.target === '_blank') return;
+      e.preventDefault();
+      YC.transition.go(href);
+    });
+
     YC.initReveal();
   }
 });

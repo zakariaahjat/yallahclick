@@ -155,44 +155,91 @@
 .row-actions .btn-icon svg{width:14px;height:14px;}
 
 /* ========== LOGIN ========== */
-.login-body{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;position:relative;overflow:hidden;}
+.login-body{min-height:100vh;display:flex;flex-direction:column;position:relative;overflow:hidden;}
 .login-body::before{
   content:"";position:absolute;width:600px;height:600px;border:1px solid rgba(255,51,68,.12);
   border-radius:50%;right:-200px;top:-120px;box-shadow:0 0 0 90px rgba(255,51,68,.025);
-  pointer-events:none;
+  pointer-events:none;display:none;
 }
-.login-wrap{width:100%;max-width:430px;position:relative;z-index:1;}
-.login-card{
-  background:var(--black-soft);border:1px solid var(--card-border);border-radius:22px;
-  box-shadow:var(--shadow-pop), inset 0 1px 0 rgba(255,255,255,.05);
-  padding:36px 32px;position:relative;overflow:hidden;
+.login-split{
+  width:100%;height:100vh;min-height:100vh;position:relative;z-index:1;
+  display:grid;grid-template-columns:1fr 1fr;overflow:hidden;
 }
+
+/* ===== BRAND PANEL (LEFT) — always dark black ===== */
+.login-brand-panel{
+  position:relative;overflow:hidden;padding:56px 52px;
+  display:flex;align-items:center;
+  background:
+    radial-gradient(circle at 20% 20%,rgba(255,51,68,.28),transparent 60%),
+    #08080a !important;
+}
+.login-brand-panel::before{
+  content:"";position:absolute;inset:0;pointer-events:none;
+  background-image:url("../images/YalahClickicone.png");
+  background-size:cover;background-position:center;
+  opacity:.5;
+  z-index:0;
+}
+.login-brand-panel::after{
+  content:"";position:absolute;inset:0;pointer-events:none;
+  background-image:radial-gradient(rgba(255,255,255,.06) 1px,transparent 1px);
+  background-size:22px 22px;opacity:.4;z-index:0;
+}
+.brand-inner{position:relative;z-index:1;width:100%;}
+.brand-logos{display:flex;align-items:center;gap:12px;margin-bottom:28px;}
+.brand-logos img{width:96px;height:70px;object-fit:contain;display:block;}
+.brand-logos .logo-dark{display:none;}
+.brand-logos .logo-light{display:block;}
+.brand-logos .ll-badge{
+  font:600 9px/1 'JetBrains Mono',monospace;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--red);border:1px solid rgba(255,51,68,.3);background:rgba(255,51,68,.08);
+  padding:6px 10px;border-radius:99px;margin-left:6px;
+}
+.brand-title{font-size:clamp(40px,4.5vw,62px);margin:0 0 14px;color:#fff;}
+.brand-title .brand-highlight{
+  -webkit-text-stroke:1px var(--red);color:transparent;
+}
+.brand-sub{color:#9a9aa3;font-size:15px;line-height:1.7;max-width:340px;}
+.brand-dots{display:flex;gap:8px;margin-top:36px;}
+.brand-dots span{width:9px;height:9px;border-radius:50%;display:block;}
+
+/* ===== FORM PANEL (RIGHT) — always white ===== */
+.login-form-panel{padding:52px 48px;display:flex;align-items:center;justify-content:center;background:#ffffff !important;}
+.login-card{width:100%;max-width:420px;position:relative;}
 .login-card::before{
   content:"";position:absolute;top:-70px;right:-70px;width:220px;height:220px;
   background:radial-gradient(circle,var(--red-glow),transparent 70%);pointer-events:none;
 }
 .login-logo{display:flex;align-items:center;gap:12px;margin-bottom:8px;}
 .login-logo img{width:64px;height:56px;object-fit:contain;}
+.login-logo .logo-dark{display:none;}
+[data-theme="light"] .login-logo .logo-dark{display:block;}
+[data-theme="light"] .login-logo .logo-light{display:none;}
 .login-logo .ll-badge{
   font:600 9px/1 'JetBrains Mono',monospace;letter-spacing:.14em;text-transform:uppercase;
   color:var(--red);border:1px solid rgba(255,51,68,.3);background:rgba(255,51,68,.08);
   padding:6px 10px;border-radius:99px;
 }
-.login-title{font-size:30px;margin:18px 0 6px;}
-.login-sub{color:var(--gray);font-size:14px;margin-bottom:26px;line-height:1.6;}
+.login-title{font-size:30px;margin:12px 0 6px;position:relative;color:#16161a;}
+.login-title .brand-highlight{
+  -webkit-text-stroke:1px var(--red);color:transparent;
+}
+.login-sub{color:#5b5b64;font-size:14px;margin-bottom:26px;line-height:1.6;}
 .login-field{margin-bottom:16px;}
-.login-field label{display:block;font-size:11px;font-weight:700;color:var(--gray);text-transform:uppercase;letter-spacing:.06em;margin-bottom:7px;}
+.login-field label{display:block;font-size:11px;font-weight:700;color:#3a3a42;text-transform:uppercase;letter-spacing:.06em;margin-bottom:7px;}
 .login-field .input-hold{position:relative;}
 .login-field input{
-  width:100%;background:var(--form-input-bg);border:1px solid var(--line);
-  border-radius:11px;padding:13px 46px 13px 38px;color:var(--white);font-size:14px;
-  transition:border-color .2s;
+  width:100%;background:#fff;border:1px solid #dcd5e1;
+  border-radius:11px;padding:13px 46px 13px 38px;color:#16161a;font-size:14px;
+  transition:border-color .2s;box-shadow:0 1px 2px rgba(0,0,0,.04);
 }
+.login-field input::placeholder{color:#a4a4ad;}
 .login-field input:focus{outline:none;border-color:var(--red);}
-.login-field .input-hold > svg{position:absolute;left:14px;top:50%;transform:translateY(-50%);width:16px;height:16px;color:var(--gray);}
+.login-field .input-hold > svg{position:absolute;left:14px;top:50%;transform:translateY(-50%);width:16px;height:16px;color:#8b8b95;}
 .login-field .pw-toggle{
   position:absolute;right:8px;top:50%;transform:translateY(-50%);
-  width:32px;height:32px;border:none;background:none;color:var(--gray);cursor:pointer;
+  width:32px;height:32px;border:none;background:none;color:#8b8b95;cursor:pointer;
   display:flex;align-items:center;justify-content:center;border-radius:8px;transition:color .2s;
 }
 .login-field .pw-toggle:hover{color:var(--red);}
@@ -210,25 +257,39 @@
 .login-error{
   display:none;align-items:center;gap:9px;
   background:rgba(255,79,94,.09);border:1px solid rgba(255,79,94,.3);
-  color:#ff8b94;font-size:13px;border-radius:11px;padding:12px 14px;margin-bottom:16px;
+  color:#c83540;font-size:13px;border-radius:11px;padding:12px 14px;margin-bottom:16px;
 }
 .login-error.show{display:flex;}
 .login-success{
   display:none;align-items:center;gap:9px;
   background:rgba(71,209,108,.08);border:1px solid rgba(71,209,108,.3);
-  color:var(--success);font-size:13px;border-radius:11px;padding:12px 14px;margin-bottom:16px;
+  color:#1c7a45;font-size:13px;border-radius:11px;padding:12px 14px;margin-bottom:16px;
 }
 .login-success.show{display:flex;}
 .login-demo{
-  margin-top:20px;padding:12px 14px;background:var(--glass);
-  border:1px dashed var(--line);border-radius:11px;
-  font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--gray);line-height:1.7;
+  margin-top:20px;padding:12px 14px;background:#f6f6f8;
+  border:1px dashed #dcd5e1;border-radius:11px;
+  font-family:'JetBrains Mono',monospace;font-size:11px;color:#5b5b64;line-height:1.7;
 }
-.login-demo b{color:var(--white);}
-.login-back{display:inline-flex;align-items:center;gap:7px;margin-top:18px;font-size:13px;color:var(--gray);transition:color .2s;font-weight:600;}
+.login-demo b{color:#16161a;}
+.login-back{display:inline-flex;align-items:center;gap:7px;margin-top:18px;font-size:13px;color:#5b5b64;transition:color .2s;font-weight:600;}
 .login-back:hover{color:var(--red);}
 .login-back svg{width:14px;height:14px;}
-.login-footnote{text-align:center;font-size:11px;color:var(--gray);margin-top:22px;line-height:1.6;}
+.login-footnote{
+  position:absolute;z-index:2;bottom:18px;right:26px;left:auto;
+  text-align:right;font-size:11px;color:#8b8b95;line-height:1.6;white-space:nowrap;
+}
+@media (max-width:820px){
+  .login-footnote{left:50%;right:auto;transform:translateX(-50%);text-align:center;color:#8b8b95;}
+  .login-split{grid-template-columns:1fr;height:auto;min-height:100vh;}
+  .login-brand-panel{padding:40px 32px;}
+  .login-form-panel{padding:40px 26px;}
+  .brand-sub{max-width:none;}
+}
+@media (max-width:480px){
+  .login-brand-panel .brand-title{font-size:34px;}
+  .brand-logos img{width:76px;height:56px;}
+}
 
 /* ========== CONTENT MIX / CATEGORY GRID ========== */
 .content-type-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;}
@@ -370,3 +431,20 @@
 .settings-group{margin-bottom:20px;}
 .settings-fields{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:18px;}
 .settings-fields .field{margin-bottom:0;}
+
+/* toast with inline action buttons (admin) */
+.toast .toast-action{
+  flex-shrink:0;margin-left:4px;background:var(--red);color:#fff;border:none;
+  border-radius:8px;padding:6px 12px;font-size:12px;font-weight:700;cursor:pointer;
+  transition:filter .15s, transform .15s;
+}
+.toast .toast-action:hover{filter:brightness(1.1);transform:translateY(-1px);}
+
+/* toolbar export button */
+.toolbar .btn-export{
+  display:inline-flex;align-items:center;gap:8px;background:var(--glass);color:var(--white);
+  border:1px solid var(--line);border-radius:var(--radius-sm);padding:10px 15px;font-size:12px;
+  font-weight:700;cursor:pointer;transition:all .2s;
+}
+.toolbar .btn-export:hover{border-color:var(--red);color:var(--red);}
+.toolbar .btn-export svg{width:15px;height:15px;}

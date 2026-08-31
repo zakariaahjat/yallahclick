@@ -109,6 +109,22 @@ YC.app.markErrors = function(form, fields){
     if(f) f.classList.toggle('error', fields.indexOf(el.name) >= 0);
   });
 };
+/* Live error clearing: as the user types/changes a required field, drop
+   the `.error` class so validation errors don't get stuck. Read-only nor
+   submit logic is untouched. */
+YC.app.clearErrorsAsYouType = function(form){
+  if(!form) return;
+  function clear(el){
+    var f = el.closest ? el.closest('.field') : null;
+    if(f) f.classList.remove('error');
+  }
+  YC.app.$$('input,textarea,select', form).forEach(function(el){
+    if(el.closest && el.closest('.field')){
+      el.addEventListener('input', function(){ clear(el); });
+      el.addEventListener('change', function(){ clear(el); });
+    }
+  });
+};
 YC.app.required = function(data, fields){
   var missing = [];
   fields.forEach(function(f){
@@ -139,6 +155,7 @@ YC.app.openForm = function(opts){
         var data = YC.app.parseForm(form);
         if(opts.onSubmit) opts.onSubmit(data, form);
       });
+      YC.app.clearErrorsAsYouType(form);
     }
   });
 };
@@ -509,10 +526,10 @@ YC.app.pages_bookings = function(){
       else if(act === 'confirm'){ svc.setStatus(id, 'confirmed'); YC.toast.success('Booking confirmed.'); table.refresh(); }
       else if(act === 'cancel'){ svc.setStatus(id, 'cancelled'); YC.toast.info('Booking cancelled.'); table.refresh(); }
       else if(act === 'delete'){
-        YC.app.confirm('Delete booking ' + id + '? This cannot be undone.', function(){
-          svc.remove(id);
-          YC.toast.success('Booking deleted.');
-          table.refresh(); updateStats();
+        YC.app.confirm('Delete booking ' + id + '?', function(){
+          YC.admin.undoableDelete(svc, id, 'booking ' + id, function(){
+            table.refresh(); updateStats();
+          });
         });
       }
     }
@@ -520,6 +537,22 @@ YC.app.pages_bookings = function(){
 
   var btnNew = YC.app.$('#btnNewBooking');
   if(btnNew) btnNew.addEventListener('click', function(){ editBooking(null); });
+
+  var btnExport = YC.app.$('#btnExportBookings');
+  if(btnExport) btnExport.addEventListener('click', function(){
+    YC.exportCSV('bookings.csv', table.getRows(), [
+      { title: 'Booking', key: 'id' },
+      { title: 'Customer', key: 'customerName' },
+      { title: 'Email', key: 'email' },
+      { title: 'Phone', key: 'phone' },
+      { title: 'Service', key: 'serviceId', render: function(r){ return YC.app.svcName(r.serviceId); } },
+      { title: 'Date', key: 'date' },
+      { title: 'Time', key: 'time' },
+      { title: 'People', key: 'people' },
+      { title: 'Status', key: 'status' },
+      { title: 'Notes', key: 'notes' }
+    ]);
+  });
 
   function updateStats(){
     var a = svc.all();
@@ -677,7 +710,9 @@ YC.app.pages_customers = function(){
       else if(act === 'disable'){ svc.toggleStatus(id); YC.toast.info('Customer disabled.'); table.refresh(); stats(); }
       else if(act === 'delete'){
         YC.app.confirm('Delete customer ' + row.name + '? Their bookings stay in the system.', function(){
-          svc.remove(id); YC.toast.success('Customer deleted.'); table.refresh(); stats();
+          YC.admin.undoableDelete(svc, id, 'customer ' + row.name, function(){
+            table.refresh(); stats();
+          });
         });
       }
     }
@@ -685,6 +720,19 @@ YC.app.pages_customers = function(){
 
   var btnNew = YC.app.$('#btnNewCustomer');
   if(btnNew) btnNew.addEventListener('click', function(){ editCustomer(null); });
+
+  var btnExport = YC.app.$('#btnExportCustomers');
+  if(btnExport) btnExport.addEventListener('click', function(){
+    YC.exportCSV('customers.csv', table.getRows(), [
+      { title: 'Name', key: 'name' },
+      { title: 'Email', key: 'email' },
+      { title: 'Phone', key: 'phone' },
+      { title: 'Registered', key: 'registered' },
+      { title: 'Bookings', key: 'bookingCount' },
+      { title: 'Last booking date', key: 'lastBooking', render: function(r){ return r.lastBooking ? r.lastBooking.date : ''; } },
+      { title: 'Status', key: 'status' }
+    ]);
+  });
 
   function editCustomer(row){
     var editing = !!row;
@@ -848,7 +896,9 @@ YC.app.pages_prompts = function(){
       else if(act === 'edit') editPrompt(row);
       else if(act === 'delete'){
         YC.app.confirm('Delete this prompt?', function(){
-          svc.remove(id); YC.toast.success('Prompt deleted.'); table.refresh(); stats();
+          YC.admin.undoableDelete(svc, id, 'prompt', function(){
+            table.refresh(); stats();
+          });
         });
       }
     },
@@ -1062,7 +1112,9 @@ function templatesPage(svc, cfg){
       else if(act === 'edit') editTemplate(row);
       else if(act === 'delete'){
         YC.app.confirm('Delete this template?', function(){
-          svc.remove(id); YC.toast.success('Template deleted.'); table.refresh(); stats();
+          YC.admin.undoableDelete(svc, id, 'template', function(){
+            table.refresh(); stats();
+          });
         });
       }
     },
@@ -1267,7 +1319,9 @@ YC.app.pages_files = function(){
       else if(act === 'edit') editFile(row);
       else if(act === 'delete'){
         YC.app.confirm('Delete file ' + row.name + '?', function(){
-          svc.remove(id); YC.toast.success('File deleted.'); table.refresh(); stats();
+          YC.admin.undoableDelete(svc, id, 'file ' + row.name, function(){
+            table.refresh(); stats();
+          });
         });
       }
     }

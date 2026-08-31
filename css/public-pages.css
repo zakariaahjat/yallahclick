@@ -216,3 +216,25 @@
   -webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);
 }
 .fav-tray .fav-chip b{color:#ffd76a;}
+
+/* ========== SEARCH HIGHLIGHT ========== */
+.hl{background:rgba(255,51,68,.18);color:var(--red);border-radius:3px;padding:0 2px;}
+
+/* ========== LIB GRID ENTRANCE (stagger reveal) ========== */
+.lib-grid .prompt-card,.lib-grid .tpl-card{
+  transition:opacity .5s var(--ease-premium), transform .5s var(--ease-premium), border-color .3s ease, box-shadow .45s var(--ease-premium);
+}
+
+/* ========== SKELETON PLACEHOLDER CARDS ========== */
+.sk-card{
+  background:var(--card-bg);
+  border:1px solid var(--card-border);
+  border-radius:var(--radius);
+  overflow:hidden;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.035), var(--shadow-card);
+  -webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);
+}
+.sk-preview{aspect-ratio:16/9;border-radius:0;}
+.sk-card .sk-body{padding:18px;display:flex;flex-direction:column;gap:12px;}
+.sk-line{height:14px;}
+.sk-line:nth-of-type(1){height:18px;}

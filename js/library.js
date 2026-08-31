@@ -32,6 +32,19 @@ YC.lib.typeChip = function(type){
   var cls = String(type || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
   return '<span class="type-chip ' + cls + '">' + YC.esc(type) + '</span>';
 };
+YC.lib.hl = function(text, q){
+  if(!text) return text;
+  var qt = String(q == null ? '' : q).trim().toLowerCase();
+  if(!qt) return text;
+  var out = '', lower = text.toLowerCase(), i = 0, idx;
+  while((idx = lower.indexOf(qt, i)) !== -1){
+    if(idx > i) out += text.slice(i, idx);
+    out += '<span class="hl">' + text.slice(idx, idx + qt.length) + '</span>';
+    i = idx + qt.length;
+  }
+  out += text.slice(i);
+  return out;
+};
 
 YC.lib.render = function(opts){
   var type = opts.type;            // 'prompts' | 'templates' | 'video' | 'thumb'
@@ -93,7 +106,7 @@ YC.lib.render = function(opts){
 
   function prevMarkup(x){
     if(x.preview){
-      return '<img src="' + YC.esc(x.preview) + '" alt="' + YC.esc(x.title) + '">';
+      return '<img loading="lazy" decoding="async" src="' + YC.esc(x.preview) + '" alt="' + YC.esc(x.title) + '">';
     }
     return '<span class="p-emoji" style="font-size:44px">' + (x.previewEmoji || '✨') + '</span>';
   }
@@ -110,8 +123,8 @@ YC.lib.render = function(opts){
           '<div class="p-meta">' +
             (x.category ? '<span class="plat-badge other" style="color:var(--gray)"><span class="pdot"></span>' + YC.esc(x.category) + '</span>' : '') +
           '</div>' +
-          '<h3 class="p-title">' + YC.esc(x.title) + '</h3>' +
-          '<p class="p-desc">' + YC.esc(x.description) + '</p>' +
+          '<h3 class="p-title">' + YC.lib.hl(YC.esc(x.title), state.q) + '</h3>' +
+          '<p class="p-desc">' + YC.lib.hl(YC.esc(x.description), state.q) + '</p>' +
           '<div class="p-tags">' + x.tags.slice(0, 3).map(function(t){ return '<span class="plat-badge" style="color:var(--gray)"><span class="pdot"></span>#' + YC.esc(t) + '</span>'; }).join('') + '</div>' +
           '<div class="p-foot">' +
             '<span class="p-views"><b>' + YC.esc(YC.abbrNum(x.views || 0)) + '</b> views</span>' +
@@ -130,8 +143,8 @@ YC.lib.render = function(opts){
         '<span class="t-play"><span>▶</span></span>' +
       '</div>' +
       '<div class="t-body">' +
-        '<h3 class="t-title">' + YC.esc(x.title) + '</h3>' +
-        '<p class="t-desc">' + YC.esc(x.description) + '</p>' +
+        '<h3 class="t-title">' + YC.lib.hl(YC.esc(x.title), state.q) + '</h3>' +
+        '<p class="t-desc">' + YC.lib.hl(YC.esc(x.description), state.q) + '</p>' +
         '<div class="t-software">' + YC.esc(x.software || '') + (x.dimensions ? ' &middot; ' + YC.esc(x.dimensions) : '') + (x.resolution ? ' &middot; ' + YC.esc(x.resolution) : '') + '</div>' +
         '<div class="t-meta">' +
           (x.platform ? '<span class="plat-badge" style="color:var(--gray)"><span class="pdot"></span>' + YC.esc(x.platform) + '</span>' : '') +
@@ -145,10 +158,38 @@ YC.lib.render = function(opts){
     '</article>';
   }
 
-  function render(){
-    var all = sortList(applySearch(applyFilter(svc.all().filter(function(x){ return x.published; }))));
-    var featured = all.filter(function(x){ return x.featured; }).slice(0, 2);
+  var firstRender = true;
 
+  function skeletonHTML(count){
+    var s = '';
+    for(var i = 0; i < count; i++){
+      s += '<div class="sk-card">' +
+        '<div class="skeleton sk-preview"></div>' +
+        '<div class="sk-body">' +
+          '<div class="skeleton sk-line" style="width:55%"></div>' +
+          '<div class="skeleton sk-line" style="width:100%"></div>' +
+          '<div class="skeleton sk-line" style="width:82%"></div>' +
+          '<div class="skeleton sk-line" style="width:40%"></div>' +
+        '</div>' +
+      '</div>';
+    }
+    return s;
+  }
+
+  function applyStagger(host){
+    if(!host) return;
+    var cards = host.querySelectorAll('.prompt-card, .tpl-card');
+    if(!cards.length) return;
+    host.classList.remove('in');
+    host.classList.add('reveal-stagger');
+    cards.forEach(function(c, i){
+      c.style.transitionDelay = Math.min(0.05 + i * 0.06, 0.3) + 's';
+    });
+    void host.offsetHeight; /* commit hidden state, then play entrance */
+    host.classList.add('in');
+  }
+
+  function renderCards(all, featured){
     var empty = '<div class="empty-state" style="padding:48px"><span class="empty-ico">' + YC.icons.get('search') + '</span><strong>No ' + (isPrompt ? 'prompts' : 'templates') + ' found.</strong></div>';
 
     if(featuredHost){
@@ -161,6 +202,9 @@ YC.lib.render = function(opts){
       host.innerHTML = rest.length ? rest.map(card).join('') : (all.length ? empty : empty);
       if(!all.length && featuredHost) featuredHost.style.display = 'none';
     }
+
+    applyStagger(featuredHost);
+    applyStagger(host);
 
     /* per-card wiring */
     var clickables = document.querySelectorAll('[data-view]');
@@ -200,6 +244,28 @@ YC.lib.render = function(opts){
     });
   }
 
+  function render(){
+    var all = sortList(applySearch(applyFilter(svc.all().filter(function(x){ return x.published; }))));
+    var featured = all.filter(function(x){ return x.featured; }).slice(0, 2);
+    var rest = all.filter(function(x){ return featured.indexOf(x) === -1; });
+
+    /* skeleton flash */
+    if(featuredHost){
+      featuredHost.classList.toggle('lib-grid', !!featured.length);
+      featuredHost.style.display = featured.length ? '' : 'none';
+      featuredHost.innerHTML = featured.length ? skeletonHTML(featured.length) : '';
+    }
+    if(host){
+      host.innerHTML = rest.length ? skeletonHTML(rest.length) : '';
+      if(!all.length && featuredHost) featuredHost.style.display = 'none';
+    }
+
+    setTimeout(function(){
+      renderCards(all, featured);
+    }, firstRender ? 300 : 150);
+    firstRender = false;
+  }
+
   function detail(x){
     if(!x) return;
     svc.incrementViews(x.id);
@@ -223,7 +289,7 @@ YC.lib.render = function(opts){
       hero = '<span class="d-emoji">' + (x.previewEmoji || '✨') + '</span>';
     }
     var gallery = (x.gallery && x.gallery.length) ? '<div class="gallery-strip">' + x.gallery.map(function(g){
-      return '<img src="' + YC.esc(g) + '" alt="" data-gtab>';
+      return '<img loading="lazy" decoding="async" src="' + YC.esc(g) + '" alt="" data-gtab>';
     }).join('') + '</div>' : '';
 
     var body =

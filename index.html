@@ -268,6 +268,17 @@
 
   /* ========== HERO ========== */
   .hero{padding:180px 0 90px;position:relative;}
+  .hero .aurora{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:0;}
+  .hero .aurora .blob{position:absolute;border-radius:50%;filter:blur(60px);opacity:.5;mix-blend-mode:screen;}
+  [data-theme="light"] .hero .aurora .blob{mix-blend-mode:multiply;opacity:.22;}
+  .hero .aurora .blob.b1{width:520px;height:520px;top:-120px;left:-80px;background:radial-gradient(circle,var(--red-glow) 0%,transparent 70%);animation:auroraFloat 22s ease-in-out infinite;}
+  .hero .aurora .blob.b2{width:460px;height:460px;bottom:-140px;right:-100px;background:radial-gradient(circle,#ff8a74 0%,transparent 70%);animation:auroraFloat 26s ease-in-out infinite reverse;}
+  .hero .aurora .blob.b3{width:380px;height:380px;top:38%;left:52%;background:radial-gradient(circle,#6a2cff 0%,transparent 72%);animation:auroraFloat 30s ease-in-out infinite;}
+  @keyframes auroraFloat{
+    0%,100%{transform:translate3d(0,0,0) scale(1);}
+    33%{transform:translate3d(4%,-6%,0) scale(1.12);}
+    66%{transform:translate3d(-5%,5%,0) scale(.94);}
+  }
   .hero::after{
     content:"";
     position:absolute;top:0;right:-10%;
@@ -331,6 +342,18 @@
     font-family:'Inter',sans-serif;
   }
   .btn-ghost:hover{border-color:var(--red);background:rgba(228,33,44,0.06);transform:translateY(-2px);}
+
+  /* magnetic tilt buttons: light sheen */
+  .magnetic{position:relative;overflow:hidden;transform-style:preserve-3d;will-change:transform;}
+  .magnetic::after{
+    content:"";position:absolute;top:0;left:0;width:100%;height:100%;
+    background:linear-gradient(100deg,transparent 20%,rgba(255,255,255,.35) var(--sx,50%),transparent calc(var(--sx,50%) + 25%));
+    mix-blend-mode:overlay;opacity:0;transition:opacity .25s;pointer-events:none;
+  }
+  .magnetic:hover::after{opacity:1;}
+  @media (prefers-reduced-motion: reduce){
+    .magnetic::after{display:none;}
+  }
 
   .btn-ghost .play-ico{
     width:20px;height:20px;border-radius:50%;
@@ -497,6 +520,28 @@
     transition:transform .3s cubic-bezier(.16,.8,.3,1), border-color .3s, box-shadow .3s, background var(--transition-speed) ease;
   }
   .work-card:hover{transform:translateY(-6px);border-color:rgba(228,33,44,0.4);box-shadow:0 20px 50px -15px rgba(228,33,44,0.12);}
+
+  /* case-study overlay on hover */
+  .work-card{position:relative;}
+  .case-overlay{
+    position:absolute;inset:auto 0 0 0;z-index:3;
+    display:flex;align-items:flex-end;
+    padding:56px 20px 18px;
+    background:linear-gradient(180deg,transparent,rgba(0,0,0,.78) 70%);
+    opacity:0;visibility:hidden;
+    transform:translateY(12px);
+    transition:opacity .4s var(--ease-premium),visibility .4s,transform .4s var(--ease-premium);
+  }
+  .work-card:hover .case-overlay{opacity:1;visibility:visible;transform:translateY(0);}
+  .case-inner{display:flex;flex-direction:column;gap:6px;width:100%;}
+  .case-lab{
+    font:700 9px/1 'JetBrains Mono',monospace;letter-spacing:.14em;text-transform:uppercase;color:var(--gray);
+  }
+  .case-cta{
+    font:800 13px/1.2 'Inter',sans-serif;color:#fff;letter-spacing:.02em;
+    display:inline-flex;align-items:center;gap:8px;
+  }
+  .case-cta::after{content:"↗";font-size:14px;color:var(--red);transform:translateY(-1px);}
   .work-thumb{
     aspect-ratio:16/10;
     position:relative;
@@ -826,6 +871,41 @@
   }
   [data-theme="light"] .cursor-dot{mix-blend-mode:multiply;}
   body:hover .cursor-dot{opacity:0.6;}
+
+  /* ========== CHARACTER-SPLIT HEADING REVEAL ========== */
+  .char-split .cs{
+    display:inline-block;white-space:pre;
+    opacity:0;transform:translateY(0.6em) rotate(3deg);
+    animation:csIn .6s var(--ease-premium) forwards;
+    animation-delay:var(--d,0s);
+  }
+  @keyframes csIn{to{opacity:1;transform:translateY(0) rotate(0);}}
+  @media (prefers-reduced-motion: reduce){
+    .char-split .cs{opacity:1;transform:none;animation:none;}
+  }
+
+  /* ========== ANIMATED THEME SWITCH BLOOM ========== */
+  .theme-flash{
+    position:fixed;z-index:10000;pointer-events:none;
+    left:50%;top:50%;width:12px;height:12px;border-radius:50%;
+    transform:translate(-50%,-50%);
+    background:radial-gradient(circle,var(--red) 0%,transparent 60%);
+    opacity:0;
+  }
+  .theme-flash.on{
+    opacity:.5;
+    animation:themeBloom .7s var(--ease-premium) forwards;
+  }
+  @keyframes themeBloom{
+    0%{width:12px;height:12px;opacity:.55;}
+    100%{width:180vmax;height:180vmax;opacity:0;}
+  }
+
+  /* ========== DIRECTOR'S CUT EASTER EGG ========== */
+  body.directors-cut .logo-status::after{
+    content:"Director's Cut";margin-left:8px;
+    font:800 8px/1 'JetBrains Mono',monospace;letter-spacing:.1em;color:var(--red);
+  }
 
   /* ========== PARALLAX ========== */
   .parallax-wrap{overflow:hidden;}
@@ -1973,6 +2053,7 @@
 
 <!-- HERO -->
 <section class="hero">
+  <div class="aurora" aria-hidden="true"><span class="blob b1"></span><span class="blob b2"></span><span class="blob b3"></span></div>
   <div class="spotlight" id="heroSpotlight"></div>
   <!-- Decorative shapes -->
   <div class="deco-shape circle-red float-slow" style="width:180px;height:180px;top:80px;right:12%;"></div>
@@ -2092,7 +2173,7 @@
     <div class="section-head reveal">
       <div>
         <div class="eyebrow">Featured Work</div>
-        <h2 class="section-title display">Explore the Cut</h2>
+        <h2 class="section-title display char-split">Explore the Cut</h2>
         <p class="section-desc">Explore my video editing work and projects, from long-form documentaries to high-retention shorts.</p>
       </div>
       <div class="filters">
@@ -2240,7 +2321,7 @@
     <div class="section-head reveal">
       <div>
         <div class="eyebrow">Before &amp; After</div>
-        <h2 class="section-title display">See The Transformation</h2>
+        <h2 class="section-title display char-split">See The Transformation</h2>
         <p class="section-desc">Drag the interactive slider on each card to compare the raw footage on the left with the final polished edit on the right.</p>
       </div>
     </div>
@@ -2396,7 +2477,7 @@
     <div class="section-head reveal">
       <div>
         <div class="eyebrow">Behind The Scenes</div>
-        <h2 class="section-title display">Inside The Edit Suite</h2>
+        <h2 class="section-title display char-split">Inside The Edit Suite</h2>
         <p class="section-desc">A peek at the workspace, tools, and creative process behind every project.</p>
       </div>
     </div>
@@ -2964,7 +3045,7 @@
     <div class="section-head reveal">
       <div>
         <div class="eyebrow">Tech Stack</div>
-        <h2 class="section-title display">Tools Of The Trade</h2>
+        <h2 class="section-title display char-split">Tools Of The Trade</h2>
         <p class="section-desc">Industry-standard software and hardware powering every project.</p>
       </div>
     </div>
@@ -3021,7 +3102,7 @@
     <div class="section-head reveal">
       <div>
         <div class="eyebrow">Simple Workflow</div>
-        <h2 class="section-title display">Easy 4-Step Process</h2>
+        <h2 class="section-title display char-split">Easy 4-Step Process</h2>
         <p class="section-desc">I respect your time. No complicated onboarding, no endless email threads. Just a streamlined, highly efficient workflow.</p>
       </div>
     </div>
@@ -3091,7 +3172,7 @@
     <div class="section-head reveal">
       <div>
         <div class="eyebrow">Verified Social Proof</div>
-        <h2 class="section-title display">What My Clients Say</h2>
+        <h2 class="section-title display char-split">What My Clients Say</h2>
         <p class="section-desc">Don't just take my word for it. Here's what successful creators and brand founders experience when we partner together.</p>
       </div>
     </div>
@@ -3165,7 +3246,7 @@
 <section id="faq">
   <div class="wrap">
     <div class="eyebrow">Got Questions?</div>
-    <h2 class="section-title display">Frequently Asked Questions</h2>
+    <h2 class="section-title display char-split">Frequently Asked Questions</h2>
     <p class="section-desc" style="margin-bottom:56px;">Everything you need to know about the service, pricing, and our collaboration.</p>
 
     <div class="faq-list reveal-stagger">
@@ -3201,7 +3282,7 @@
     <div class="cta-grid reveal-stagger">
       <div>
         <div class="eyebrow">Ready to Level Up?</div>
-        <h2 class="section-title display">Let's Build Your Visual Empire Together.</h2>
+        <h2 class="section-title display char-split">Let's Build Your Visual Empire Together.</h2>
         <p class="section-desc">Book a free 15-minute discovery call to discuss your creative vision, monthly editing packages, and custom workflows.</p>
         <ul class="cta-perks">
           <li>No Lock-in Contracts</li>
@@ -3352,6 +3433,7 @@
 
 <!-- CURSOR TRAIL -->
 <div class="cursor-dot" id="cursorDot"></div>
+<div class="theme-flash" id="themeFlash" aria-hidden="true"></div>
 
 <script>
   // ========== PAGE LOADER (once per session, not on refresh) ==========
@@ -3629,6 +3711,68 @@
   }, {threshold: 0.15, rootMargin: '0px 0px -60px 0px'});
   revealTargets.forEach(t => revealObserver.observe(t));
 
+  // ========== CHARACTER-SPLIT HEADING REVEAL (desktop, reduced-motion aware) ==========
+  (function(){
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if(reduced || !window.IntersectionObserver) return;
+    const els = document.querySelectorAll('.char-split');
+    if(!els.length) return;
+    els.forEach(h => {
+      const text = h.textContent;
+      if(!text) return;
+      h.setAttribute('aria-label', text);
+      h.innerHTML = text.split('').map((ch, i) => {
+        const clean = ch === ' ' ? '\u00A0' : ch;
+        return '<span class="cs" style="--d:' + (i * 0.02) + 's">' + clean + '</span>';
+      }).join('');
+      const spans = h.querySelectorAll('.cs');
+      const io = new IntersectionObserver((entries) => {
+        entries.forEach(en => {
+          if(en.isIntersecting){
+            spans.forEach(s => s.classList.add('in'));
+            io.unobserve(h);
+          }
+        });
+      }, { threshold: 0.4 });
+      io.observe(h);
+    });
+  })();
+
+  // ========== CONFETTI EASTER EGG + DIRECTOR'S CUT ==========
+  (function(){
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if(reduced) return;
+    const konami = ['ArrowUp','ArrowUp','ArrowDown','ArrowDown','ArrowLeft','ArrowRight','ArrowLeft','ArrowRight','b','a'];
+    let pos = 0;
+    document.addEventListener('keydown', (e) => {
+      const key = e.key.length === 1 ? e.key.toLowerCase() : e.key;
+      pos = (key === konami[pos]) ? pos + 1 : (key === konami[0] ? 1 : 0);
+      if(pos === konami.length){
+        pos = 0;
+        if(window.YC && YC.confetti) YC.confetti.burst({ x: window.innerWidth / 2, y: 40, count: 160 });
+        if(window.YC && YC.toast) YC.toast.success('Director\u2019s Cut mode unlocked \u2728');
+        document.body.classList.add('directors-cut');
+      }
+    });
+  })();
+
+  // ========== ANIMATED THEME SWITCH (color bloom) ==========
+  (function(){
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if(reduced) return;
+    const meta = document.getElementById('themeFlash');
+    const htmlEl = document.documentElement;
+    document.addEventListener('click', (e) => {
+      if(e.target.closest('.theme-toggle')){
+        if(meta){
+          meta.classList.remove('on');
+          void meta.offsetWidth;
+          meta.classList.add('on');
+        }
+      }
+    });
+  })();
+
   // ========== COUNT-UP STATS (spring physics) ==========
   const counters = document.querySelectorAll('.count');
   const countObserver = new IntersectionObserver((entries) => {
@@ -3744,17 +3888,23 @@
     });
   }
 
-  // ========== MAGNETIC CURSOR ON BUTTONS ==========
-  if(window.matchMedia('(hover:hover)').matches){
+  // ========== MAGNETIC CURSOR ON BUTTONS (pull + tilt + sheen) ==========
+  if(window.matchMedia('(hover:hover)').matches && !window.matchMedia('(prefers-reduced-motion: reduce)').matches){
     document.querySelectorAll('.magnetic').forEach(btn => {
       btn.addEventListener('mousemove', function(e){
         const rect = this.getBoundingClientRect();
-        const x = e.clientX - rect.left - rect.width / 2;
-        const y = e.clientY - rect.top - rect.height / 2;
-        this.style.transform = 'translate(' + (x * 0.2) + 'px,' + (y * 0.2) + 'px)';
+        const px = e.clientX - rect.left - rect.width / 2;
+        const py = e.clientY - rect.top - rect.height / 2;
+        const tx = px * 0.25, ty = py * 0.25;
+        const rotY = (px / rect.width) * 8;
+        const rotX = (py / rect.height) * -8;
+        const sheenPct = ((e.clientX - rect.left) / rect.width) * 100;
+        this.style.transform = 'translate(' + tx + 'px,' + ty + 'px) perspective(600px) rotateX(' + rotX + 'deg) rotateY(' + rotY + 'deg)';
+        this.style.setProperty('--sx', sheenPct + '%');
       });
       btn.addEventListener('mouseleave', function(){
         this.style.transform = '';
+        this.style.setProperty('--sx', '50%');
       });
     });
   }
@@ -3963,6 +4113,15 @@
   }
   window.addEventListener('scroll', updateParallax, {passive:true});
 
+  // rAF-throttle the raw parallax scroll handler
+  let paraTicking = false;
+  window.addEventListener('scroll', () => {
+    if(!paraTicking){
+      requestAnimationFrame(() => { updateParallax(); paraTicking = false; });
+      paraTicking = true;
+    }
+  }, {passive:true});
+
   // ========== BEFORE / AFTER SLIDER LOGIC ==========
   document.querySelectorAll('.comparison-container').forEach(container => {
     const range = container.querySelector('.comparison-range');
@@ -3970,8 +4129,51 @@
       range.addEventListener('input', (e) => {
         container.style.setProperty('--position', `${e.target.value}%`);
       });
+
+      // idle auto-sweep when the slider enters view (pause on hover/drag)
+      const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if(!reduced){
+        let sweep = null, sweeping = false, dir = 1, hold = 0;
+        function startSweep(){
+          if(sweeping || !range) return;
+          sweeping = true;
+          sweep = setInterval(() => {
+            if(container.matches(':hover')) return;
+            hold += dir * 1.4;
+            if(hold > 78){ hold = 78; dir = -1; }
+            else if(hold < 20){ hold = 20; dir = 1; }
+            range.value = hold;
+            container.style.setProperty('--position', hold + '%');
+          }, 50);
+        }
+        const io = new IntersectionObserver((entries) => {
+          entries.forEach(en => {
+            if(en.isIntersecting && !sweep) startSweep();
+          });
+        }, { threshold: 0.4 });
+        io.observe(container);
+        container.addEventListener('mouseenter', () => { if(sweep){ clearInterval(sweep); sweep = null; sweeping = false; } });
+        container.addEventListener('mouseleave', () => { if(!sweep) startSweep(); });
+      }
     }
   });
+
+  // ========== WORK-CARD CASE-STUDY OVERLAY ==========
+  if(window.matchMedia('(hover:hover)').matches){
+    document.querySelectorAll('.work-card').forEach(card => {
+      if(card.querySelector('.case-overlay')) return;
+      const meta = card.querySelector('.work-foot');
+      if(!meta) return;
+      const ov = document.createElement('div');
+      ov.className = 'case-overlay';
+      ov.innerHTML =
+        '<div class="case-inner">' +
+          '<span class="case-lab">Case detail</span>' +
+          '<span class="case-cta">View case study &rarr;</span>' +
+        '</div>';
+      card.appendChild(ov);
+    });
+  }
 </script>
 
 <!-- ========== YALLAHCLICK EXTENSION: promo popups + ?svc= deep links ========== -->

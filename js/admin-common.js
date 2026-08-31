@@ -155,18 +155,44 @@ YC.admin.initDrawer = function(){
   var sidebar = document.getElementById('adminSidebar');
   var closeBtn = document.querySelector('.sidebar-close');
   var scrim = document.getElementById('adminScrim');
+  var lastFocus = null;
 
+  function isOpen(){
+    return !!sidebar && sidebar.classList.contains('open');
+  }
   function open(){
+    if(!sidebar || isOpen()) return;
+    lastFocus = document.activeElement;
     sidebar.classList.add('open');
     if(scrim) scrim.classList.add('open');
+    if(burger) burger.setAttribute('aria-expanded', 'true');
+    sidebar.setAttribute('aria-hidden', 'false');
+    var first = sidebar.querySelector('a, button, [tabindex]:not([tabindex="-1"])');
+    if(first) setTimeout(function(){ first.focus(); }, 40);
   }
   function close(){
+    if(!sidebar || !isOpen()) return;
     sidebar.classList.remove('open');
     if(scrim) scrim.classList.remove('open');
+    if(burger) burger.setAttribute('aria-expanded', 'false');
+    sidebar.setAttribute('aria-hidden', 'true');
+    if(burger){
+      if(lastFocus && lastFocus.focus){ lastFocus.focus(); }
+      else { burger.focus(); }
+    }
+    lastFocus = null;
   }
-  if(burger) burger.addEventListener('click', open);
+  if(burger){
+    burger.setAttribute('aria-controls', 'adminSidebar');
+    burger.setAttribute('aria-expanded', 'false');
+    burger.addEventListener('click', function(){ if(!isOpen()) open(); });
+  }
+  if(sidebar) sidebar.setAttribute('aria-hidden', 'true');
   if(closeBtn) closeBtn.addEventListener('click', close);
   if(scrim) scrim.addEventListener('click', close);
+  document.addEventListener('keydown', function(e){
+    if(e.key === 'Escape' && isOpen()) close();
+  });
 };
 
 /* ---------- topbar ---------- */
@@ -187,6 +213,180 @@ YC.admin.buildTopbar = function(opts){
   }
 };
 
+/* ---------- undo / redo stack (in-memory) ---------- */
+YC.undoStack = (function(){
+  var undoStack = [];
+  var redoStack = [];
+  var MAX = 100;
+
+  function push(undoFn, label, redoFn){
+    undoStack.push({ undo: undoFn, label: label || 'Action', redo: redoFn || null });
+    redoStack = [];
+    if(undoStack.length > MAX) undoStack.shift();
+  }
+
+  function undo(){
+    if(!undoStack.length){
+      YC.toast.info('Nothing to undo.');
+      return false;
+    }
+    var entry = undoStack.pop();
+    try{ entry.undo(); }
+    catch(e){ if(window.console) console.error('Undo failed:', e); }
+    if(entry.redo) redoStack.push(entry);
+    try{ YC.toast.success('Undid: ' + entry.label); }catch(e){}
+    return true;
+  }
+
+  function redo(){
+    if(!redoStack.length){
+      YC.toast.info('Nothing to redo.');
+      return false;
+    }
+    var entry = redoStack.pop();
+    try{ entry.redo(); }
+    catch(e){ if(window.console) console.error('Redo failed:', e); }
+    undoStack.push(entry);
+    try{ YC.toast.success('Redid: ' + entry.label); }catch(e){}
+    return true;
+  }
+
+  /* Ctrl+Z / Ctrl+Shift+Z / Ctrl+Y keyboard handler for the admin shell. */
+  function bind(){
+    document.addEventListener('keydown', function(e){
+      if(!(e.ctrlKey || e.metaKey) || e.altKey) return;
+      var k = String(e.key || '').toLowerCase();
+      if(e.shiftKey && k === 'z'){ e.preventDefault(); redo(); }
+      else if(k === 'z'){ e.preventDefault(); undo(); }
+      else if(k === 'y'){ e.preventDefault(); redo(); }
+    });
+  }
+
+  return { push: push, undo: undo, redo: redo, bind: bind };
+})();
+YC.adminHistory = YC.undoStack;
+
+/* ---------- toast with inline action buttons (does NOT modify YC.toast) ---------- */
+YC.admin.actionToast = function(msg, actions){
+  var box = document.getElementById('toastContainer');
+  if(!box){
+    box = document.createElement('div');
+    box.className = 'toast-container';
+    box.id = 'toastContainer';
+    document.body.appendChild(box);
+  }
+  actions = actions || [];
+  var buttons = actions.map(function(a){
+    return '<button type="button" class="toast-action">' + YC.esc(a.label) + '</button>';
+  }).join('');
+  var t = document.createElement('div');
+  t.className = 'toast';
+  t.innerHTML = '<span>' + YC.esc(msg) + '</span>' + buttons;
+  box.appendChild(t);
+  requestAnimationFrame(function(){ t.classList.add('show'); });
+
+  function dismiss(){
+    t.classList.add('hide');
+    setTimeout(function(){ t.remove(); }, 400);
+  }
+  actions.forEach(function(a, i){
+    var btn = t.querySelectorAll('.toast-action')[i];
+    if(btn) btn.addEventListener('click', function(){
+      dismiss();
+      if(a.onClick) a.onClick();
+    });
+  });
+  return { dismiss: dismiss, el: t };
+};
+
+/* Restore a deleted record back into a service without ever throwing.
+   Prefers an `add` method when present; otherwise re-inserts the item
+   directly, falling back to `create` only if that too fails. */
+function YCAdminRestore(svc, item){
+  if(svc && item){
+    if(typeof svc.add === 'function'){
+      try{ svc.add(item); return; }catch(e){}
+    }
+    try{
+      var list = svc.all();
+      var exists = list.some(function(r){ return String(r.id) === String(item.id); });
+      if(!exists){
+        list.unshift(item);
+        if(typeof svc.save === 'function') svc.save(list);
+      }
+      return;
+    }catch(e){}
+    if(typeof svc.create === 'function'){
+      try{ svc.create(item); return; }catch(e2){}
+    }
+  }
+}
+
+/* Deferred delete with an inline "Undo" button in the toast.
+   The removal is delayed ~5s; pressing Undo cancels it. After a
+   successful removal the record is pushed onto the undo stack so
+   Ctrl+Z can also restore it. Fires `onDone` once removed. */
+YC.admin.undoableDelete = function(svc, id, label, onDone){
+  var snapshot = null;
+  try{
+    var item = (svc && svc.getById) ? svc.getById(id) : null;
+    if(item) snapshot = JSON.parse(JSON.stringify(item));
+  }catch(e){ snapshot = null; }
+
+  var cancelled = false;
+  var removed = false;
+  var toast = YC.admin.actionToast('Deleting ' + (label || id) + '\u2026', [
+    { label: 'Undo', onClick: function(){
+        cancelled = true;
+        YC.toast.info((label || id) + ' was kept.');
+      } }
+  ]);
+
+  setTimeout(function(){
+    if(cancelled) return;
+    try{ svc.remove(id); removed = true; }catch(e){ if(window.console) console.error(e); }
+    if(toast && toast.dismiss) toast.dismiss();
+    YC.toast.success('Deleted ' + (label || id) + '.');
+    if(removed && snapshot){
+      YC.undoStack.push(function(){
+        YCAdminRestore(svc, snapshot);
+      }, 'Delete ' + (label || id));
+    }
+    if(onDone) onDone();
+  }, 5000);
+};
+
+/* ---------- CSV export for tables ---------- */
+YC.exportCSV = function(filename, rows, columns){
+  var safe = function(v){
+    var s = String(v == null ? '' : v);
+    if(/[",\n]/.test(s)) s = '"' + s.replace(/"/g, '""') + '"';
+    return s;
+  };
+  var lines = [];
+  lines.push(columns.map(function(c){ return safe(c.title != null ? c.title : c); }).join(','));
+  rows.forEach(function(r){
+    lines.push(columns.map(function(c){
+      var key = c.key != null ? c.key : c;
+      var val = r[key] != null ? r[key] : '';
+      if(typeof c.render === 'function'){
+        val = c.render(r) || '';
+        val = String(val).replace(/<[^>]*>/g, '').replace(/&nbsp;/g, ' ').replace(/&middot;/g, '·');
+      }
+      return safe(val);
+    }).join(','));
+  });
+  var csv = '\uFEFF' + lines.join('\r\n');
+  var blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  setTimeout(function(){ URL.revokeObjectURL(a.href); }, 1000);
+};
+
 /* ---------- boot ---------- */
 YC.admin.boot = function(opts){
   opts = opts || {};
@@ -199,4 +399,5 @@ YC.admin.boot = function(opts){
   YC.admin.buildSidebar();
   YC.admin.initDrawer();
   YC.admin.buildTopbar(opts);
+  YC.undoStack.bind();
 };
