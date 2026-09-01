@@ -85,9 +85,9 @@
   .admin-shell.collapsed .admin-nav{padding:14px 10px;scrollbar-width:none;-ms-overflow-style:none;}
   .admin-shell.collapsed .admin-nav::-webkit-scrollbar{display:none;}
 
-  /* nav items → icon-only, centered */
+  /* nav items → icon-only, centered in one column */
   .admin-shell.collapsed .admin-nav a.nav-item{justify-content:center;gap:0;padding:10px 0;}
-  .admin-shell.collapsed .admin-nav a.nav-item > span:not(.ic){width:0;opacity:0;overflow:hidden;flex:none;}
+  .admin-shell.collapsed .admin-nav a.nav-item > span:not(.ic){width:0;opacity:0;overflow:hidden;flex:none;margin-left:0;}
   .admin-shell.collapsed .admin-nav a.nav-item .ic{display:inline-flex;}
   .admin-shell.collapsed .admin-nav a.nav-item .ic svg{width:18px;height:18px;}
   .admin-shell.collapsed .admin-nav a.nav-item.logout{border-top:none;padding-top:10px;}
