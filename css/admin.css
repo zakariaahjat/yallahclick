@@ -68,7 +68,7 @@
 .admin-sidebar .sidebar-close{display:none;position:absolute;top:16px;right:14px;}
 
 /* ========== COLLAPSED SIDEBAR (desktop-only) ========== */
-@media (min-width: 901px){
+@media (min-width: 1081px){
   .admin-shell.collapsed{grid-template-columns:78px 1fr;}
   .admin-shell.collapsed .admin-sidebar{overflow:hidden;}
 
@@ -82,11 +82,13 @@
     padding:0;margin:14px 10px 12px;height:1px;
     background:var(--line);font-size:0;line-height:0;color:transparent;overflow:hidden;
   }
-  .admin-shell.collapsed .admin-nav{padding:14px 10px;}
+  .admin-shell.collapsed .admin-nav{padding:14px 10px;scrollbar-width:none;-ms-overflow-style:none;}
+  .admin-shell.collapsed .admin-nav::-webkit-scrollbar{display:none;}
 
   /* nav items → icon-only, centered */
   .admin-shell.collapsed .admin-nav a.nav-item{justify-content:center;gap:0;padding:10px 0;}
   .admin-shell.collapsed .admin-nav a.nav-item > span:not(.ic){width:0;opacity:0;overflow:hidden;flex:none;}
+  .admin-shell.collapsed .admin-nav a.nav-item .ic{display:inline-flex;}
   .admin-shell.collapsed .admin-nav a.nav-item .ic svg{width:18px;height:18px;}
   .admin-shell.collapsed .admin-nav a.nav-item.logout{border-top:none;padding-top:10px;}
 
@@ -107,6 +109,10 @@
   backdrop-filter:blur(20px) saturate(150%);
 }
 .admin-topbar .burger-admin{display:flex;}
+.admin-topbar .burger-admin .chev-expand{display:none;}
+.admin-topbar .burger-admin svg{transition:transform .3s cubic-bezier(.4,0,.2,1);}
+.admin-shell.collapsed .admin-topbar .burger-admin .chev-collapse{display:none;}
+.admin-shell.collapsed .admin-topbar .burger-admin .chev-expand{display:inline-block;}
 .admin-topbar h1{font-size:18px;font-weight:800;display:flex;align-items:center;gap:10px;}
 .admin-topbar h1 .crumb{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--gray);font-weight:500;}
 .admin-topbar h1 .crumb b{color:var(--red);}
@@ -516,6 +522,8 @@
   .admin-sidebar.open{transform:translateX(0);}
   .admin-sidebar .sidebar-close{display:flex;}
   .admin-topbar .burger-admin{display:flex;}
+  .admin-topbar .burger-admin .chev-collapse{display:none;}
+  .admin-topbar .burger-admin .chev-expand{display:inline-block;}
   .admin-content{padding:20px;}
 }
 @media (max-width:640px){

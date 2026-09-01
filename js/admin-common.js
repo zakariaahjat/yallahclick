@@ -158,7 +158,7 @@ YC.admin.initDrawer = function(){
   var scrim = document.getElementById('adminScrim');
   var lastFocus = null;
   var STORE = 'yc:sidebar-collapsed';
-  var mq = window.matchMedia ? window.matchMedia('(min-width: 901px)') : { matches: true };
+  var mq = window.matchMedia ? window.matchMedia('(min-width: 1081px)') : { matches: true };
 
   function isOpen(){
     return !!sidebar && sidebar.classList.contains('open');
@@ -170,6 +170,10 @@ YC.admin.initDrawer = function(){
     if(!shell) return;
     shell.classList.toggle('collapsed', !!on);
     try{ localStorage.setItem(STORE, on ? '1' : '0'); }catch(e){}
+    if(burger){
+      burger.setAttribute('aria-label', on ? 'Expand sidebar' : 'Collapse sidebar');
+      burger.setAttribute('aria-expanded', on ? 'false' : 'true');
+    }
   }
   try{
     if(localStorage.getItem(STORE) === '1' && mq.matches) applyCollapsed(true);
@@ -179,7 +183,7 @@ YC.admin.initDrawer = function(){
     lastFocus = document.activeElement;
     sidebar.classList.add('open');
     if(scrim) scrim.classList.add('open');
-    if(burger) burger.setAttribute('aria-expanded', 'true');
+    if(burger){ burger.setAttribute('aria-expanded', 'true'); burger.setAttribute('aria-label', 'Close menu'); }
     sidebar.setAttribute('aria-hidden', 'false');
     var first = sidebar.querySelector('a, button, [tabindex]:not([tabindex="-1"])');
     if(first) setTimeout(function(){ first.focus(); }, 40);
@@ -188,7 +192,7 @@ YC.admin.initDrawer = function(){
     if(!sidebar || !isOpen()) return;
     sidebar.classList.remove('open');
     if(scrim) scrim.classList.remove('open');
-    if(burger) burger.setAttribute('aria-expanded', 'false');
+    if(burger){ burger.setAttribute('aria-expanded', 'false'); burger.setAttribute('aria-label', 'Open menu'); }
     sidebar.setAttribute('aria-hidden', 'true');
     if(burger){
       if(lastFocus && lastFocus.focus){ lastFocus.focus(); }
@@ -198,7 +202,8 @@ YC.admin.initDrawer = function(){
   }
   if(burger){
     burger.setAttribute('aria-controls', 'adminSidebar');
-    burger.setAttribute('aria-expanded', 'false');
+    burger.setAttribute('aria-expanded', mq.matches ? 'true' : 'false');
+    if(!mq.matches) burger.setAttribute('aria-label', 'Open menu');
     burger.addEventListener('click', function(){
       if(mq.matches){
         applyCollapsed(!isCollapsed());
