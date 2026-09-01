@@ -308,6 +308,8 @@ YC.app.Table = function(cfg){
     }
   }
 
+  render();
+
   return {
     refresh: render,
     setQ: function(q){ state.q = q; state.page = 1; render(); },
