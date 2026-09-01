@@ -413,6 +413,39 @@ YC.exportCSV = function(filename, rows, columns){
   setTimeout(function(){ URL.revokeObjectURL(a.href); }, 1000);
 };
 
+/* ---------- page transitions ---------- */
+YC.admin.initPageFx = function(){
+  var overlay = document.createElement('div');
+  overlay.id = 'pgFx';
+  document.body.appendChild(overlay);
+
+  document.body.classList.add('is-boot');
+  requestAnimationFrame(function(){
+    document.body.classList.add('is-ready');
+  });
+
+  var leaving = false;
+  document.addEventListener('click', function(e){
+    if(leaving) return;
+    var t = e.target;
+    var a = t && t.closest ? t.closest('a[href]') : null;
+    if(!a) return;
+    var href = a.getAttribute('href') || '';
+    if(!href || href.charAt(0) === '#' || href.indexOf('javascript:') === 0) return;
+    if(a.getAttribute('download') != null) return;
+    if(a.target && a.target !== '_self') return;
+    if(a.hasAttribute('data-no-fx')) return;
+    try{
+      if(new URL(href, location.href).origin !== location.origin) return;
+    }catch(err){ return; }
+    if(e.defaultPrevented) return;
+    e.preventDefault();
+    leaving = true;
+    document.body.classList.add('pg-leave');
+    setTimeout(function(){ location.href = href; }, 240);
+  });
+};
+
 /* ---------- boot ---------- */
 YC.admin.boot = function(opts){
   opts = opts || {};
@@ -425,5 +458,6 @@ YC.admin.boot = function(opts){
   YC.admin.buildSidebar();
   YC.admin.initDrawer();
   YC.admin.buildTopbar(opts);
+  YC.admin.initPageFx();
   YC.undoStack.bind();
 };
