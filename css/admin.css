@@ -5,48 +5,59 @@
 
 /* ========== SHELL ========== */
 .admin-body{min-height:100vh;}
-.admin-shell{display:grid;grid-template-columns:256px 1fr;min-height:100vh;transition:grid-template-columns .38s cubic-bezier(.4,0,.2,1);}
+.admin-shell{display:grid;grid-template-columns:282px 1fr;min-height:100vh;transition:grid-template-columns .38s cubic-bezier(.4,0,.2,1);}
 .admin-main{display:flex;flex-direction:column;min-width:0;}
 
 /* ========== SIDEBAR ========== */
 .admin-sidebar{
   position:sticky;top:0;height:100vh;
-  background:linear-gradient(180deg,rgba(255,255,255,.03),rgba(255,255,255,0) 24%),var(--sidebar-bg);
+  background:
+    radial-gradient(120% 60% at 0% 0%,rgba(255,51,68,.06),rgba(255,51,68,0) 55%),
+    linear-gradient(180deg,rgba(255,255,255,.045),rgba(255,255,255,0) 26%),var(--sidebar-bg);
   border-right:1px solid var(--line);
   -webkit-backdrop-filter:blur(20px) saturate(150%);
   backdrop-filter:blur(20px) saturate(150%);
   display:flex;flex-direction:column;z-index:100;
 }
-.admin-brand{
-  display:flex;align-items:center;gap:10px;
-  padding:20px 20px 16px;border-bottom:1px solid var(--line);
-  min-height:74px;overflow:hidden;
+.admin-sidebar::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,rgba(255,51,68,.55),rgba(255,255,255,.06) 30%,transparent);
 }
-.admin-brand img{width:120px;height:56px;object-fit:contain;display:block;min-width:0;transition:width .3s cubic-bezier(.4,0,.2,1),opacity .25s;}
+.admin-brand{
+  display:flex;align-items:center;gap:12px;
+  padding:22px 22px 18px;border-bottom:1px solid var(--line);
+  min-height:84px;overflow:hidden;
+}
+.admin-brand img{width:148px;height:62px;object-fit:contain;display:block;min-width:0;
+  filter:drop-shadow(0 2px 6px rgba(0,0,0,.25));
+  transition:width .32s cubic-bezier(.4,0,.2,1),opacity .25s,filter .25s;}
 .admin-brand .logo-dark{display:none;}
-[data-theme="light"] .admin-brand .logo-dark{display:block;}
+[data-theme="light"] .admin-brand .logo-dark{display:block;filter:drop-shadow(0 2px 5px rgba(0,0,0,.14));}
 [data-theme="light"] .admin-brand .logo-light{display:none;}
 .admin-brand .brand-mark{
-  display:block;width:0;height:34px;flex:none;opacity:0;overflow:hidden;
-  transform:scale(.4);filter:drop-shadow(0 6px 16px rgba(255,51,68,.35));
+  display:block;width:0;height:36px;flex:none;opacity:0;overflow:hidden;
+  transform:scale(.4);filter:drop-shadow(0 6px 18px rgba(255,51,68,.4));
   transition:width .32s cubic-bezier(.4,0,.2,1),opacity .25s,transform .32s cubic-bezier(.34,1.56,.64,1);
 }
-.admin-brand .brand-mark svg{display:block;width:34px;height:34px;}
+.admin-brand .brand-mark svg{display:block;width:36px;height:36px;}
 .admin-brand .brand-badge{
   font:600 9px/1 'JetBrains Mono',monospace;letter-spacing:.1em;text-transform:uppercase;
-  color:var(--red);transition:opacity .25s;
+  color:var(--red);white-space:nowrap;
+  background:rgba(255,51,68,.1);border:1px solid rgba(255,51,68,.25);
+  padding:5px 10px;border-radius:99px;box-shadow:inset 0 1px 0 rgba(255,255,255,.07);
+  transition:opacity .25s;
 }
-.admin-nav{flex:1;overflow-y:auto;padding:14px 12px;}
+.admin-nav{flex:1;overflow-y:auto;padding:16px 14px;}
 .admin-nav-section{
-  font:600 9px/1 'JetBrains Mono',monospace;letter-spacing:.12em;text-transform:uppercase;
-  color:var(--gray);padding:14px 10px 8px;
+  font:700 9px/1 'JetBrains Mono',monospace;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--gray);padding:16px 12px 9px;opacity:.9;
 }
 .admin-nav a.nav-item{
-  display:flex;align-items:center;gap:11px;
-  padding:10px 12px;border-radius:10px;
-  color:var(--gray);font-size:13px;font-weight:600;
-  margin-bottom:2px;position:relative;
-  transition:all .2s;
+  display:flex;align-items:center;gap:12px;
+  padding:12px 14px;border-radius:12px;
+  color:var(--gray);font-size:13.5px;font-weight:600;
+  margin-bottom:3px;position:relative;
+  transition:all .22s ease;
   will-change:transform,background;
 }
 .admin-nav a.nav-item::before{
@@ -97,7 +108,7 @@
   .admin-shell.collapsed .admin-brand{justify-content:center;padding:16px 0;gap:0;}
   .admin-shell.collapsed .admin-brand img{width:0;opacity:0;pointer-events:none;}
   .admin-shell.collapsed .admin-brand .brand-badge{width:0;opacity:0;overflow:hidden;pointer-events:none;}
-  .admin-shell.collapsed .admin-brand .brand-mark{width:34px;opacity:1;transform:scale(1);}
+  .admin-shell.collapsed .admin-brand .brand-mark{width:36px;opacity:1;transform:scale(1);}
 
   /* nav sections → hidden so icons form one clean column */
   .admin-shell.collapsed .admin-nav-section{display:none;}
