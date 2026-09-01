@@ -132,13 +132,13 @@ YC.admin.buildSidebar = function(){
       if(item.count && counts[item.count] > 0){
         count = '<span class="nav-count" data-count="' + item.count + '">' + counts[item.count] + '</span>';
       }
-      return '<a class="nav-item' + (item.file === currentFile ? ' active' : '') + '" href="' + item.file + '" data-icon="' + item.icon + '">' +
+      return '<a class="nav-item' + (item.file === currentFile ? ' active' : '') + '" href="' + item.file + '" data-icon="' + item.icon + '" title="' + item.label + '">' +
         '<span class="ic">' + YC.icons.get(item.icon) + '</span><span>' + item.label + '</span>' + count + '</a>';
     }).join('');
     return '<div class="admin-nav-section">' + group.section + '</div>' + rows;
   }).join('');
 
-  html += '<a class="nav-item logout" href="javascript:;" data-logout><span class="ic">' + YC.icons.get('logout') + '</span><span>Log out</span></a>';
+  html += '<a class="nav-item logout" href="javascript:;" data-logout title="Log out"><span class="ic">' + YC.icons.get('logout') + '</span><span>Log out</span></a>';
 
   host.innerHTML = html;
 
@@ -149,17 +149,31 @@ YC.admin.buildSidebar = function(){
   });
 };
 
-/* ---------- drawer (mobile) ---------- */
+/* ---------- drawer (mobile) + collapse (desktop) ---------- */
 YC.admin.initDrawer = function(){
   var burger = document.getElementById('adminBurger');
   var sidebar = document.getElementById('adminSidebar');
+  var shell = document.querySelector('.admin-shell');
   var closeBtn = document.querySelector('.sidebar-close');
   var scrim = document.getElementById('adminScrim');
   var lastFocus = null;
+  var STORE = 'yc:sidebar-collapsed';
+  var mq = window.matchMedia ? window.matchMedia('(min-width: 901px)') : { matches: true };
 
   function isOpen(){
     return !!sidebar && sidebar.classList.contains('open');
   }
+  function isCollapsed(){
+    return !!shell && shell.classList.contains('collapsed');
+  }
+  function applyCollapsed(on){
+    if(!shell) return;
+    shell.classList.toggle('collapsed', !!on);
+    try{ localStorage.setItem(STORE, on ? '1' : '0'); }catch(e){}
+  }
+  try{
+    if(localStorage.getItem(STORE) === '1' && mq.matches) applyCollapsed(true);
+  }catch(e){}
   function open(){
     if(!sidebar || isOpen()) return;
     lastFocus = document.activeElement;
@@ -185,7 +199,14 @@ YC.admin.initDrawer = function(){
   if(burger){
     burger.setAttribute('aria-controls', 'adminSidebar');
     burger.setAttribute('aria-expanded', 'false');
-    burger.addEventListener('click', function(){ if(!isOpen()) open(); });
+    burger.addEventListener('click', function(){
+      if(mq.matches){
+        applyCollapsed(!isCollapsed());
+        if(isOpen()) close();
+      }else if(!isOpen()){
+        open();
+      }
+    });
   }
   if(sidebar) sidebar.setAttribute('aria-hidden', 'true');
   if(closeBtn) closeBtn.addEventListener('click', close);
