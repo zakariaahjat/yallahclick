@@ -609,7 +609,7 @@ YC.charts = (function(){
     for(var g = 0; g <= 4; g++){
       var gy = pad.t + (innerH / 4) * g;
       var val = max - (max / 4) * g;
-      gridLines += '<line x1="' + pad.l + '" y1="' + gy + '" x2="' + (w - pad.r) + '" y2="' + gy + '" stroke="' + css().line + '" stroke-width="1"/><text x="' + (pad.l - 8) + '" y="' + (gy + 3) + '" text-anchor="end" font-size="10" fill="' + css().gray + '">' + YC.abbrNum ? YC.abbrNum(val) : Math.round(val) + '</text>';
+      gridLines += '<line class="svg-grid" x1="' + pad.l + '" y1="' + gy + '" x2="' + (w - pad.r) + '" y2="' + gy + '" stroke="' + css().line + '" stroke-width="1"/><text x="' + (pad.l - 8) + '" y="' + (gy + 3) + '" text-anchor="end" font-size="10" fill="' + css().gray + '">' + YC.abbrNum ? YC.abbrNum(val) : Math.round(val) + '</text>';
     }
     var color = opts.color || css().red;
     var html =
@@ -620,8 +620,9 @@ YC.charts = (function(){
         gridLines +
         '<path d="' + area + '" fill="url(#ycAreaGrad)"/>' +
         '<path d="' + line + '" fill="none" stroke="' + color + '" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>' +
-        pts.map(function(p){
-          return '<circle cx="' + p.x + '" cy="' + p.y + '" r="3.2" fill="' + color + '" stroke="' + css().white + '" stroke-width="1.5"><title>' + p.d.label + ' — ' + p.d.value + '</title></circle>';
+        pts.map(function(p, i){
+          var extra = (i === pts.length - 1) ? ' class="svg-pulse"' : '';
+          return '<circle' + extra + ' cx="' + p.x + '" cy="' + p.y + '" r="3.2" fill="' + color + '" stroke="' + css().white + '" stroke-width="1.5"><title>' + p.d.label + ' — ' + p.d.value + '</title></circle>';
         }).join('') +
         pts.filter(function(p, i){ return i % Math.ceil(data.length / 6) === 0; }).map(function(p){
           return '<text x="' + p.x + '" y="' + (h - 10) + '" text-anchor="middle" font-size="10" fill="' + css().gray + '">' + p.d.label + '</text>';
@@ -646,7 +647,7 @@ YC.charts = (function(){
         var bh = Math.max(2, (d.value / max) * innerH);
         var x = pad.l + i * slot + (slot - bw) / 2;
         var y = pad.t + innerH - bh;
-        return '<rect x="' + x + '" y="' + y + '" width="' + bw + '" height="' + bh + '" rx="5" fill="' + color + '" opacity=".92"><title>' + d.label + ' — ' + d.value + '</title></rect>' +
+        return '<rect class="svg-bar" x="' + x + '" y="' + y + '" width="' + bw + '" height="' + bh + '" rx="5" fill="' + color + '" opacity=".92" style="transform-origin:' + (x + bw / 2) + 'px ' + (y + bh) + 'px"><title>' + d.label + ' — ' + d.value + '</title></rect>' +
                '<text x="' + (x + bw / 2) + '" y="' + (y - 6) + '" text-anchor="middle" font-size="10" fill="' + css().white + '" font-family="JetBrains Mono,monospace">' + d.value + '</text>' +
                '<text x="' + (x + bw / 2) + '" y="' + (h - 10) + '" text-anchor="middle" font-size="10" fill="' + css().gray + '">' + d.label + '</text>';
       }).join('') +
@@ -677,7 +678,7 @@ YC.charts = (function(){
       var frac = item.value / total;
       var len = frac * c;
       var off = acc * c; acc += frac;
-      return '<circle cx="' + cx + '" cy="' + cy + '" r="' + r + '" fill="none" stroke="' + (palette[i % palette.length]) + '" stroke-width="16" stroke-dasharray="' + len.toFixed(2) + ' ' + c.toFixed(2) + '" stroke-dashoffset="' + (-off).toFixed(2) + '" transform="rotate(-90 ' + cx + ' ' + cy + ')"/>';
+      return '<circle cx="' + cx + '" cy="' + cy + '" r="' + r + '" fill="none" stroke="' + (palette[i % palette.length]) + '" stroke-width="16" stroke-dasharray="' + len.toFixed(2) + ' ' + c.toFixed(2) + '" stroke-dashoffset="' + (-off).toFixed(2) + '" transform="rotate(-90 ' + cx + ' ' + cy + ')"><title>' + item.label + ' — ' + item.value + ' (' + Math.round(frac * 100) + '%)</title></circle>';
     }).join('');
     el.innerHTML =
       '<svg class="svg-chart" viewBox="0 0 200 200" role="img">' + segs +

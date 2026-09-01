@@ -47,6 +47,27 @@ YC.app.typeChip = function(type){
   var cls = String(type || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
   return '<span class="type-chip ' + cls + '">' + YC.esc(type) + '</span>';
 };
+
+/* Animate numeric KPI counters 0 -> value. Preserves a trailing .kunit suffix. */
+YC.app.countUp = function(el, target){
+  if(!el) return;
+  var dur = 900;
+  var start = 0;
+  var t0 = null;
+  var suffix = '';
+  var add = el.querySelector('.kunit');
+  if(add){ suffix = add.outerHTML; add.remove(); }
+  function tick(ts){
+    if(t0 == null) t0 = ts;
+    var p = Math.min(1, (ts - t0) / dur);
+    var eased = 1 - Math.pow(1 - p, 3);
+    var val = Math.round(start + (target - start) * eased);
+    el.innerHTML = YC.abbrNum(val) + suffix;
+    if(p < 1) requestAnimationFrame(tick);
+    else el.innerHTML = YC.abbrNum(target) + suffix;
+  }
+  requestAnimationFrame(tick);
+};
 YC.app.previewThumb = function(r){
   var style = 'width:52px;height:38px;border-radius:8px;overflow:hidden;flex-shrink:0;display:flex;align-items:center;justify-content:center;';
   if(r.preview){
@@ -338,6 +359,7 @@ YC.app.attachSelect = function(sel, onVal){
    LOGIN
    ============================================================ */
 YC.app.pages_login = function(){
+  if(YC.admin && YC.admin.initPageFx) YC.admin.initPageFx();
   var next = new URLSearchParams(location.search).get('next') || 'index.html';
   if(YC.auth.isLoggedIn()){
     location.replace(next);
@@ -372,7 +394,11 @@ YC.app.pages_login = function(){
       if(res.ok){
         YC.toast.success('Welcome back, Admin!');
         if(errorBox) errorBox.classList.remove('show');
-        setTimeout(function(){ location.href = next; }, 450);
+        setTimeout(function(){
+          if(YC.admin && YC.admin.pageFxKick) YC.admin.pageFxKick();
+          document.body.classList.add('pg-leave');
+          setTimeout(function(){ location.href = next; }, 250);
+        }, 400);
       }else{
         if(formBox) formBox.classList.add('is-error');
         if(errorBox){
@@ -450,15 +476,22 @@ YC.app.pages_dashboard = function(){
     kpiGrid.innerHTML = kpis.map(function(k){
       var dir = (k.trend || 0) >= 0 ? 'up' : 'down';
       var badge = k.trend ? '<span class="kpi-badge ' + dir + '">' + (k.trend > 0 ? '▲' : '▼') + ' ' + Math.abs(k.trend) + '%</span>' : '';
+      var raw = typeof k.num === 'number' ? k.num : NaN;
       var num = typeof k.num === 'number' ? YC.abbrNum(k.num) : k.num;
       return '<div class="kpi-card"><div class="kpi-top"><span class="kpi-ico">' + YC.icons.get(k.ico) + '</span>' + badge + '</div>' +
-        '<div class="kpi-num">' + num + (k.unit ? '<span class="kunit">' + k.unit + '</span>' : '') + '</div>' +
+        '<div class="kpi-num"' + (isFinite(raw) ? ' data-count="' + raw + '"' : '') + '>' + num + (k.unit ? '<span class="kunit">' + k.unit + '</span>' : '') + '</div>' +
         '<div class="kpi-label">' + k.label + '</div>' +
         '<div class="kpi-spark" data-spark="' + k.ico + '"></div></div>';
     }).join('');
     kpiGrid.querySelectorAll('[data-spark]').forEach(function(el, i){
       YC.charts.spark(el, kpis[i].spark);
     });
+    var counters = kpiGrid.querySelectorAll('[data-count]');
+    for(var ci = 0; ci < counters.length; ci++){
+      (function(el){
+        setTimeout(function(){ YC.app.countUp(el, parseFloat(el.getAttribute('data-count'))); }, 120 + ci * 90);
+      })(counters[ci]);
+    }
   }
 
   /* ---- Revenue vs Bookings ---- */

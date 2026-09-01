@@ -343,14 +343,26 @@ YC.exportCSV = function(filename, rows, columns){
 
 /* ---------- page transitions ---------- */
 YC.admin.initPageFx = function(){
+  /* remove stale key left by the removed sidebar-collapse feature */
+  try{ if(localStorage.getItem('yc:sidebar-collapsed') != null) localStorage.removeItem('yc:sidebar-collapsed'); }catch(e){}
+
   var overlay = document.createElement('div');
   overlay.id = 'pgFx';
+  var bar = document.createElement('div');
+  bar.id = 'pgBar';
   document.body.appendChild(overlay);
+  document.body.appendChild(bar);
 
   document.body.classList.add('is-boot');
   requestAnimationFrame(function(){
     document.body.classList.add('is-ready');
   });
+
+  function kickbar(){
+    bar.getBoundingClientRect();
+    document.body.classList.add('pg-busy');
+  }
+  YC.admin.pageFxKick = kickbar;
 
   var leaving = false;
   document.addEventListener('click', function(e){
@@ -369,9 +381,152 @@ YC.admin.initPageFx = function(){
     if(e.defaultPrevented) return;
     e.preventDefault();
     leaving = true;
+    kickbar();
     document.body.classList.add('pg-leave');
-    setTimeout(function(){ location.href = href; }, 240);
+    setTimeout(function(){ location.href = href; }, 250);
   });
+
+  return { kick: kickbar };
+};
+
+/* ---------- command palette (Cmd/Ctrl+K) ---------- */
+YC.admin.initPalette = function(){
+  window.addEventListener('keydown', function(e){
+    if((e.metaKey || e.ctrlKey) && (e.key === 'k' || e.key === 'K')){
+      e.preventDefault();
+      open();
+    }
+  });
+
+  var host = null, input = null, list = null;
+
+  function build(){
+    host = document.createElement('div');
+    host.id = 'palette';
+    host.className = 'palette';
+    host.innerHTML =
+      '<div class="palette-backdrop" data-close></div>' +
+      '<div class="palette-box" role="dialog" aria-modal="true" aria-label="Quick search">' +
+        '<div class="palette-search">' +
+          '<span class="palette-ico">' + YC.icons.get('search') + '</span>' +
+          '<input id="paletteInput" type="text" placeholder="Jump to a booking, customer, prompt, template or file…" autocomplete="off" spellcheck="false">' +
+          '<kbd>ESC</kbd>' +
+        '</div>' +
+        '<div class="palette-body"><div class="palette-list" id="paletteList"></div></div>' +
+      '</div>';
+    document.body.appendChild(host);
+    input = host.querySelector('#paletteInput');
+    list = host.querySelector('#paletteList');
+    host.addEventListener('click', function(e){
+      if(e.target && e.target.hasAttribute('data-close')) close();
+    });
+    input.addEventListener('input', function(){ render(input.value); });
+    input.addEventListener('keydown', function(e){
+      if(e.key === 'Escape'){ close(); }
+      else if(e.key === 'Enter'){ goFirst(); }
+      else if(e.key === 'ArrowDown'){ move(1); }
+      else if(e.key === 'ArrowUp'){ move(-1); }
+    });
+  }
+
+  function source(){
+    var items = [];
+    function add(file, ico, label, sub, extra){
+      items.push({ file: file, ico: ico, label: label, sub: sub, extra: extra || '' });
+    }
+    try{
+      YC.services.bookings.all().slice(0, 60).forEach(function(b){
+        add('bookings.html', 'calendar', b.id + ' · ' + b.customerName, YC.app.svcName(b.serviceId), b.status);
+      });
+    }catch(e){}
+    try{
+      YC.services.customers.all().slice(0, 60).forEach(function(c){
+        add('customers.html', 'users', c.name, c.email, c.status);
+      });
+    }catch(e){}
+    try{
+      YC.services.prompts.all().slice(0, 60).forEach(function(p){
+        add('ai-prompts.html', 'prompts', p.title, p.category, p.platform);
+      });
+    }catch(e){}
+    try{
+      ['templates', 'videoTemplates', 'thumbnailTemplates'].forEach(function(k){
+        if(!YC.services[k]) return;
+        YC.services[k].all().slice(0, 40).forEach(function(t){
+          add(k === 'templates' ? 'templates.html' : k === 'videoTemplates' ? 'video-templates.html' : 'thumbnail-templates.html', 'layers', t.title, t.category);
+        });
+      });
+    }catch(e){}
+    return items;
+  }
+
+  var allItems = [];
+  var activeIndex = -1;
+
+  function render(q){
+    q = (q || '').trim().toLowerCase();
+    var pool = q ? allItems.filter(function(it){
+      return (it.label + ' ' + it.sub + ' ' + it.extra).toLowerCase().indexOf(q) >= 0;
+    }) : allItems.slice();
+    activeIndex = -1;
+    if(!pool.length){
+      list.innerHTML = '<div class="palette-empty">' + (q ? 'No matches for “' + q + '”.' : 'No results.') + '</div>';
+      return;
+    }
+    list.innerHTML = pool.map(function(it, i){
+      return '<button type="button" class="palette-item" data-i="' + i + '" data-file="' + it.file + '">' +
+        '<span class="palette-item-ico">' + YC.icons.get(it.ico) + '</span>' +
+        '<span class="palette-item-main"><b>' + YC.esc(it.label) + '</b>' +
+        (it.sub ? '<span class="pi-sub">' + YC.esc(it.sub) + '</span>' : '') + '</span>' +
+        (it.extra ? '<span class="pi-tag">' + YC.esc(it.extra) + '</span>' : '') +
+        '<span class="pi-arrow">' + YC.icons.get('chevronR') + '</span></button>';
+    }).join('');
+    list.querySelectorAll('.palette-item').forEach(function(btn){
+      btn.addEventListener('click', function(){ goto(btn.getAttribute('data-file')); });
+    });
+    markActive();
+  }
+
+  function markActive(){
+    var itemsList = list.querySelectorAll('.palette-item');
+    itemsList.forEach(function(el, i){
+      el.classList.toggle('active', i === activeIndex);
+    });
+  }
+  function move(d){
+    var n = list.querySelectorAll('.palette-item').length;
+    if(!n) return;
+    activeIndex = (activeIndex + d + n) % n;
+    markActive();
+    var el = list.querySelector('.palette-item[data-i="' + activeIndex + '"]');
+    if(el && el.scrollIntoView) el.scrollIntoView({ block: 'nearest' });
+  }
+  function goFirst(){
+    var el = list.querySelector('.palette-item.active') || list.querySelector('.palette-item');
+    if(el) goto(el.getAttribute('data-file'));
+  }
+  function goto(file){
+    if(!file) return;
+    close();
+    if(YC.admin && YC.admin.pageFxKick) YC.admin.pageFxKick();
+    document.body.classList.add('pg-leave');
+    setTimeout(function(){ location.href = file; }, 200);
+  }
+
+  function open(){
+    if(!host) build();
+    allItems = source();
+    render(input.value);
+    host.classList.add('open');
+    document.body.classList.add('palette-open');
+    setTimeout(function(){ if(input) input.focus(); }, 30);
+  }
+  function close(){
+    if(!host) return;
+    host.classList.remove('open');
+    document.body.classList.remove('palette-open');
+    if(input) input.value = '';
+  }
 };
 
 /* ---------- boot ---------- */
@@ -386,5 +541,6 @@ YC.admin.boot = function(opts){
   YC.admin.buildSidebar();
   YC.admin.buildTopbar(opts);
   YC.admin.initPageFx();
+  YC.admin.initPalette();
   YC.undoStack.bind();
 };
