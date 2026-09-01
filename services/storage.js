@@ -4,6 +4,7 @@
    Backend-ready: swap the mapping layer; UI code unchanged.
    ============================================================ */
 window.YC = window.YC || {};
+YC.SEED_VERSION = '3';
 YC.Store = {
   read: function(key){
     try{
@@ -19,9 +20,24 @@ YC.Store = {
     try{ localStorage.removeItem(key); }catch(e){}
   },
   migrate: function(key, seedData){
+    /* If the dataset was expanded (SEED_VERSION bumped), drop the
+       previously-seeded demo records so the new seed can take over. */
+    this.ensureFresh();
     if(!localStorage.getItem(key)){
       this.write(key, seedData);
     }
+  },
+  ensureFresh: function(){
+    try{
+      if(localStorage.getItem('yc:seed-version') === YC.SEED_VERSION) return;
+      var stale = [];
+      for(var i = 0; i < localStorage.length; i++){
+        var k = localStorage.key(i);
+        if(k && k.indexOf('yc:') === 0 && k !== 'yc:seed-version') stale.push(k);
+      }
+      stale.forEach(function(k){ localStorage.removeItem(k); });
+      localStorage.setItem('yc:seed-version', YC.SEED_VERSION);
+    }catch(e){}
   }
 };
 

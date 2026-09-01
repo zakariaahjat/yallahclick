@@ -688,7 +688,27 @@ YC.charts = (function(){
       }).join('') + '</div>';
   }
 
-  return { area: areaChart, bar: barChart, hbar: hbar, donut: donut };
+  function spark(el, data, opts){
+    opts = opts || {};
+    var w = 120, h = 26, pad = 2;
+    var max = Math.max.apply(null, data.map(function(d){ return d; })) || 1;
+    var min = Math.min.apply(null, data.map(function(d){ return d; }));
+    var range = (max - min) || 1;
+    var innerW = w - pad * 2, innerH = h - pad * 2;
+    var step = innerW / (data.length - 1 || 1);
+    var pts = data.map(function(v, i){
+      var x = pad + i * step;
+      var y = pad + innerH - ((v - min) / range) * innerH;
+      return x.toFixed(1) + ',' + y.toFixed(1);
+    });
+    var color = opts.color || css().red;
+    el.innerHTML =
+      '<svg viewBox="0 0 ' + w + ' ' + h + '" width="100%" height="' + h + '" preserveAspectRatio="none" role="img" aria-hidden="true">' +
+      '<polyline points="' + pts.join(' ') + '" fill="none" stroke="' + color + '" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" opacity=".9"/>' +
+      '</svg>';
+  }
+
+  return { area: areaChart, bar: barChart, hbar: hbar, donut: donut, spark: spark };
 })();
 YC.abbrNum = function(n){
   if(n >= 1000000) return (n / 1000000).toFixed(1).replace(/\.0$/, '') + 'M';

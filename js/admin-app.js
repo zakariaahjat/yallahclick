@@ -392,35 +392,116 @@ YC.app.pages_dashboard = function(){
 
   var statuses = { pending: 0, confirmed: 0, cancelled: 0, completed: 0 };
   bookings.forEach(function(b){ statuses[b.status] = (statuses[b.status] || 0) + 1; });
+  var moneymade = ['confirmed', 'completed'];
+  var PRICE = { 'video-production': 450, 'motion-design': 350, 'graphic-design': 180, 'marketing': 300, 'full-creative': 900 };
+  function amount(b){ return ((PRICE[b.serviceId] || 250) * (b.people || 1)); }
+  var revenue = bookings.filter(function(b){ return moneymade.indexOf(b.status) >= 0; }).reduce(function(s, b){ return s + amount(b); }, 0);
+
   var today = new Date();
-  var nextWeek = new Date(today); nextWeek.setDate(nextWeek.getDate() + 7);
-  var nwIso = YC.app.iso(nextWeek);
-  var upcomingCount = bookings.filter(function(b){
-    return b.date >= YC.app.iso(today) && b.date <= nwIso && b.status !== 'cancelled';
-  }).length;
+
+  function monthSpan(offset){
+    var first = new Date(today.getFullYear(), today.getMonth() - offset, 1);
+    var last = new Date(first.getFullYear(), first.getMonth() + 1, 0);
+    return { fi: YC.app.iso(first), li: YC.app.iso(last), label: first.toLocaleString('en', { month: 'short' }) };
+  }
+  function bookingsIn(fi, li){
+    return bookings.filter(function(b){ return b.date >= fi && b.date <= li; }).length;
+  }
+  function countBy(fi, li, fn){
+    return bookings.filter(function(b){ return b.date >= fi && b.date <= li && fn(b); }).length;
+  }
+
+  /* ---- KPI cards with trend + sparkline ---- */
+  function pct(part, whole){ return whole ? Math.round((part / whole) * 100) : 0; }
+  var curMonth = monthSpan(0), prevMonth = monthSpan(1);
+  var curCount = bookingsIn(curMonth.fi, curMonth.li), prevCount = bookingsIn(prevMonth.fi, prevMonth.li);
+  var curRev = bookings.filter(function(b){ return b.date >= curMonth.fi && b.date <= curMonth.li && moneymade.indexOf(b.status) >= 0; }).reduce(function(s, b){ return s + amount(b); }, 0);
+  var prevRev = bookings.filter(function(b){ return b.date >= prevMonth.fi && b.date <= prevMonth.li && moneymade.indexOf(b.status) >= 0; }).reduce(function(s, b){ return s + amount(b); }, 0);
+  function grow(cur, prev){ return prev ? Math.round(((cur - prev) / prev) * 100) : 0; }
+
+  var activeCustomers = customers.filter(function(c){ return c.status === 'active'; }).length;
   var libCount = ['prompts', 'templates', 'videoTemplates', 'thumbnailTemplates'].reduce(function(sum, k){
     return sum + YC.services[k].all().filter(function(x){ return x.published; }).length;
   }, 0);
-
-  YC.app.renderStats([
-    { icon: 'bookings', num: bookings.length, label: 'Total bookings', delta: upcomingCount + ' in the next 7 days', dir: 'up' },
-    { icon: 'clock', num: statuses.pending, label: 'Pending approval', delta: statuses.confirmed + ' confirmed', dir: 'up' },
-    { icon: 'users', num: customers.length, label: 'Customers', delta: customers.filter(function(c){ return c.status === 'active'; }).length + ' active', dir: 'up' },
-    { icon: 'layers', num: libCount, label: 'Published library items', delta: activePro + ' active promotions', dir: 'up' }
-  ]);
-
-  /* booking activity (last 14 days) */
-  var area = YC.app.$('#chartActivity');
-  if(area){
-    var days = [];
-    for(var i = 13; i >= 0; i--){
-      var d = new Date(today); d.setDate(d.getDate() - i);
-      var key = YC.app.iso(d);
-      var c = bookings.filter(function(b){ return b.date === key; }).length;
-      days.push({ label: (d.getMonth() + 1) + '/' + d.getDate(), value: c });
-    }
-    YC.charts.area(area, days);
+  function registeredIn(off){
+    var s = monthSpan(off);
+    return customers.filter(function(c){ return c.registered >= s.fi && c.registered <= s.li + 'T23:59:59Z'; }).length;
   }
+
+  function sparkSeries(fn, months){
+    var out = [];
+    for(var i = months - 1; i >= 0; i--){ out.push(fn(i)); }
+    return out;
+  }
+  var curRegistered = registeredIn(0), prevRegistered = registeredIn(1);
+  var kpis = [
+    { ico: 'bookings',  num: bookings.length, label: 'Total bookings', trend: grow(curCount, prevCount), spark: sparkSeries(function(i){ return bookingsIn(monthSpan(i).fi, monthSpan(i).li); }, 6) },
+    { ico: 'analytics', num: revenue, unit: '$', label: 'Est. revenue', trend: grow(curRev, prevRev), spark: sparkSeries(function(i){ var s = monthSpan(i); return bookings.filter(function(b){ return b.date >= s.fi && b.date <= s.li && moneymade.indexOf(b.status) >= 0; }).reduce(function(a, b){ return a + amount(b); }, 0); }, 6) },
+    { ico: 'check', num: pct(statuses.confirmed + statuses.completed, bookings.length), unit: '%', label: 'Conversion rate', trend: 0, spark: sparkSeries(function(i){ return pct(countBy(monthSpan(i).fi, monthSpan(i).li, function(b){ return b.status !== 'cancelled'; }), bookingsIn(monthSpan(i).fi, monthSpan(i).li)); }, 6) },
+    { ico: 'layers', num: bookings.length ? Math.round(revenue / bookings.length) : 0, unit: '$', label: 'Avg booking value', trend: 0, spark: sparkSeries(function(i){ var s = monthSpan(i); var bs = bookings.filter(function(b){ return b.date >= s.fi && b.date <= s.li; }); return bs.length ? Math.round(bs.reduce(function(a, b){ return a + amount(b); }, 0) / bs.length) : 0; }, 6) },
+    { ico: 'users', num: activeCustomers, label: 'Active customers', trend: grow(curRegistered, prevRegistered), spark: sparkSeries(function(i){ return registeredIn(i); }, 6) },
+    { ico: 'star', num: libCount, label: 'Published library', trend: 0, spark: sparkSeries(function(i){ return ['prompts', 'templates'].reduce(function(a, k){ return a + YC.services[k].all().filter(function(x){ return x.published && x.createdAt >= monthSpan(i).fi; }).length; }, 0); }, 6) }
+  ];
+
+  var kpiGrid = YC.app.$('#kpiGrid');
+  if(kpiGrid){
+    kpiGrid.innerHTML = kpis.map(function(k){
+      var dir = (k.trend || 0) >= 0 ? 'up' : 'down';
+      var badge = k.trend ? '<span class="kpi-badge ' + dir + '">' + (k.trend > 0 ? '▲' : '▼') + ' ' + Math.abs(k.trend) + '%</span>' : '';
+      var num = typeof k.num === 'number' ? YC.abbrNum(k.num) : k.num;
+      return '<div class="kpi-card"><div class="kpi-top"><span class="kpi-ico">' + YC.icons.get(k.ico) + '</span>' + badge + '</div>' +
+        '<div class="kpi-num">' + num + (k.unit ? '<span class="kunit">' + k.unit + '</span>' : '') + '</div>' +
+        '<div class="kpi-label">' + k.label + '</div>' +
+        '<div class="kpi-spark" data-spark="' + k.ico + '"></div></div>';
+    }).join('');
+    kpiGrid.querySelectorAll('[data-spark]').forEach(function(el, i){
+      YC.charts.spark(el, kpis[i].spark);
+    });
+  }
+
+  /* ---- Revenue vs Bookings ---- */
+  var revChart = YC.app.$('#chartRevenue');
+  if(revChart){
+    var months = [];
+    for(var i = 5; i >= 0; i--){
+      var s = monthSpan(i);
+      var sl = bookings.filter(function(b){ return b.date >= s.fi && b.date <= s.li && moneymade.indexOf(b.status) >= 0; });
+      months.push({ label: s.label, value: sl.reduce(function(a, b){ return a + amount(b); }, 0) });
+    }
+    YC.charts.bar(revChart, months);
+  }
+
+  /* ---- Customers added ---- */
+  var custChart = YC.app.$('#chartCustomers');
+  if(custChart){
+    var cm = [];
+    for(var k = 5; k >= 0; k--){
+      var sm = monthSpan(k);
+      cm.push({ label: sm.label, value: customers.filter(function(c){ return c.registered >= sm.fi && c.registered <= sm.li + 'T23:59:59Z'; }).length });
+    }
+    YC.charts.area(custChart, cm);
+  }
+
+  /* ---- Funnel ---- */
+  var funnel = YC.app.$('#chartFunnel');
+  if(funnel){
+    var funnelData = [
+      { label: 'Enquiries', value: bookings.length },
+      { label: 'Confirmed', value: statuses.confirmed },
+      { label: 'Completed', value: statuses.completed },
+      { label: 'Delivered / paid', value: statuses.completed }
+    ];
+    var funnelMax = bookings.length || 1;
+    var fhtml = '<div class="funnel-list">' + funnelData.map(function(st, idx){
+      var w = Math.max(6, Math.round((st.value / funnelMax) * 100));
+      var val = idx === 3 ? revenue : st.value;
+      var label = idx === 3 ? 'Revenue' : st.label;
+      return '<div class="funnel-step"><div class="funnel-bar" style="width:' + w + '%;' + (idx === 3 ? 'background:linear-gradient(90deg,var(--red),var(--red-dark));' : '') + '"><span class="fb-label">' + label + '</span><span class="fb-val">' + (idx === 3 ? YC.abbrNum(val) + ' $' : val) + '</span></div></div>';
+    }).join('') + '</div>';
+    funnel.innerHTML = fhtml;
+  }
+
+  /* ---- Booking status donut ---- */
   var donut = YC.app.$('#chartDonut');
   if(donut){
     YC.charts.donut(donut, [
@@ -431,7 +512,25 @@ YC.app.pages_dashboard = function(){
     ], { label: 'Bookings' });
   }
 
-  /* recent bookings list */
+  /* ---- Quick actions ---- */
+  var qa = YC.app.$('#quickActions');
+  if(qa){
+    var actions = [
+      { href: 'bookings.html?new=1', ico: 'plus', t: 'New booking', s: 'Capture a new client request' },
+      { href: 'bookings.html', ico: 'calendar', t: 'Pending approvals', s: statuses.pending + ' need your attention' },
+      { href: 'ai-prompts.html', ico: 'prompts', t: 'Add AI prompt', s: 'Publish a new prompt' },
+      { href: 'templates.html', ico: 'templates', t: 'Add template', s: 'Upload a new pack' },
+      { href: 'customers.html', ico: 'customers', t: 'Customers', s: activeCustomers + ' active' },
+      { href: 'promotions.html', ico: 'promotions', t: 'Promotions', s: activePro + ' live' },
+      { href: 'analytics.html', ico: 'analytics', t: 'Analytics', s: 'Full report' },
+      { href: 'settings.html', ico: 'settings', t: 'Settings', s: 'Site & branding' }
+    ];
+    qa.innerHTML = actions.map(function(a){
+      return '<a class="qa-card" href="' + a.href + '"><span class="qa-ico">' + YC.icons.get(a.ico) + '</span><span class="qa-t">' + a.t + '</span><span class="qa-s">' + a.s + '</span></a>';
+    }).join('');
+  }
+
+  /* ---- recent bookings list ---- */
   var recent = YC.app.$('#recentList');
   if(recent){
     recent.innerHTML = YC.services.bookings.recent(6).map(function(b){
@@ -450,6 +549,49 @@ YC.app.pages_dashboard = function(){
     }).join('') || '<div class="empty-state" style="padding:30px"><strong>Nothing upcoming.</strong></div>';
   }
 
+  /* ---- Recent activity feed ---- */
+  var feed = YC.app.$('#activityFeed');
+  if(feed){
+    function actColor(b){
+      return b.status === 'cancelled' ? 'red' : (b.status === 'completed' ? 'green' : (b.status === 'pending' ? 'amber' : 'gray'));
+    }
+    feed.innerHTML = bookings.slice().sort(function(a, b){ return String(b.createdAt).localeCompare(String(a.createdAt)); }).slice(0, 7).map(function(b){
+      var t = b.status === 'pending' ? 'New booking request' : (b.status === 'confirmed' ? 'Booking confirmed' : (b.status === 'completed' ? 'Booking completed' : 'Booking cancelled'));
+      return '<div class="feed-item"><span class="feed-dot ' + actColor(b) + '"></span>' +
+        '<div class="feed-main"><div class="t">' + t + '</div><div class="s">' + YC.esc(b.customerName) + ' — ' + YC.esc(YC.app.svcName(b.serviceId)) + '</div></div>' +
+        '<div class="feed-time">' + YC.timeAgo(b.createdAt) + '</div></div>';
+    }).join('') || '<div class="empty-state" style="padding:30px"><strong>No recent activity.</strong></div>';
+  }
+
+  /* ---- Alerts ---- */
+  var alerts = YC.app.$('#alertsList');
+  if(alerts){
+    var al = [];
+    if(statuses.pending) al.push({ ico: 'clock', cls: 'warn', t: statuses.pending + ' pending booking(s)', s: 'Awaiting your approval', go: 'bookings.html', l: 'Review' });
+    if(statuses.cancelled) al.push({ ico: 'bell', cls: 'danger', t: statuses.cancelled + ' cancelled booking(s) this period', s: 'Consider a re-engagement follow-up', go: 'bookings.html', l: 'View' });
+    var lowViews = YC.services.prompts.all().filter(function(p){ return p.published && (p.views || 0) < 3000; }).length;
+    if(lowViews) al.push({ ico: 'eye', cls: 'info', t: lowViews + ' prompt(s) under 3K views', s: 'Refresh these listings to boost discoverability', go: 'ai-prompts.html', l: 'Fix' });
+    if(!al.length) al.push({ ico: 'star', cls: 'info', t: 'All clear', s: 'Nothing needs attention right now', go: 'bookings.html', l: 'OK' });
+    alerts.innerHTML = al.map(function(a){
+      return '<div class="alert-item"><span class="alert-ico ' + a.cls + '">' + YC.icons.get(a.ico) + '</span>' +
+        '<div class="alert-main"><div class="t">' + a.t + '</div><div class="s">' + a.s + '</div></div>' +
+        '<a class="alert-go" href="' + a.go + '">' + a.l + '</a></div>';
+    }).join('');
+  }
+
+  /* ---- Top services (top sellers) ---- */
+  var sellers = YC.app.$('#topSellers');
+  if(sellers){
+    var bySvc = YC.data.services.map(function(s){
+      return { id: s.id, icon: s.icon, name: s.short, count: bookings.filter(function(b){ return b.serviceId === s.id; }).length };
+    }).sort(function(a, b){ return b.count - a.count; }).slice(0, 5);
+    sellers.innerHTML = bySvc.map(function(s){
+      return '<div class="seller-row"><span class="seller-ic">' + s.icon + '</span>' +
+        '<div class="seller-main"><div class="t">' + YC.esc(s.name) + '</div><div class="s">' + s.count + ' booking' + (s.count === 1 ? '' : 's') + '</div></div>' +
+        '<span class="seller-num">' + s.count + '</span></div>';
+    }).join('') || '<div class="empty-state" style="padding:30px"><strong>No bookings.</strong></div>';
+  }
+
   /* hbar ranks */
   var ranks1 = YC.app.$('#rankPrompts');
   if(ranks1){
@@ -458,16 +600,25 @@ YC.app.pages_dashboard = function(){
       return { rank: i + 1, label: p.title, value: p.views || 0 };
     }));
   }
-  var ranks2 = YC.app.$('#rankTemplates');
-  if(ranks2){
-    var tops = ['templates', 'videoTemplates', 'thumbnailTemplates'].reduce(function(a, k){
-      return a.concat(YC.services[k].all());
-    }, []).filter(function(t){ return t.published; })
-      .sort(function(a, b){ return (b.downloads || 0) - (a.downloads || 0); })
-      .slice(0, 5);
-    YC.charts.hbar(ranks2, tops.map(function(t, i){
-      return { rank: i + 1, label: t.title, value: t.downloads || 0 };
-    }));
+
+  /* ---- last updated ---- */
+  var upEl = YC.app.$('#lastUpdated');
+  if(upEl){
+    upEl.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Updated ' + new Date().toLocaleTimeString('en', { hour: '2-digit', minute: '2-digit' });
+  }
+
+  /* ---- reset demo data (seeds expandable sample set) ---- */
+  var resetBtn = YC.app.$('#resetDataBtn');
+  if(resetBtn && !resetBtn.getAttribute('data-bound')){
+    resetBtn.setAttribute('data-bound', '1');
+    resetBtn.addEventListener('click', function(){
+      if(!window.confirm('Reset all demo data to the sample dataset? This restores the default test records.')) return;
+      ['bookings', 'customers', 'prompts', 'templates', 'videoTemplates', 'thumbnailTemplates', 'promotions', 'categories'].forEach(function(k){
+        if(YC.services[k]) YC.services[k].reset();
+      });
+      YC.app.pages_dashboard();
+      if(YC.toast && YC.toast.success) YC.toast.success('Demo data reset to sample set');
+    });
   }
 };
 
