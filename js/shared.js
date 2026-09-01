@@ -820,11 +820,15 @@ YC.settings = (function(){
 YC.buildChrome = function(opts){
   opts = opts || {};
   var socials = [
-    { name: 'youtube', label: 'YouTube', href: 'https://www.youtube.com/@YallahClick', icon: '<svg viewBox="0 0 24 24"><rect x="2.5" y="5.5" width="19" height="13" rx="4" fill="none" stroke="currentColor" stroke-width="2"/><path d="M10 9l6 3-6 3z" fill="currentColor" stroke="none"/></svg>' },
-    { name: 'instagram', label: 'Instagram', href: 'https://www.instagram.com/yallah.click/?hl=en', icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>' },
-    { name: 'tiktok', label: 'TikTok', href: 'https://www.tiktok.com/@yallah.click', icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5"/></svg>' },
-    { name: 'behance', label: 'Behance', href: 'https://www.behance.net/yallahclick', icon: '<span class="behance-mark">Bē</span>' },
-    { name: 'x', label: 'X (Twitter)', href: 'https://x.com/YallahClick', icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4l16 16M20 4L4 20"/></svg>' }
+    { name: 'youtube', label: 'YouTube', href: 'https://www.youtube.com/@YallahClick', icon: '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="5.5" width="19" height="13" rx="4" fill="none" stroke="currentColor" stroke-width="2"/><path d="M10 9l6 3-6 3z" fill="currentColor" stroke="none"/></svg>' },
+    { name: 'instagram', label: 'Instagram', href: 'https://www.instagram.com/yallah.click/?hl=en', icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>' },
+    { name: 'tiktok', label: 'TikTok', href: 'https://www.tiktok.com/@yallah.click', icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5"/></svg>' },
+    { name: 'behance', label: 'Behance', href: 'https://www.behance.net/yallahclick', icon: '<span class="social-letter behance-mark" aria-hidden="true">Bē</span>' },
+    { name: 'linkedin', label: 'LinkedIn', href: 'https://www.linkedin.com/in/yallah-click-34a897421/', icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>' },
+    { name: 'facebook', label: 'Facebook', href: 'https://facebook.com', icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>' },
+    { name: 'pinterest', label: 'Pinterest', href: 'https://www.pinterest.com/yallahclick/_profile/', icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.2 20.5c1.1-3.4 1.5-4.7 2.2-7.8-.5-1-.1-3 1.1-3 1 0 1.5.8 1.5 1.8 0 1.1-.7 2.8-1 4.3-.5 1.3.7 2.4 2 2.4 2.4 0 4.1-2.6 4.1-6.2 0-3.2-2.3-5.4-5.7-5.4-3.9 0-6.2 2.9-6.2 5.9 0 1.2.5 2.4 1 3 .1.1.1.3.1.5l-.4 1.7c-.1.5-.5.7-1 .4-2.1-1-3.4-4-3.4-6.4C2.5 6.5 6.4 2 13.4 2 19 2 23 6 23 11.3c0 5.6-3.5 10.1-8.4 10.1-1.6 0-3.2-.9-3.7-1.9l-1 3.8"/></svg>' },
+    { name: 'x', label: 'X (Twitter)', href: 'https://x.com/YallahClick', icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4l16 16M20 4L4 20"/></svg>' },
+    { name: 'whatsapp', label: 'WhatsApp', href: 'https://wa.me/message/I5ZSIR6EPNRON1', icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>' }
   ];
   var nav = [
     { label: 'Home', href: 'index.html', idx: '01' },
@@ -902,8 +906,8 @@ YC.buildChrome = function(opts){
       '</div>' +
     '</div>';
 
-  document.body.insertBefore(footer, document.body.firstChild ? null : null);
   document.body.appendChild(header);
+  document.body.appendChild(footer);
   document.body.appendChild(scrim);
   document.body.appendChild(drawer);
 
