@@ -4183,6 +4183,7 @@
 <script src="data/services.js"></script>
 <script src="data/promotions.js"></script>
 <script src="services/storage.js"></script>
+<script src="services/backend.js"></script>
 <script src="services/promotionService.js"></script>
 <script src="js/promo-popup.js"></script>
 <script>
@@ -4204,7 +4205,14 @@
         }
       }
     }
-    if(window.YC && YC.PromoPopup) YC.PromoPopup.init();
+    if(window.YC && YC.PromoPopup){
+      var bootPromo = function(){ try{ YC.PromoPopup.init(); }catch(_e){} };
+      if(window.YC && YC.backend && YC.backend.ready){
+        YC.backend.ready.finally(bootPromo);
+      }else{
+        bootPromo();
+      }
+    }
   }catch(err){
     if(window.console) console.error('Extension init failed:', err);
   }

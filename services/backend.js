@@ -30,6 +30,7 @@ window.YC = window.YC || {};
   ];
 
   var cache = {};        // key(ref YC key) -> array
+  var snapshot = {};     // server state as of last hydrate (for diffing)
   var hydrated = false;  // has the cache been populated from the API?
   var online = null;     // true/false after first probe
 
@@ -83,9 +84,14 @@ window.YC = window.YC || {};
       if (!isUp){ hydrated = true; online = false; return false; }
       var jobs = COLLECTIONS.map(function(name){
         return request('GET', '/' + name).then(function(r){
-          if (r.ok && r.body && Array.isArray(r.body.data)) cache[name] = r.body.data;
-          else cache[name] = [];
-        }).catch(function(){ cache[name] = []; });
+          if (r.ok && r.body && Array.isArray(r.body.data)){
+            cache[name] = r.body.data.map(function(x){ return Object.assign({}, x, { _synced: true }); });
+            snapshot[name] = r.body.data.map(function(x){ return JSON.parse(JSON.stringify(x)); });
+          }else{
+            cache[name] = [];
+            snapshot[name] = [];
+          }
+        }).catch(function(){ cache[name] = []; snapshot[name] = []; });
       });
       return Promise.all(jobs).then(function(){ hydrated = true; online = true; return true; });
     });
@@ -102,21 +108,47 @@ window.YC = window.YC || {};
   }
 
   /* Persist a collection's full array back to the server.
-     Prefer diffing when we know a record id, but a wholesale PUT
-     of the array is simplest & correct for a single-actor admin
-     demo. We PATCH each changed id when possible, else recreate. */
+     Full sync: POST brand-new records, PATCH changed existing records,
+     and DELETE records that were removed locally. */
   function pushCollection(name, arr){
     if (!online || !arr) return Promise.resolve();
-    var tokenOf = function(id){ return String(id); };
-    var created = arr.filter(function(x){ return x && !x._synced; });
+    var ids = {};
     var jobs = [];
-    // create missing server-side records
-    created.forEach(function(x){
-      var rec = Object.assign({}, x);
-      delete rec._synced; delete rec._clientId;
-      jobs.push(request('POST', '/' + name, rec));
+    arr.forEach(function(x){
+      if(!x) return;
+      var id = String(x.id);
+      ids[id] = true;
+      var clean = function(o){
+        var c = Object.assign({}, o);
+        delete c._synced; delete c._clientId;
+        return c;
+      };
+      if (x._synced){
+        // known server record -> PATCH to propagate edits
+        jobs.push(request('PATCH', '/' + name + '/' + encodeURIComponent(id), clean(x)));
+      }else{
+        // brand-new local record -> POST to create
+        jobs.push(request('POST', '/' + name, clean(x)).then(function(r){
+          // mark it as server-backed + adopt the returned id to avoid
+          // re-creating duplicates on the next write of this session.
+          if (r.ok && r.body && r.body.data && r.body.data.id){
+            x.id = r.body.data.id;
+            x._synced = true;
+          }
+          return r;
+        }));
+      }
     });
-    return Promise.all(jobs).catch(function(){ /* non-fatal */ });
+    // records that existed on the server but were removed locally
+    var prev = snapshot[name] || [];
+    prev.forEach(function(p){
+      if(p && p.id && !ids[String(p.id)]){
+        jobs.push(request('DELETE', '/' + name + '/' + encodeURIComponent(String(p.id))));
+      }
+    });
+    return Promise.all(jobs).then(function(){
+      snapshot[name] = arr.map(function(x){ return JSON.parse(JSON.stringify(x)); });
+    }).catch(function(){ /* non-fatal */ });
   }
 
   /* ---- YC.Store bridge: replace read/write with an API-backed cache ---- */

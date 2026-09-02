@@ -237,6 +237,11 @@ YC.PromoPopup = (function(){
 
 document.addEventListener('DOMContentLoaded', function(){
   if(document.body && document.body.hasAttribute('data-promo-auto')){
-    YC.PromoPopup.init();
+    var boot = function(){ YC.PromoPopup.init(); };
+    if(window.YC && YC.backend && YC.backend.ready){
+      YC.backend.ready.finally(boot);
+    }else{
+      boot();
+    }
   }
 });
