@@ -106,6 +106,21 @@ YC.app.fld = {
   sw: function(o){
     return '<div class="field"><label class="switch"><input type="checkbox" name="' + o.name + '"' +
       (o.value ? ' checked' : '') + '><span class="track"></span><span class="switch-label">' + YC.esc(o.label || '') + '</span></label></div>';
+  },
+  /* Image/file URL with an "Upload" button. The uploaded file lands in
+     /uploads/... and its public URL is inserted into the sibling input, so
+     the URL (not base64) is what gets stored in JSON and sent over the API. */
+  upload: function(o){
+    if(!YC.app.uploadInit){ YC.app.uploadInit = true; }
+    return '<div class="field img-upload"><label>' + YC.esc(o.label || '') + (o.required ? ' <span class="req">*</span>' : '') + '</label>' +
+      '<div class="img-upload-row">' +
+        '<input type="text" name="' + o.name + '" class="img-upload-url" value="' + YC.esc(o.value || '') + '"' +
+          (o.placeholder ? ' placeholder="' + YC.esc(o.placeholder) + '"' : '') + '>' +
+        '<button type="button" class="btn btn-ghost btn-sm" data-upload="' + (o.folder || 'content') + '">' +
+          '<span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg></span>Upload</button>' +
+      '</div>' +
+      '<input type="file" style="display:none" accept="' + (o.accept || 'image/*,.mp4,.webm,.zip,.pdf') + '">' +
+      '<div class="field-error">' + YC.esc(o.errorMsg || 'Provide a URL or upload a file.') + '</div></div>';
   }
 };
 
@@ -166,6 +181,7 @@ YC.app.openForm = function(opts){
       '<button type="submit" class="btn btn-primary" data-submit-form>Save changes</button>',
     onMount: function(card){
       var form = card.querySelector('#ycModalForm');
+      YC.app.initUploads(form);
       card.querySelector('[data-close-modal]').addEventListener('click', function(){ YC.modal.close(); });
       var submit = card.querySelector('[data-submit-form]');
       submit.addEventListener('click', function(){
@@ -178,6 +194,58 @@ YC.app.openForm = function(opts){
       });
       YC.app.clearErrorsAsYouType(form);
     }
+  });
+};
+/* Upload wiring for `upload` fields: clicking Upload opens a file picker,
+   POSTs the chosen file to /api/upload (Bearer auth) and fills the sibling
+   URL input with the returned /uploads/... path. */
+YC.app.initUploads = function(form){
+  if(!form) return;
+  form.querySelectorAll('[data-upload]').forEach(function(btn){
+    if(btn.dataset.bound){ return; }
+    btn.dataset.bound = '1';
+    var row = btn.closest('.img-upload-row');
+    var urlInput = row ? row.querySelector('.img-upload-url') : null;
+    var fileInput = btn.closest('.img-upload').querySelector('input[type=file]');
+    var folder = btn.getAttribute('data-upload') || 'content';
+    btn.addEventListener('click', function(){ if(fileInput) fileInput.click(); });
+    fileInput.addEventListener('change', function(){
+      if(!fileInput.files || !fileInput.files.length) return;
+      var f = fileInput.files[0];
+      var label = urlInput.closest('.field').querySelector('label');
+      var before = label ? label.textContent : '';
+      if(label){ label.textContent = 'Uploading…'; }
+      YC.app.uploadFile(f, folder).then(function(url){
+        if(urlInput) urlInput.value = url;
+        if(label && before){ label.textContent = before; }
+        YC.toast.success('Uploaded: ' + url.split('/').pop());
+        YC.app.clearErrorsAsYouType(form);
+      }).catch(function(err){
+        if(label && before){ label.textContent = before; }
+        YC.toast.error((err && err.message) || 'Upload failed.');
+      });
+    });
+  });
+};
+YC.app.uploadFile = function(file, folder){
+  return new Promise(function(resolve, reject){
+    if(!file) return reject(new Error('No file selected.'));
+    if(!YC.backend){ return reject(new Error('Backend not available.')); }
+    if(!YC.backend.isOnline()){ return reject(new Error('Backend offline — uploads need the API.')); }
+    var fd = new FormData();
+    fd.append('file', file);
+    if(folder) fd.append('folder', folder);
+    var t = YC.backend.token();
+    fetch(YC.backend.base + '/upload', {
+      method: 'POST',
+      headers: t ? { 'Authorization': 'Bearer ' + t } : {},
+      body: fd
+    }).then(function(res){ return res.json().catch(function(){ return {}; }); })
+      .then(function(json){
+        if(json && json.data && json.data.url) return resolve(json.data.url);
+        reject(new Error((json && json.message) || 'Upload failed.'));
+      })
+      .catch(function(){ reject(new Error('Upload request failed.')); });
   });
 };
 YC.app.confirm = function(msg, onYes, label){
@@ -1101,13 +1169,20 @@ YC.app.pages_prompts = function(){
   if(btnNew) btnNew.addEventListener('click', function(){ editPrompt(null); });
 
   function populateSelects(){
+    /* Rebuild category options from live data instead of stale HTML. */
     var cat = YC.$('#filterPromptCat');
     if(cat){
-      categories.forEach(function(c){
-        var o = document.createElement('option');
-        o.value = c; o.textContent = c;
-        cat.appendChild(o);
-      });
+      var cur = cat.value;
+      var html = '<option value="all">All categories</option>';
+      categories.forEach(function(c){ html += '<option value="' + YC.esc(c) + '">' + YC.esc(c) + '</option>'; });
+      cat.innerHTML = html;
+      if(categories.indexOf(cur) >= 0) cat.value = cur;
+    }
+    var pl = YC.$('#filterPromptPlatform');
+    if(pl){
+      var ph = '<option value="all">All platforms</option>';
+      (svc.PLATFORMS || []).forEach(function(x){ ph += '<option value="' + YC.esc(x) + '">' + YC.esc(x) + '</option>'; });
+      pl.innerHTML = ph;
     }
   }
 
@@ -1194,7 +1269,7 @@ YC.app.pages_templates = function(){
     host: '#templatesTable', search: '#searchTemplates',
     typeFilter: '#filterTemplateType', statusFilter: '#filterTemplateStatus',
     newBtn: '#btnNewTemplate',
-    title: 'Template', eyebrow: 'Templates'
+    title: 'Template', eyebrow: 'Templates', folder: 'templates'
   });
 };
 
@@ -1206,7 +1281,7 @@ YC.app.pages_videoTemplates = function(){
     host: '#videoTemplatesTable', search: '#searchVideoTemplates',
     typeFilter: '#filterVideoPlatform', statusFilter: '#filterVideoStatus',
     newBtn: '#btnNewVideoTemplate',
-    title: 'Video template', eyebrow: 'Video Templates', platformFilter: true
+    title: 'Video template', eyebrow: 'Video Templates', platformFilter: true, folder: 'video'
   });
 };
 
@@ -1218,7 +1293,7 @@ YC.app.pages_thumbnailTemplates = function(){
     host: '#thumbTemplatesTable', search: '#searchThumbTemplates',
     typeFilter: '#filterThumbPlatform', statusFilter: '#filterThumbStatus',
     newBtn: '#btnNewThumbTemplate',
-    title: 'Thumbnail template', eyebrow: 'Thumbnail Templates', platformFilter: true, thumb: true
+    title: 'Thumbnail template', eyebrow: 'Thumbnail Templates', platformFilter: true, thumb: true, folder: 'thumbnails'
   });
 };
 
@@ -1337,7 +1412,7 @@ function templatesPage(svc, cfg){
         value: editing ? v('type') || v('platform') || typeOpts[0] : typeOpts[0], required: true, options: typeOpts },
       { t: 'text', name: 'category', label: 'Category', value: v('category'), required: true },
       { t: 'text', name: 'tags', label: 'Tags (comma separated)', value: editing ? (row.tags || []).join(', ') : '' },
-      { t: 'text', name: 'preview', label: 'Preview image URL (optional)', value: v('preview') },
+      { t: 'upload', name: 'preview', label: 'Preview image', value: v('preview'), folder: cfg.folder || 'content', accept: 'image/*' },
       { t: 'text', name: 'previewEmoji', label: 'Fallback emoji', value: v('previewEmoji') || '📦' },
       { t: 'text', name: 'previewColor', label: 'Fallback color', value: v('previewColor') || '#101216', type: 'color' }
     ];
@@ -1354,7 +1429,7 @@ function templatesPage(svc, cfg){
       );
     }
     fields.push(
-      { t: 'text', name: 'file', label: 'File name', value: v('file'), placeholder: 'template-pack.zip' },
+      { t: 'upload', name: 'file', label: 'Download file', value: v('file'), folder: cfg.folder || 'content', accept: '.zip,.psd,.pdf,.mp4,.webm,.png,.jpg,.ppt,.pptx,.fig,.sketch,.ep,.ai,.afdesign,.mov,.jpg,.jpeg' },
       { t: 'text', name: 'fileSize', label: 'File size', value: v('fileSize'), placeholder: '24 MB' },
       isVideo || isThumb ? { t: 'text', name: 'software', label: 'Software', value: v('software'), required: true } : { t: 'text', name: 'fileSizeFake', label: '', value: '' },
       { t: 'sw', name: 'featured', label: 'Featured', value: v('featured') },
@@ -1667,9 +1742,9 @@ YC.app.pages_promotions = function(){
       b.addEventListener('click', function(){
         var id = b.getAttribute('data-del');
         YC.app.confirm('Delete this promotion?', function(){
-          svc.remove(id);
-          YC.toast.success('Promotion deleted.');
-          grid(); stats();
+          YC.admin.undoableDelete(svc, id, 'promotion', function(){
+            grid(); stats();
+          });
         });
       });
     });
@@ -1699,6 +1774,7 @@ YC.app.pages_promotions = function(){
         { t: 'text', name: 'destPage', label: 'Offer button link (optional)', value: v('destPage'),
           placeholder: 'templates.html or index.html#book' },
         { t: 'area', name: 'description', label: 'Description', value: v('description'), rows: 2, required: true },
+        { t: 'upload', name: 'image', label: 'Banner image (optional)', value: v('image'), folder: 'promotions', accept: 'image/*' },
         { t: 'select', name: 'discountType', label: 'Discount type', value: v('discountType') || 'percentage',
           options: ['percentage', 'fixed'] },
         { t: 'text', name: 'discountValue', label: 'Discount value', value: v('discountValue') || 10, type: 'number', min: 1 },
@@ -2012,6 +2088,11 @@ YC.app.pages_settings = function(){
     reset.addEventListener('click', function(){
       YC.app.confirm('Reset all settings to defaults?', function(){
         YC.Store.remove('yc:settings');
+        /* Also push defaults to the server so the reset propagates site-wide. */
+        if(YC.backend && YC.backend.saveSettings){
+          var defaults = { websiteName:'Yallah Click', tagline:'Premium Video Editing & Content Growth', contactEmail:'yallahclick.contact@gmail.com', phone:'+212 600 000 000', logoDark:'images/Yalah Click WH.png', logoLight:'images/yallahclick.png', favicon:'images/Mini logo.ico', defaultTheme:'dark', enableThemeToggle:true, announcement:'', bookingEnabled:true, bookingMinPeople:1, bookingMaxPeople:10, bookingBufferHours:1, confirmRequired:true, contentPromptsEnabled:true, contentTemplatesEnabled:true, downloadMethod:'direct', itemsPerPage:9, promoPopupsEnabled:true, promoDefaultDelay:5, promoDefaultPosition:'center', promoDefaultShowOnce:true };
+          YC.backend.saveSettings(defaults);
+        }
         YC.toast.success('Settings reset.');
         setTimeout(function(){ location.reload(); }, 500);
       }, 'Reset');

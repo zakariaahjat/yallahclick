@@ -7,6 +7,8 @@
 'use strict';
 
 const path = require('path');
+const fs = require('fs');
+const crypto = require('crypto');
 const express = require('express');
 const cors = require('cors');
 
@@ -17,6 +19,7 @@ const { requireAuth, optionalAuth } = require('./routes/middleware');
 
 const ROOT = path.join(__dirname, '..');
 const PORT = process.env.PORT || 3000;
+const UPLOAD_DIR = path.join(ROOT, 'uploads');
 
 const app = express();
 app.disable('x-powered-by');
@@ -50,8 +53,10 @@ api.post('/auth/reset', requireAuth, (req, res, next) => {
   }catch(e){ next(e); }
 });
 
-api.post('/auth/reset-public', (req, res, next) => {
-  // Public reset endpoint used for the demo "restore sample data" button.
+api.post('/auth/reset-public', requireAuth, (req, res, next) => {
+  // Reset is now admin-only. The generic POST /auth/reset already covers
+  // authenticated resets; this alias is kept for the dashboard reset button
+  // but no longer exposed unauthenticated.
   try{
     db.dropAll();
     res.json({ data: { ok: true } });
@@ -63,9 +68,95 @@ for (const name of db.collections()){
   api.use('/' + name, genericRouter(name));
 }
 
+/* ---------- file upload (multipart/form-data, single file) ---------- */
+api.post('/upload', requireAuth, (req, res, next) => {
+  try{
+    const contentType = String(req.headers['content-type'] || '');
+    const boundary = typeof req.headers['content-type'] === 'string'
+      ? (contentType.match(/boundary=(?:"([^"]+)"|([^;]+))/i) || [])[1] || (contentType.match(/boundary=(?:"([^"]+)"|([^;]+))/i) || [])[2]
+      : '';
+    if (!boundary) return res.status(400).json({ error: 'missing_boundary' });
+
+    let buf = Buffer.alloc(0);
+    req.on('data', (c) => { buf = Buffer.concat([buf, c]); });
+
+    req.on('end', () => {
+      try{
+        const parsed = parseMultipart(buf, boundary);
+        if (!parsed || !parsed.file){
+          return res.status(400).json({ error: 'no_file' });
+        }
+        fs.mkdirSync(UPLOAD_DIR, { recursive: true });
+        const safe = (s) => String(s || '').replace(/[^a-z0-9._-]/gi, '_');
+        const ext = path.extname(parsed.file.filename || '').toLowerCase();
+        const fileName = 'u_' + crypto.randomBytes(6).toString('hex') + ext;
+        const sub = String(parsed.fields.folder === 'promotions' ? 'promotions'
+          : parsed.fields.folder === 'files' ? 'files'
+          : parsed.fields.folder || 'content');
+        const dir = path.join(UPLOAD_DIR, safe(sub));
+        fs.mkdirSync(dir, { recursive: true });
+        const abs = path.join(dir, fileName);
+        fs.writeFileSync(abs, parsed.file.data);
+        const url = '/uploads/' + safe(sub) + '/' + fileName;
+        res.status(201).json({ data: { url, filename: fileName, folder: safe(sub), size: parsed.file.data.length } });
+      }catch(e){ next(e); }
+    });
+    req.on('error', next);
+  }catch(e){ next(e); }
+});
+
+/* lightweight multipart/form-data parser (single file + fields):
+   delimiter = "--boundary". The first part may start right after the
+   opening "--boundary" (no leading CRLF); subsequent parts are separated
+   by "\r\n--boundary". Each part body ends right before the next
+   "--boundary", after stripping a single trailing CRLF. */
+function parseMultipart(buffer, boundary){
+  const delim = Buffer.from('--' + boundary);
+  const parts = [];
+  let search = 0;
+  while (true){
+    const start = buffer.indexOf(delim, search);
+    if (start < 0) break;
+    let partStart = start + delim.length;
+    // closing boundary: "--boundary--"
+    if (buffer.subarray(partStart, partStart + 2).toString() === '--') break;
+    // skip leading CRLF that separates this part from the previous one
+    if (buffer[partStart] === 0x0d) partStart += 2;
+    const headerEnd = buffer.indexOf(Buffer.from('\r\n\r\n'), partStart);
+    if (headerEnd < 0) break;
+    const headerText = buffer.slice(partStart, headerEnd).toString('utf8');
+    const bodyStart = headerEnd + 4;
+    const bodyEnd = buffer.indexOf(delim, bodyStart);
+    if (bodyEnd < 0) break;
+    let bodyEndRaw = bodyEnd;
+    if (bodyEnd >= 2 && buffer[bodyEnd - 2] === 0x0d && buffer[bodyEnd - 1] === 0x0a) bodyEndRaw = bodyEnd - 2;
+    const body = buffer.slice(bodyStart, bodyEndRaw);
+    const nameMatch = /name="([^"]*)"/.exec(headerText);
+    const fileMatch = /filename="([^"]*)"/.exec(headerText);
+    const name = nameMatch ? nameMatch[1] : '';
+    parts.push({
+      name,
+      filename: fileMatch ? fileMatch[1] : null,
+      contentType: (/Content-Type:\s*([^\r\n]+)/i.exec(headerText) || [])[1]?.trim() || '',
+      data: fileMatch ? body : body.toString('utf8')
+    });
+    search = bodyEnd;
+  }
+  const fields = {};
+  let file = null;
+  parts.forEach((p) => {
+    if (p.filename){ file = p; }
+    else if (p.name) fields[p.name] = p.data;
+  });
+  return { fields, file };
+}
+
 api.use('/auth', authRouter);
 
 app.use('/api', api);
+
+/* uploaded files are served publicly so /uploads/... paths resolve */
+app.use('/uploads', express.static(UPLOAD_DIR, { fallthrough: true }));
 
 /* ---- static site (root = repo root so relative html/css/img resolve) ---- */
 app.use(express.static(ROOT, {

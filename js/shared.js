@@ -798,8 +798,23 @@ YC.settings = (function(){
       whatsapp: 'https://wa.me/message/I5ZSIR6EPNRON1'
     }
   };
+  /* Prefer the backend's persisted settings when it's loaded & hydrated,
+     otherwise fall back to localStorage, otherwise the bundled defaults. */
+  function serverSettings(){
+    try{
+      if (window.YC && YC.backend){
+        var s = YC.backend.getSettings();
+        if (s && typeof s === 'object' && !Array.isArray(s)) return s;
+      }
+    }catch(e){}
+    return null;
+  }
+  function localBase(){
+    try{ return YC.Store.read('yc:settings') || null; }
+    catch(e){ return null; }
+  }
   function load(){
-    var s = YC.Store.read('yc:settings') || DEFAULT;
+    var s = serverSettings() || localBase() || {};
     return Object.assign({}, DEFAULT, s, { social: Object.assign({}, DEFAULT.social, (s.social || {})) });
   }
   return {
@@ -810,7 +825,11 @@ YC.settings = (function(){
     save: function(patch){
       var current = load();
       var next = Object.assign({}, current, patch);
-      YC.Store.write('yc:settings', next);
+      next.id = current.id || 1;
+      try{ YC.Store.write('yc:settings', next); }catch(e){}
+      if (window.YC && YC.backend && YC.backend.saveSettings){
+        YC.backend.saveSettings(next);
+      }
       return next;
     }
   };

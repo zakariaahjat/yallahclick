@@ -1,19 +1,15 @@
-# Vercel
-.vercel
+# Local Vercel CLI project link
+.vercel/
 
-# OS
-Thumbs.db
-.DS_Store
-Desktop.ini
+# Uploaded files live outside source control (local/persistent-host only;
+# on Vercel they are ephemeral and should be replaced with object storage URLs)
+uploads/
 
-# Logs
-*.log
-npm-debug.log*
-
-# Node
+# Local node modules
 node_modules/
 
-# Editor
-.vscode
-.idea
-.vercel
+# Local test artifacts
+*.log
+
+# Stray analytics export
+images/bookings.csv

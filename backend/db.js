@@ -27,6 +27,7 @@ const COLLECTIONS = [
   'videoTemplates',
   'thumbnailTemplates',
   'promotions',
+  'settings',
   'admins',
   'files',
   'categories',
@@ -124,7 +125,8 @@ function loadSeeds(){
   const seedFileOrder = [
     'services.js', 'categories.js', 'bookings.js', 'customers.js',
     'aiPrompts.js', 'templates.js', 'videoTemplates.js',
-    'thumbnailTemplates.js', 'promotions.js', 'files.js', 'admins.js'
+    'thumbnailTemplates.js', 'promotions.js', 'settings.js',
+    'files.js', 'admins.js'
   ];
 
   for (const f of seedFileOrder){
@@ -158,7 +160,8 @@ function clone(v){
    durable remote store (Vercel KV) can be hydrated before serving. --- */
 async function init(){
   let seeded = false;
-  if (fs.existsSync(DB_FILE)){
+  const hadFile = fs.existsSync(DB_FILE);
+  if (hadFile){
     try{
       const raw = fs.readFileSync(DB_FILE, 'utf8');
       const parsed = JSON.parse(raw);
@@ -174,6 +177,20 @@ async function init(){
   }else{
     state = loadSeeds();
     seeded = true;
+  }
+
+  // Backfill collections that are entirely absent from an older db.json
+  // so newly-introduced collections (e.g. settings) appear automatically.
+  // Note: only fills missing keys — never resurrects a deliberately
+  // emptied collection, so deleting every booking stays deleted.
+  if (hadFile && !seeded){
+    const seeds = loadSeeds();
+    for (const key of COLLECTIONS){
+      if (!(key in state)){
+        state[key] = seeds[key] || [];
+        seeded = true;
+      }
+    }
   }
 
   // If a durable store is configured, prefer its snapshot (it wins over file).

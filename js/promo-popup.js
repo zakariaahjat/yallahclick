@@ -55,9 +55,21 @@ YC.PromoPopup = (function(){
 
   function buildCard(p){
     var card = document.createElement('div');
-    card.className = 'promo-popup-card';
+    card.className = 'promo-popup-card' + (p.image ? ' has-image' : '');
     var inner = document.createElement('div');
     inner.className = 'promo-popup-inner';
+
+    /* optional banner image */
+    var imgWrap = null;
+    if(p.image){
+      imgWrap = document.createElement('div');
+      imgWrap.className = 'promo-banner';
+      var img = document.createElement('img');
+      img.src = p.image;
+      img.alt = p.title || 'Promotion';
+      img.addEventListener('error', function(){ imgWrap && imgWrap.remove(); });
+      imgWrap.appendChild(img);
+    }
 
     /* tag + service + discount */
     var tag = span(p.promoType === 'discount' ? 'Auto-applied discount' : 'Limited-time offer', 'promo-tag');
@@ -91,6 +103,7 @@ YC.PromoPopup = (function(){
     cta.href = ctaDest(p);
     cta.textContent = p.ctaText || 'Get This Offer';
 
+    if(imgWrap) inner.appendChild(imgWrap);
     inner.appendChild(tag);
     inner.appendChild(svc);
     inner.appendChild(disc);

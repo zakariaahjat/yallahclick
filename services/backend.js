@@ -26,7 +26,8 @@ window.YC = window.YC || {};
   var apiBase = API.replace(/\/+$/, '') + '/api';
   var COLLECTIONS = [
     'bookings','customers','prompts','templates','videoTemplates',
-    'thumbnailTemplates','promotions','admins','files','categories','services'
+    'thumbnailTemplates','promotions','settings','admins','files',
+    'categories','services'
   ];
 
   var cache = {};        // key(ref YC key) -> array
@@ -199,6 +200,40 @@ window.YC = window.YC || {};
     });
   }
 
+  /* Site-wide settings are stored as a single record in the `settings`
+     collection. These helpers keep the cache + local fallback in sync. */
+  function settingsRecord(){
+    var arr = cache['settings'];
+    if (arr && arr.length) return arr[0];
+    return null;
+  }
+
+  function getSettings(){
+    var rec = settingsRecord();
+    if (rec) return rec;
+    var raw = lsRead('yc:settings');
+    if (raw && typeof raw === 'object' && !Array.isArray(raw)) return raw;
+    return null;
+  }
+
+  function saveSettings(patch){
+    var existing = settingsRecord() || lsRead('yc:settings') || {};
+    var merged = Object.assign({}, existing, patch || {});
+    merged.id = merged.id || 1;
+    if (online){
+      var p = request('PATCH', '/settings/' + merged.id, merged).then(function(r){
+        if (r.ok && r.body && r.body.data){
+          cache['settings'] = [r.body.data];
+          snapshot['settings'] = [JSON.parse(JSON.stringify(r.body.data))];
+        }
+        return r;
+      });
+      return p;
+    }
+    lsWrite('yc:settings', merged);
+    return Promise.resolve({ ok: true });
+  }
+
   window.YC.backend = {
     base: apiBase,
     request: request,
@@ -206,7 +241,10 @@ window.YC = window.YC || {};
     resetAll: resetAll,
     probe: probe,
     isOnline: function(){ return online; },
-    token: token
+    token: token,
+    getSettings: getSettings,
+    saveSettings: saveSettings,
+    COLLECTIONS: COLLECTIONS.slice()
   };
 
   window.YC.backend.ready = hydrate();
