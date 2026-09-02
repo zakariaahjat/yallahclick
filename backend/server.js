@@ -18,8 +18,6 @@ const { requireAuth, optionalAuth } = require('./routes/middleware');
 const ROOT = path.join(__dirname, '..');
 const PORT = process.env.PORT || 3000;
 
-db.init();
-
 const app = express();
 app.disable('x-powered-by');
 app.use(cors());
@@ -97,10 +95,16 @@ app.use((err, req, res, next) => {
 });
 
 if (require.main === module){
-  app.listen(PORT, () => {
-    console.log('YallahClick API + site running at http://localhost:' + PORT);
-    console.log('  DB file: ' + db.DB_FILE);
-    console.log('  Health:  http://localhost:' + PORT + '/api/health');
+  db.init().then(() => {
+    app.listen(PORT, () => {
+      console.log('YallahClick API + site running at http://localhost:' + PORT);
+      console.log('  DB file: ' + db.DB_FILE);
+      console.log('  KV store: ' + (db.KV_ENABLED ? 'enabled' : 'disabled'));
+      console.log('  Health:  http://localhost:' + PORT + '/api/health');
+    });
+  }).catch((e) => {
+    console.error('Failed to init db:', e);
+    process.exit(1);
   });
 }
 
