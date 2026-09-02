@@ -1,0 +1,20 @@
+{
+  "name": "yallah-click",
+  "version": "1.0.0",
+  "description": "YallahClick — studio admin + library site with a real Express JSON-file API (data/db.json) and full CRUD.",
+  "main": "backend/server.js",
+  "scripts": {
+    "start": "node backend/server.js",
+    "dev": "node backend/server.js",
+    "seed": "node backend/seed.js",
+    "test": "node backend/test.js",
+    "check": "node --check backend/server.js && node --check backend/db.js && node --check backend/routes/generic.js && node --check backend/routes/auth.js && node --check backend/routes/middleware.js && node --check backend/seed.js && node --check backend/test.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.19.2"
+  }
+}

@@ -10,6 +10,9 @@ Desktop.ini
 *.log
 npm-debug.log*
 
+# Node
+node_modules/
+
 # Editor
 .vscode
 .idea

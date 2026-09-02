@@ -10,41 +10,72 @@ YC.admin = YC.admin || {};
 YC.auth = {
   DEMO: { email: 'admin@yallahclick.com', password: 'admin123' },
 
+  /* Validate against the backend (/api/auth/login). Falls back to the
+     local demo credential only when the API is unreachable, so the
+     static demo still opens without a server. Returns { ok, error }. */
   login: function(email, password, remember){
-    var user = null;
-    if(YC.services && YC.services.admins){
-      var au = YC.services.admins.authenticate(email, password);
-      if(au) user = au;
-    }
-    if(!user){
-      if(String(email).trim().toLowerCase() === this.DEMO.email && password === this.DEMO.password){
-        user = { email: this.DEMO.email, name: 'YallahClick Admin', role: 'owner' };
+    var self = this;
+    var me = { email: String(email || '').trim(), password: String(password || '') };
+
+    // 1) try the backend first (async)
+    var attemptApi = function(){
+      if(!window.YC || !YC.backend) return Promise.resolve({ ok: false, error: 'Backend not loaded.' });
+      return fetch(YC.backend.base + '/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify({ email: me.email, password: me.password })
+      }).then(function(res){ return res.json().catch(function(){ return {}; }); })
+        .then(function(json){
+          if (json && json.data && json.data.token){
+            self._setSession(json.data.user, json.data.token, remember);
+            if (YC.backend) YC.backend.token = function(){ return json.data.token; };
+            return { ok: true };
+          }
+          return { ok: false, error: (json && json.message) || 'Incorrect email or password.' };
+        })
+        .catch(function(){ return null; }); // API unreachable
+    };
+
+    return attemptApi().then(function(res){
+      // 3) backend rejected or offline: try local demo creds (offline fallback)
+      if (res === null || (res && res.ok === false)){
+        var demo = self.DEMO;
+        if (String(me.email).trim().toLowerCase() === demo.email && me.password === demo.password){
+          var user = { email: demo.email, name: 'YallahClick Admin', role: 'owner' };
+          self._setSession(user, 'local-' + Date.now(), remember);
+          return { ok: true };
+        }
+        return res || { ok: false, error: 'Incorrect email or password.' };
       }
-    }
-    if(!user) return { ok: false, error: 'Incorrect email or password. Try the demo credentials.' };
+      return res;
+    });
+  },
+
+  _setSession: function(user, token, remember){
+    var store = remember ? localStorage : sessionStorage;
     var payload = JSON.stringify({ email: user.email, name: user.name || 'Admin', role: user.role || 'admin', at: new Date().toISOString() });
-    if(remember){
-      localStorage.setItem('yc-auth', payload);
-      sessionStorage.removeItem('yc-session');
-    }else{
-      sessionStorage.setItem('yc-session', payload);
-    }
-    return { ok: true };
+    store.setItem('yc-auth', payload);
+    if (token) store.setItem('yc-token', token);
+    var other = remember ? sessionStorage : localStorage;
+    other.removeItem('yc-auth');
+    other.removeItem('yc-token');
   },
 
   isLoggedIn: function(){
-    return !!(localStorage.getItem('yc-auth') || sessionStorage.getItem('yc-session'));
+    return !!(localStorage.getItem('yc-auth') || sessionStorage.getItem('yc-auth'));
   },
 
   user: function(){
-    var raw = localStorage.getItem('yc-auth') || sessionStorage.getItem('yc-session');
+    var raw = localStorage.getItem('yc-auth') || sessionStorage.getItem('yc-auth');
     if(!raw) return null;
     try{ return JSON.parse(raw); }catch(e){ return null; }
   },
 
   logout: function(){
     localStorage.removeItem('yc-auth');
-    sessionStorage.removeItem('yc-session');
+    sessionStorage.removeItem('yc-auth');
+    localStorage.removeItem('yc-token');
+    sessionStorage.removeItem('yc-token');
   },
 
   guard: function(redirect){
@@ -538,9 +569,13 @@ YC.admin.boot = function(opts){
       return;
     }
   }
-  YC.admin.buildSidebar();
-  YC.admin.buildTopbar(opts);
-  YC.admin.initPageFx();
-  YC.admin.initPalette();
-  YC.undoStack.bind();
+  /* hydrate the API-backed cache, then build the shell */
+  var ready = (YC.backend && YC.backend.hydrate) ? YC.backend.hydrate() : Promise.resolve(true);
+  Promise.resolve(ready).then(function(){
+    YC.admin.buildSidebar();
+    YC.admin.buildTopbar(opts);
+    YC.admin.initPageFx();
+    YC.admin.initPalette();
+    YC.undoStack.bind();
+  });
 };

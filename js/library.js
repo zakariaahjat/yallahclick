@@ -410,6 +410,10 @@ document.addEventListener('DOMContentLoaded', function(){
   };
   var cfg = map[lib];
   if(cfg && cfg.svc){
-    YC.lib.render({ type: cfg.type, svc: cfg.svc });
+    /* wait for API hydration so the library shows server data when a
+       backend is present; otherwise fall back to the static demo data */
+    var ready = (YC.backend && YC.backend.hydrate) ? YC.backend.hydrate() : Promise.resolve(true);
+    Promise.resolve(ready).then(function(){ YC.lib.render({ type: cfg.type, svc: cfg.svc }); })
+      .catch(function(){ YC.lib.render({ type: cfg.type, svc: cfg.svc }); });
   }
 });

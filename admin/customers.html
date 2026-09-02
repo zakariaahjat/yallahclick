@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -45,7 +45,7 @@
         <div>
           <span class="overline" style="color:var(--red)">Operations</span>
           <h2>Customers</h2>
-          <p>Every client and their booking history in one view — enable, disable or extend profiles.</p>
+          <p>Every client and their booking history in one view â€” enable, disable or extend profiles.</p>
         </div>
         <button type="button" class="btn btn-primary" id="btnNewCustomer">
           <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span>
@@ -58,7 +58,7 @@
       <div class="toolbar">
         <div class="search-box">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-          <input type="text" id="searchCustomers" placeholder="Search customers…">
+          <input type="text" id="searchCustomers" placeholder="Search customersâ€¦">
         </div>
         <button type="button" class="btn-export" id="btnExportCustomers">
           <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></span>
@@ -83,7 +83,9 @@
 <script src="../data/thumbnailTemplates.js"></script>
 <script src="../data/files.js"></script>
 <script src="../data/categories.js"></script>
-<script src="../services/storage.js"></script>
+
+  <script src="../services/storage.js"></script>
+<script src="../services/backend.js"></script>
 <script src="../services/bookingService.js"></script>
 <script src="../services/customerService.js"></script>
 <script src="../services/promptService.js"></script>

@@ -388,24 +388,26 @@ YC.app.pages_login = function(){
     submit.disabled = true;
     submit.classList.add('loading');
     setTimeout(function(){
-      var res = YC.auth.login(email, pass, remember);
-      submit.disabled = false;
-      submit.classList.remove('loading');
-      if(res.ok){
-        YC.toast.success('Welcome back, Admin!');
-        if(errorBox) errorBox.classList.remove('show');
-        setTimeout(function(){
-          if(YC.admin && YC.admin.pageFxKick) YC.admin.pageFxKick();
-          document.body.classList.add('pg-leave');
-          setTimeout(function(){ location.href = next; }, 250);
-        }, 400);
-      }else{
-        if(formBox) formBox.classList.add('is-error');
-        if(errorBox){
-          errorBox.textContent = res.error;
-          errorBox.classList.add('show');
+      Promise.resolve(YC.auth.login(email, pass, remember)).then(function(res){
+        if(!res) res = { ok: false, error: 'Unable to sign in. Please try again.' };
+        submit.disabled = false;
+        submit.classList.remove('loading');
+        if(res.ok){
+          YC.toast.success('Welcome back, Admin!');
+          if(errorBox) errorBox.classList.remove('show');
+          setTimeout(function(){
+            if(YC.admin && YC.admin.pageFxKick) YC.admin.pageFxKick();
+            document.body.classList.add('pg-leave');
+            setTimeout(function(){ location.href = next; }, 250);
+          }, 400);
+        }else{
+          if(formBox) formBox.classList.add('is-error');
+          if(errorBox){
+            errorBox.textContent = res.error;
+            errorBox.classList.add('show');
+          }
         }
-      }
+      });
     }, 450);
   });
 };
@@ -2171,12 +2173,22 @@ document.addEventListener('DOMContentLoaded', function(){
     settings: YC.app.pages_settings,
     users: YC.app.pages_users
   };
-  if(page && typeof map[page] === 'function'){
+  var fn = (page && typeof map[page] === 'function') ? map[page] : null;
+  if(!fn) return;
+
+  /* Hydrate the API-backed cache (if a backend is present) before
+     rendering a page, so every service read returns server data. If
+     the API is unreachable the bridge falls back to localStorage. */
+  var ready = (YC.backend && YC.backend.hydrate) ? YC.backend.hydrate() : Promise.resolve(true);
+  Promise.resolve(ready).then(function(){
     try{
-      map[page]();
+      fn();
     }catch(err){
       if(window.console) console.error('Page controller error [' + page + ']:', err);
       YC.toast.error('Something went wrong loading this page.');
     }
-  }
+  }).catch(function(err){
+    if(window.console) console.error('Hydration error [' + page + ']:', err);
+    try{ fn(); }catch(e2){ YC.toast.error('Something went wrong loading this page.'); }
+  });
 });
