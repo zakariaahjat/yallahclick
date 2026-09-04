@@ -123,6 +123,12 @@ async function main(){
   r = await request(port, 'GET', '/api/prompts?filters=' + encodeURIComponent(JSON.stringify({ featured: true })));
   ok(r.status === 200 && r.body.data.every((p) => p.featured === true), 'prompts filter featured');
 
+  // 11b) per-section kebab-case aliases work (e.g. /api/psd-templates)
+  r = await request(port, 'GET', '/api/psd-templates');
+  ok(r.status === 200 && r.body.data.length >= 1, 'alias /api/psd-templates serves psdTemplates');
+  r = await request(port, 'GET', '/api/video-templates');
+  ok(r.status === 200 && Array.isArray(r.body.data), 'alias /api/video-templates works');
+
   // 12) reset to seed (requires auth)
   r = await request(port, 'POST', '/api/auth/reset-public', undefined, token);
   ok(r.status === 200 && r.body.data.ok === true, 'reset to seed (authed)');

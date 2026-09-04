@@ -70,9 +70,15 @@ api.post('/auth/reset-public', requireAuth, (req, res, next) => {
   }catch(e){ next(e); }
 });
 
-// mount a generic CRUD router per collection
+// mount a generic CRUD router per collection, under both the collection
+// name and its per-section file alias (kebab-case), e.g.
+//   /api/psdTemplates   AND   /api/psd-templates
 for (const name of db.collections()){
-  api.use('/' + name, genericRouter(name));
+  const router = genericRouter(name);
+  api.use('/' + name, router);
+  const file = db.COLLECTION_FILES[name];
+  const alias = String(file || '').replace(/\.json$/, '');
+  if (alias && alias !== name) api.use('/' + alias, router);
 }
 
 /* ---------- file upload (multipart/form-data, single file) ---------- */
