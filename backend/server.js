@@ -38,7 +38,14 @@ if (process.env.YC_LOG){
 const api = express.Router();
 
 api.get('/health', (req, res) => {
-  res.json({ status: 'ok', time: new Date().toISOString(), db: path.basename(db.DB_FILE), collections: db.collections() });
+  res.json({
+    status: 'ok',
+    time: new Date().toISOString(),
+    db: 'data/*.json (per-section files)',
+    kv: db.KV_ENABLED ? 'enabled' : 'disabled',
+    collections: db.collections(),
+    files: db.files()
+  });
 });
 
 api.get('/meta/counts', (req, res) => {
@@ -182,7 +189,11 @@ app.use((req, res) => {
 /* central error handler */
 app.use((err, req, res, next) => {
   console.error('[api]', err && err.message);
-  res.status(err && err.status || 500).json({ error: 'server_error', message: err && err.message });
+  const status = (err && err.status) || 500;
+  const isValidation = err && err.status === 400;
+  res.status(status).json(isValidation
+    ? { error: 'validation_error', message: err.message }
+    : { error: 'server_error', message: err && err.message });
 });
 
 if (require.main === module){

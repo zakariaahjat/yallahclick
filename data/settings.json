@@ -1,0 +1,47 @@
+{
+  "_meta": {
+    "version": 1,
+    "migratedFrom": "db.json",
+    "migratedAt": "2026-09-04T20:21:17.145Z",
+    "collection": "settings"
+  },
+  "data": [
+    {
+      "id": 1,
+      "websiteName": "Yallah Click",
+      "tagline": "Premium Video Editing & Content Growth",
+      "contactEmail": "yallahclick.contact@gmail.com",
+      "phone": "+212 600 000 000",
+      "logoDark": "images/Yalah Click WH.png",
+      "logoLight": "images/yallahclick.png",
+      "favicon": "images/Mini logo.ico",
+      "defaultTheme": "dark",
+      "enableThemeToggle": true,
+      "announcement": "",
+      "bookingEnabled": true,
+      "bookingMinPeople": 1,
+      "bookingMaxPeople": 10,
+      "bookingBufferHours": 1,
+      "confirmRequired": true,
+      "contentPromptsEnabled": true,
+      "contentTemplatesEnabled": true,
+      "downloadMethod": "direct",
+      "itemsPerPage": 9,
+      "promoPopupsEnabled": true,
+      "promoDefaultDelay": 5,
+      "promoDefaultPosition": "center",
+      "promoDefaultShowOnce": true,
+      "social": {
+        "youtube": "https://www.youtube.com/@YallahClick",
+        "instagram": "https://www.instagram.com/yallah.click/?hl=en",
+        "tiktok": "https://www.tiktok.com/@yallah.click",
+        "behance": "https://www.behance.net/yallahclick",
+        "linkedin": "https://www.linkedin.com/in/yallah-click-34a897421/",
+        "facebook": "https://facebook.com",
+        "pinterest": "https://www.pinterest.com/yallahclick/_profile/",
+        "x": "https://x.com/YallahClick",
+        "whatsapp": "https://wa.me/message/I5ZSIR6EPNRON1"
+      }
+    }
+  ]
+}

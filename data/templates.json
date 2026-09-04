@@ -1,0 +1,350 @@
+{
+  "_meta": {
+    "version": 1,
+    "updatedAt": "2026-09-04T20:26:37.458Z",
+    "collection": "templates"
+  },
+  "data": [
+    {
+      "id": 1,
+      "title": "YouTube Gaming Thumbnail",
+      "description": "Edgy gaming thumbnail PSD with glowing neon overlays, scan lines and a chunky title zone. Drag-and-drop your screenshot and export.",
+      "type": "PSD",
+      "category": "Gaming",
+      "tags": [
+        "thumbnail",
+        "gaming",
+        "fps",
+        "psd"
+      ],
+      "preview": "images/thump/Thumbnail ZIGZAG 209.jpg",
+      "gallery": [
+        "images/thump/Thumbnail ZIGZAG 209.jpg",
+        "images/thump/Thumbnail ZIGZAG 210.jpg"
+      ],
+      "file": "gaming-thumbnail.psd",
+      "fileSize": "284 MB",
+      "software": "Adobe Photoshop",
+      "version": "CC 2023+",
+      "compatible": [
+        "Photoshop"
+      ],
+      "featured": true,
+      "published": true,
+      "downloads": 1820,
+      "createdAt": "2026-06-10T09:00:00Z"
+    },
+    {
+      "id": 2,
+      "title": "Vlog Color Pack (.cube)",
+      "description": "6 cinematic LUTs tuned for outdoor/natural-light vlogs. Includes a matching photoshop action for stills.",
+      "type": "ZIP",
+      "category": "Color Grading",
+      "tags": [
+        "lut",
+        "vlog",
+        "cinematic",
+        "color"
+      ],
+      "preview": null,
+      "previewEmoji": "🎞️",
+      "previewColor": "#101a10",
+      "gallery": [],
+      "file": "yallahclick-vlog-luts.zip",
+      "fileSize": "18 MB",
+      "software": "Any NLE",
+      "version": "Universal",
+      "compatible": [
+        "Premiere Pro",
+        "DaVinci Resolve",
+        "Final Cut"
+      ],
+      "featured": true,
+      "published": true,
+      "downloads": 2440,
+      "createdAt": "2026-06-12T10:00:00Z"
+    },
+    {
+      "id": 3,
+      "title": "Canva Podcast Cover Kit",
+      "description": "3 polished Canva cover templates for podcast feeds — audio-wave motif, duotone theme and minimal grid.",
+      "type": "Canva",
+      "category": "Podcasts",
+      "tags": [
+        "canva",
+        "podcast",
+        "cover",
+        "kit"
+      ],
+      "preview": null,
+      "previewEmoji": "🎙️",
+      "previewColor": "#1a1020",
+      "gallery": [],
+      "file": "canva-podcast-kit.canva",
+      "fileSize": "Link",
+      "software": "Canva",
+      "version": "Free",
+      "compatible": [
+        "Canva"
+      ],
+      "featured": false,
+      "published": true,
+      "downloads": 986,
+      "createdAt": "2026-06-20T12:00:00Z"
+    },
+    {
+      "id": 4,
+      "title": "Figma YouTube Banner System",
+      "description": "Responsive channel banner with reusable text styles, safe-zone guides and a mini promo section.",
+      "type": "Figma",
+      "category": "Branding",
+      "tags": [
+        "figma",
+        "banner",
+        "channel",
+        "branding"
+      ],
+      "preview": null,
+      "previewEmoji": "🧩",
+      "previewColor": "#1a1005",
+      "gallery": [],
+      "file": "figma-banner-system.fig",
+      "fileSize": "12 MB",
+      "software": "Figma",
+      "version": "Free",
+      "compatible": [
+        "Figma"
+      ],
+      "featured": false,
+      "published": true,
+      "downloads": 754,
+      "createdAt": "2026-06-25T14:00:00Z"
+    },
+    {
+      "id": 5,
+      "title": "AE Kinetic Typography Presets",
+      "description": "12 kinetic caption presets (pop, bounce, tag, glitch) with sound FX baked in. Drop on any text layer.",
+      "type": "After Effects",
+      "category": "Motion",
+      "tags": [
+        "after effects",
+        "presets",
+        "captions",
+        "motion"
+      ],
+      "preview": null,
+      "previewEmoji": "💥",
+      "previewColor": "#100a1c",
+      "gallery": [],
+      "file": "ae-kinetic-typography.ffx",
+      "fileSize": "46 MB",
+      "software": "Adobe After Effects",
+      "version": "2022+",
+      "compatible": [
+        "After Effects"
+      ],
+      "featured": true,
+      "published": true,
+      "downloads": 1633,
+      "createdAt": "2026-07-02T09:00:00Z"
+    },
+    {
+      "id": 6,
+      "title": "Premiere Pro Podcast Multi-Cam Setup",
+      "description": "Pre-built multi-cam sequence with 4 angles, audio ducking, and a template lower-third track.",
+      "type": "Premiere Pro",
+      "category": "Podcasts",
+      "tags": [
+        "premiere",
+        "multicam",
+        "podcast",
+        "template"
+      ],
+      "preview": null,
+      "previewEmoji": "🎬",
+      "previewColor": "#0a1220",
+      "gallery": [],
+      "file": "pp-podcast-multicam.spr",
+      "fileSize": "88 MB",
+      "software": "Adobe Premiere Pro",
+      "version": "2023+",
+      "compatible": [
+        "Premiere Pro"
+      ],
+      "featured": false,
+      "published": true,
+      "downloads": 1210,
+      "createdAt": "2026-07-09T11:00:00Z"
+    },
+    {
+      "id": 7,
+      "title": "CapCut Gaming Edit Template",
+      "description": "Ready-to-edit CapCut template with beat-synced zooms, glitch transitions and a hype intro.",
+      "type": "CapCut",
+      "category": "Gaming",
+      "tags": [
+        "capcut",
+        "gaming",
+        "meme",
+        "template"
+      ],
+      "preview": null,
+      "previewEmoji": "🎮",
+      "previewColor": "#101610",
+      "gallery": [],
+      "file": "capcut-gaming-template.zip",
+      "fileSize": "34 MB",
+      "software": "CapCut",
+      "version": "Desktop/Mobile",
+      "compatible": [
+        "CapCut"
+      ],
+      "featured": false,
+      "published": true,
+      "downloads": 3075,
+      "createdAt": "2026-07-15T15:00:00Z"
+    },
+    {
+      "id": 8,
+      "title": "PowerPoint Pitch Deck (Creator)",
+      "description": "Clean 12-slide pitch deck for creators and agencies — dark theme, metric pages, full bleed media.",
+      "type": "PowerPoint",
+      "category": "Business",
+      "tags": [
+        "powerpoint",
+        "deck",
+        "pitch",
+        "business"
+      ],
+      "preview": null,
+      "previewEmoji": "📊",
+      "previewColor": "#101420",
+      "gallery": [],
+      "file": "creator-pitch-deck.pptx",
+      "fileSize": "22 MB",
+      "software": "Microsoft PowerPoint",
+      "version": "2016+",
+      "compatible": [
+        "PowerPoint",
+        "Google Slides"
+      ],
+      "featured": false,
+      "published": true,
+      "downloads": 871,
+      "createdAt": "2026-07-22T10:00:00Z"
+    },
+    {
+      "id": 9,
+      "title": "Illustrator Stream Overlay Set",
+      "description": "Open source stream overlay — camera frame, alerts, chat box, and logo badge in vector format.",
+      "type": "Illustrator",
+      "category": "Streaming",
+      "tags": [
+        "illustrator",
+        "overlay",
+        "stream",
+        "vector"
+      ],
+      "preview": null,
+      "previewEmoji": "📺",
+      "previewColor": "#1a0a1a",
+      "gallery": [],
+      "file": "stream-overlay-set.ai",
+      "fileSize": "58 MB",
+      "software": "Adobe Illustrator",
+      "version": "2021+",
+      "compatible": [
+        "Illustrator"
+      ],
+      "featured": false,
+      "published": true,
+      "downloads": 643,
+      "createdAt": "2026-07-30T09:30:00Z"
+    },
+    {
+      "id": 10,
+      "title": "YouTube Shorts Hook Pack (PNG)",
+      "description": "20 transparent PNG hook cards and arrows for Shorts/TikTok — drag onto your timeline.",
+      "type": "PNG",
+      "category": "Shorts",
+      "tags": [
+        "png",
+        "shorts",
+        "tiktok",
+        "hooks",
+        "overlay"
+      ],
+      "preview": null,
+      "previewEmoji": "⚡",
+      "previewColor": "#081a14",
+      "gallery": [],
+      "file": "shorts-hook-pack.zip",
+      "fileSize": "61 MB",
+      "software": "Any",
+      "version": "Universal",
+      "compatible": [
+        "All editors"
+      ],
+      "featured": true,
+      "published": true,
+      "downloads": 4120,
+      "createdAt": "2026-08-05T13:00:00Z"
+    },
+    {
+      "id": 11,
+      "title": "Wedding Highlight LUT Pack",
+      "description": "8 warm, film-inspired LUTs for weddings and lifestyle videos. Includes a grain overlay PNG.",
+      "type": "PDF",
+      "category": "Color Grading",
+      "tags": [
+        "wedding",
+        "lut",
+        "film",
+        "warm"
+      ],
+      "preview": null,
+      "previewEmoji": "💍",
+      "previewColor": "#221410",
+      "gallery": [],
+      "file": "wedding-lut-pack-guide.pdf",
+      "fileSize": "9 MB",
+      "software": "Any NLE",
+      "version": "Universal",
+      "compatible": [
+        "All NLEs"
+      ],
+      "featured": false,
+      "published": false,
+      "downloads": 402,
+      "createdAt": "2026-08-12T10:00:00Z"
+    },
+    {
+      "id": 12,
+      "title": "Minimal Tech Thumbnail (JPG)",
+      "description": "Final-style minimal tech thumbnail in 4K JPG. Swap the product render and update the text layer.",
+      "type": "JPG",
+      "category": "Tech",
+      "tags": [
+        "jpg",
+        "tech",
+        "thumbnail",
+        "minimal"
+      ],
+      "preview": "images/thump/Thumbnail Tabi3a 10.jpg",
+      "gallery": [
+        "images/thump/Thumbnail Tabi3a 10.jpg"
+      ],
+      "file": "tech-thumbnail-4k.jpg",
+      "fileSize": "6 MB",
+      "software": "Any",
+      "version": "4K",
+      "compatible": [
+        "All editors"
+      ],
+      "featured": false,
+      "published": true,
+      "downloads": 788,
+      "createdAt": "2026-08-20T09:00:00Z"
+    }
+  ]
+}

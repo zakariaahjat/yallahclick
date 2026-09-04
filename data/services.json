@@ -1,0 +1,50 @@
+{
+  "_meta": {
+    "version": 1,
+    "migratedFrom": "db.json",
+    "migratedAt": "2026-09-04T20:21:17.160Z",
+    "collection": "services"
+  },
+  "data": [
+    {
+      "id": "video-production",
+      "name": "Video Production",
+      "icon": "🎬",
+      "short": "Video Production",
+      "description": "High-retention long-form and short-form editing, cinematic color grading, and immersive sound design.",
+      "page": "index.html#book"
+    },
+    {
+      "id": "motion-design",
+      "name": "Motion Design",
+      "icon": "🎨",
+      "short": "Motion Design",
+      "description": "Motion graphics, animated captions, VFX, and visual storytelling that keeps viewers glued.",
+      "page": "index.html#book"
+    },
+    {
+      "id": "graphic-design",
+      "name": "Graphic Design",
+      "icon": "🖌️",
+      "short": "Graphic Design",
+      "description": "Thumbnails, channel art, branding and graphic assets built to convert clicks.",
+      "page": "index.html#book"
+    },
+    {
+      "id": "marketing",
+      "name": "Marketing",
+      "icon": "📈",
+      "short": "Marketing",
+      "description": "Algorithm-driven packaging, SEO titles, retention strategy and growth consulting.",
+      "page": "index.html#book"
+    },
+    {
+      "id": "full-creative",
+      "name": "Full Creative Service",
+      "icon": "⭐",
+      "short": "Full Creative Service",
+      "description": "The complete package: editing, motion, thumbnails and marketing handled end-to-end.",
+      "page": "index.html#book"
+    }
+  ]
+}

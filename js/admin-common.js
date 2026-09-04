@@ -110,6 +110,7 @@ YC.admin.navItems = [
       { page: 'templates', file: 'templates.html', label: 'Templates', icon: 'templates', count: 'templates-published' },
       { page: 'video-templates', file: 'video-templates.html', label: 'Video Templates', icon: 'video', count: 'video-published' },
       { page: 'thumbnail-templates', file: 'thumbnail-templates.html', label: 'Thumbnail Templates', icon: 'thumbnail', count: 'thumb-published' },
+      { page: 'psd-templates', file: 'psd-templates.html', label: 'PSD Templates', icon: 'layers', count: 'psd-published' },
       { page: 'files', file: 'files.html', label: 'Files', icon: 'files' }
     ]
   },
@@ -139,6 +140,7 @@ YC.admin.counts = function(){
     c['templates-published'] = YC.services.templates.all().filter(function(t){ return t.published; }).length;
     c['video-published'] = YC.services.videoTemplates.all().filter(function(t){ return t.published; }).length;
     c['thumb-published'] = YC.services.thumbnailTemplates.all().filter(function(t){ return t.published; }).length;
+    if(YC.services.psdTemplates) c['psd-published'] = YC.services.psdTemplates.all().filter(function(t){ return t.published; }).length;
     if(YC.services.admins) c['admins-total'] = YC.services.admins.all().length;
   }catch(e){}
   return c;

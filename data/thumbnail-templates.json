@@ -1,0 +1,170 @@
+{
+  "_meta": {
+    "version": 1,
+    "updatedAt": "2026-09-04T20:26:37.396Z",
+    "collection": "thumbnailTemplates"
+  },
+  "data": [
+    {
+      "id": 1,
+      "title": "Tech Review Highlight",
+      "description": "High-contrast tech thumbnail template: product on the right, emotive reaction on the left, punchy text zone.",
+      "platform": "YouTube",
+      "dimensions": "1280x720",
+      "category": "Tech",
+      "tags": [
+        "tech",
+        "review",
+        "thumbnail"
+      ],
+      "preview": "images/thump/Thumbnail Tabi3a 10.jpg",
+      "file": "tech-review-highlight.zip",
+      "fileSize": "14 MB",
+      "featured": true,
+      "published": true,
+      "favorites": 322,
+      "createdAt": "2026-06-16T09:00:00Z"
+    },
+    {
+      "id": 2,
+      "title": "Gaming Face-React Frame",
+      "description": "Classic gaming face-react template with neon smash highlights and score zone.",
+      "platform": "YouTube",
+      "dimensions": "1280x720",
+      "category": "Gaming",
+      "tags": [
+        "gaming",
+        "react",
+        "thumbnail"
+      ],
+      "preview": "images/thump/Thumbnail ZIGZAG 211.jpg",
+      "file": "gaming-face-react.zip",
+      "fileSize": "22 MB",
+      "featured": true,
+      "published": true,
+      "favorites": 410,
+      "createdAt": "2026-06-22T11:00:00Z"
+    },
+    {
+      "id": 3,
+      "title": "Football Challenge Vlog",
+      "description": "Dynamic sports template with speed lines, score card frame and sticker pack.",
+      "platform": "YouTube",
+      "dimensions": "1280x720",
+      "category": "Sports",
+      "tags": [
+        "football",
+        "sports",
+        "vlog",
+        "thumbnail"
+      ],
+      "preview": "images/thump/Thumbnail CHADIDI 152.jpg",
+      "file": "football-challenge-vlog.zip",
+      "fileSize": "18 MB",
+      "featured": true,
+      "published": true,
+      "favorites": 388,
+      "createdAt": "2026-07-01T10:00:00Z"
+    },
+    {
+      "id": 4,
+      "title": "Podcast Studio Grid",
+      "description": "Clean podcast thumbnail grid — 2–4 guest slots with guest-name captions baked in.",
+      "platform": "YouTube",
+      "dimensions": "1280x720",
+      "category": "Podcasts",
+      "tags": [
+        "podcast",
+        "grid",
+        "thumbnail"
+      ],
+      "preview": "images/thump/Thumbnail CHADIDI 155.jpg",
+      "file": "podcast-studio-grid.zip",
+      "fileSize": "11 MB",
+      "featured": false,
+      "published": true,
+      "favorites": 174,
+      "createdAt": "2026-07-09T14:00:00Z"
+    },
+    {
+      "id": 5,
+      "title": "Nature Cinematics Cover",
+      "description": "Minimal landscape thumbnail template with cinematic text placement and grain.",
+      "platform": "YouTube",
+      "dimensions": "1280x720",
+      "category": "Cinematic",
+      "tags": [
+        "nature",
+        "cinematic",
+        "cover"
+      ],
+      "preview": "images/thump/Thumbnail Tabi3a 11.jpg",
+      "file": "nature-cinematics-cover.zip",
+      "fileSize": "9 MB",
+      "featured": false,
+      "published": true,
+      "favorites": 96,
+      "createdAt": "2026-07-16T09:30:00Z"
+    },
+    {
+      "id": 6,
+      "title": "Vlog Storytime Vertical",
+      "description": "Vertical vlog thumbnail for Shorts/TikTok — big text zone, safe area guides.",
+      "platform": "YouTube Shorts",
+      "dimensions": "1080x1920",
+      "category": "Shorts",
+      "tags": [
+        "shorts",
+        "vertical",
+        "vlog"
+      ],
+      "preview": "images/thump/Thumbnail maroune Creative 5.jpg",
+      "file": "vlog-storytime-vertical.zip",
+      "fileSize": "8 MB",
+      "featured": false,
+      "published": true,
+      "favorites": 121,
+      "createdAt": "2026-07-24T12:00:00Z"
+    },
+    {
+      "id": 7,
+      "title": "Zigzag Hype Thumbnail",
+      "description": "Chaotic energy thumbnail with multi-layer glitch effects and sticker splashes.",
+      "platform": "YouTube",
+      "dimensions": "1280x720",
+      "category": "Hype",
+      "tags": [
+        "hype",
+        "glitch",
+        "thumbnail"
+      ],
+      "preview": "images/thump/Thumbnail ZIGZAG 209.jpg",
+      "file": "zigzag-hype-thumbnail.zip",
+      "fileSize": "26 MB",
+      "featured": false,
+      "published": true,
+      "favorites": 205,
+      "createdAt": "2026-08-01T10:00:00Z"
+    },
+    {
+      "id": 8,
+      "title": "Podcast Season Announce",
+      "description": "Big-name season announcement template — huge title type, spotlighting the host.",
+      "platform": "Instagram",
+      "dimensions": "1080x1350",
+      "category": "Podcasts",
+      "tags": [
+        "podcast",
+        "announce",
+        "instagram"
+      ],
+      "preview": "images/thump/Thumbnail CHADIDI 157.jpg",
+      "file": "podcast-season-announce.zip",
+      "fileSize": "12 MB",
+      "featured": false,
+      "published": false,
+      "favorites": 54,
+      "createdAt": "2026-08-12T09:00:00Z"
+    }
+  ]
+}

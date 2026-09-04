@@ -1,0 +1,403 @@
+{
+  "_meta": {
+    "version": 1,
+    "updatedAt": "2026-09-04T20:27:27.701Z",
+    "collection": "prompts"
+  },
+  "data": [
+    {
+      "id": 1,
+      "title": "Viral YouTube Hook Generator",
+      "description": "Generate 20 scroll-stopping opening hooks for any long-form video topic, ranked by retention probability.",
+      "prompt": "Act as a YouTube retention strategist. For the topic: [TOPIC], generate 20 opening hooks for a long-form video. Each hook must:\n1) Start with a curiosity gap\n2) Be under 30 seconds when spoken\n3) Foreshadow a payoff without spoiling it\nReturn them ranked from most to least likely to hold 80%+ retention, with a one-line reasoning for each.",
+      "category": "YouTube",
+      "tags": [
+        "hooks",
+        "retention",
+        "youtube",
+        "script"
+      ],
+      "platform": "ChatGPT",
+      "featured": true,
+      "published": true,
+      "views": 12840,
+      "favorites": 412,
+      "preview": null,
+      "previewEmoji": "🎣",
+      "previewColor": "#0e1726",
+      "createdAt": "2026-07-02T09:00:00Z"
+    },
+    {
+      "id": 2,
+      "title": "Cinematic Color Grade Prompt",
+      "description": "Reliable color grading brief for editors — works as a shot list handed to your colorist or graded in DaVinci.",
+      "prompt": "Create a cinematic color grade for [FOOTAGE] with:\n- Mood: [MOOD]\n- Reference: [REFERENCE FILM]\nDeliver a 3-step plan: 1) Primary correction (WB, exposure, contrast), 2) Secondary look (lift/gamma/gain), 3) Signature LUT suggestion. Include scopes targets and node order for DaVinci Resolve.",
+      "category": "Color Grading",
+      "tags": [
+        "color",
+        "cinematic",
+        "davinci",
+        "editing"
+      ],
+      "platform": "Claude",
+      "featured": true,
+      "published": true,
+      "views": 9320,
+      "favorites": 288,
+      "preview": null,
+      "previewEmoji": "🎨",
+      "previewColor": "#1c1030",
+      "createdAt": "2026-07-09T14:00:00Z"
+    },
+    {
+      "id": 3,
+      "title": "Midjourney Thumbnail Prompt",
+      "description": "Generate an impossible, high-click YouTube thumbnail scene in Midjourney with this angle/lighting rig.",
+      "prompt": "Ultra-detailed YouTube thumbnail render, /imagine prompt: [SUBJECT] in [EMOTION] pose, dramatic rim lighting, teal and orange color grade, hyper-detailed face, slight wide angle lens, centered composition with negative space on the left for text, 4k octane render, --ar 16:9 --v 6 --style raw --s 250",
+      "category": "Thumbnails",
+      "tags": [
+        "midjourney",
+        "thumbnail",
+        "ai",
+        "art"
+      ],
+      "platform": "Midjourney",
+      "featured": false,
+      "published": true,
+      "views": 7421,
+      "favorites": 201,
+      "preview": null,
+      "previewEmoji": "🖼️",
+      "previewColor": "#101a12",
+      "createdAt": "2026-07-15T10:00:00Z"
+    },
+    {
+      "id": 4,
+      "title": "YouTube Description SEO Optimizer",
+      "description": "Turn a raw draft description into an SEO-optimized, keyword-rich YouTube description with timestamps.",
+      "prompt": "Optimize the following description for YouTube SEO. Include: 1) A keyword-rich first 150 characters, 2) 3 hashtag groups, 3) a 'Watch next' section, 4) timestamps for the outline provided. Keep the tone authentic and avoid keyword stuffing.\n\nDraft: [PASTE DRAFT]",
+      "category": "SEO",
+      "tags": [
+        "seo",
+        "description",
+        "youtube",
+        "growth"
+      ],
+      "platform": "ChatGPT",
+      "featured": false,
+      "published": true,
+      "views": 6120,
+      "favorites": 188,
+      "preview": null,
+      "previewEmoji": "🔍",
+      "previewColor": "#101c26",
+      "createdAt": "2026-07-18T16:00:00Z"
+    },
+    {
+      "id": 5,
+      "title": "Retention-First Script Rewriter",
+      "description": "Rewrite any script so every 15 seconds adds a new visual or verbal element that keeps the viewer watching.",
+      "prompt": "Rewrite this script with retention-first pacing:\n1) Cut every sentence that doesn't carry information or emotion forward\n2) Insert a visual/video hook marker every 20-30s: [CUT TO], [ZOOM], [B-ROLL], [SFX]\n3) End each paragraph with a mini-hook\n4) Target spoken length: [LENGTH]\n\nScript: [PASTE SCRIPT]",
+      "category": "Scripts",
+      "tags": [
+        "script",
+        "retention",
+        "editing",
+        "storytelling"
+      ],
+      "platform": "Claude",
+      "featured": true,
+      "published": true,
+      "views": 8540,
+      "favorites": 264,
+      "preview": null,
+      "previewEmoji": "✍️",
+      "previewColor": "#081820",
+      "createdAt": "2026-07-22T12:00:00Z"
+    },
+    {
+      "id": 6,
+      "title": "DALL-E Podcast Cover Art",
+      "description": "Prompt a modern, minimal podcast cover with strong contrast — tuned to pop on mobile podcast apps.",
+      "prompt": "Minimal podcast cover art, [SHOW NAME], bold geometric shapes, [2-COLOR] palette with strong contrast, high-contrast typography area, no tiny text, centered subject, soft vignette, 3000x3000, flat vector style, DALL-E",
+      "category": "Branding",
+      "tags": [
+        "dall-e",
+        "podcast",
+        "cover",
+        "art"
+      ],
+      "platform": "DALL-E",
+      "featured": false,
+      "published": false,
+      "views": 3120,
+      "favorites": 76,
+      "preview": null,
+      "previewEmoji": "🎙️",
+      "previewColor": "#1a1020",
+      "createdAt": "2026-08-01T09:00:00Z"
+    },
+    {
+      "id": 7,
+      "title": "TikTok Short Script From Long-Form",
+      "description": "Extract 10 high-potential Shorts from one long-form video, each with a clean 3-act structure.",
+      "prompt": "From this long-form transcript find the 10 most 'clip-worthy' moments. For each: 1) the exact timestamp range, 2) a rewritten 3-act short script (hook <5s, core <25s, payoff last 5s), 3) a text-overlay hook line, 4) recommended sound/music vibe.",
+      "category": "Shorts",
+      "tags": [
+        "tiktok",
+        "shorts",
+        "clips",
+        "script"
+      ],
+      "platform": "Gemini",
+      "featured": false,
+      "published": true,
+      "views": 6890,
+      "favorites": 152,
+      "preview": null,
+      "previewEmoji": "⚡",
+      "previewColor": "#08281e",
+      "createdAt": "2026-08-05T11:00:00Z"
+    },
+    {
+      "id": 8,
+      "title": "Client Brief Abstraction",
+      "description": "Turn a chaotic client brief into a clean project brief with deliverables, tone, deadlines and revision rules.",
+      "prompt": "Convert this client brief into a structured project brief:\n- Project summary (2 lines)\n- Deliverables checklist\n- Creative tone (3 adjectives)\n- Must-haves vs. nice-to-haves\n- Timeline with proposed milestones\n- Revision policy suggestion\n\nNotes: [PASTE NOTES]",
+      "category": "Business",
+      "tags": [
+        "brief",
+        "client",
+        "business",
+        "workflow"
+      ],
+      "platform": "ChatGPT",
+      "featured": false,
+      "published": true,
+      "views": 4210,
+      "favorites": 103,
+      "preview": null,
+      "previewEmoji": "📋",
+      "previewColor": "#181208",
+      "createdAt": "2026-08-10T08:00:00Z"
+    },
+    {
+      "id": 9,
+      "title": "Gemini Music & SFX Sync",
+      "description": "Plan a music + SFX map for your edit so every beat change lands on the right visual.",
+      "prompt": "For a video of [LENGTH] with these sections [LIST]: produce a music & SFX map. For each section: tempo range, genre suggestion, entry/exit cues, SFX recommendations (whoosh, riser, hit, sting), and a note on ducking dialogue levels. Format as a table.",
+      "category": "Sound Design",
+      "tags": [
+        "music",
+        "sfx",
+        "audio",
+        "editing"
+      ],
+      "platform": "Gemini",
+      "featured": false,
+      "published": true,
+      "views": 3560,
+      "favorites": 91,
+      "preview": null,
+      "previewEmoji": "🎧",
+      "previewColor": "#10141c",
+      "createdAt": "2026-08-14T15:00:00Z"
+    },
+    {
+      "id": 10,
+      "title": "A/B Thumbnail Text Generator",
+      "description": "Generate 12 punchy, clickable thumbnail text overlays with zero jargon, sized for mobile views.",
+      "prompt": "Generate 12 thumbnail overlay texts for a video about [TOPIC]. Rules:\n1) Max 4 words each\n2) Use ONE emotional trigger per text (curiosity/status/fear/loss)\n3) No clickbait that is not delivered in the video\n4) Specify recommended font weight and placement for each\nReturn as a ranked list.",
+      "category": "Thumbnails",
+      "tags": [
+        "thumbnail",
+        "text",
+        "ctr",
+        "click"
+      ],
+      "platform": "ChatGPT",
+      "featured": false,
+      "published": true,
+      "views": 5120,
+      "favorites": 134,
+      "preview": null,
+      "previewEmoji": "🔤",
+      "previewColor": "#200a0a",
+      "createdAt": "2026-08-18T09:30:00Z"
+    },
+    {
+      "id": 11,
+      "title": "Creator Onboarding Flow",
+      "description": "A reusable prompt to scope any new client's channel, goals and editing preferences in one structured pass.",
+      "prompt": "You are scoping a new video editing client. Ask them to provide: channel URL, 3 recent videos, growth goal (views/subs/both), brand colors, fonts/logo, preferred editing style (clone of [VIDEO]), voiceover preference, turnaround needs, and revision budget. Then output a one-page creative profile I can reuse for every future edit.",
+      "category": "Business",
+      "tags": [
+        "onboarding",
+        "client",
+        "workflow",
+        "profile"
+      ],
+      "platform": "Claude",
+      "featured": false,
+      "published": false,
+      "views": 2480,
+      "favorites": 62,
+      "preview": null,
+      "previewEmoji": "🚀",
+      "previewColor": "#0a1a20",
+      "createdAt": "2026-08-22T10:00:00Z"
+    },
+    {
+      "id": 12,
+      "title": "Ad Concept Sprint",
+      "description": "Generate a full video ad concept — hook, structure, VO script, shot list and CTA — in one prompt.",
+      "prompt": "Create a 45-second video ad concept for [PRODUCT]. Deliver: 1) 5 hook options, 2) shot-by-shot storyboard (12-15 shots), 3) VO script with pauses, 4) on-screen text overlays, 5) CTA strategies + 3 variants for the end card.",
+      "category": "Ads",
+      "tags": [
+        "ads",
+        "concept",
+        "sales",
+        "script"
+      ],
+      "platform": "ChatGPT",
+      "featured": true,
+      "published": true,
+      "views": 9930,
+      "favorites": 317,
+      "preview": null,
+      "previewEmoji": "📺",
+      "previewColor": "#1a0f0f",
+      "createdAt": "2026-08-25T12:00:00Z"
+    },
+    {
+      "id": 13,
+      "title": "Faceless Channel Script Blueprint",
+      "description": "Structure a full faceless YouTube video — intro, content beats, b-roll prompts and CTA — for any niche.",
+      "prompt": "Act as a scriptwriter for faceless YouTube channels. For the niche [NICHE] and title [TITLE], write a full video outline: hook (0-15s), main sections with b-roll shot descriptions, narration script, and an end CTA that drives comments. Keep narration natural and conversational.",
+      "category": "YouTube",
+      "tags": [
+        "faceless",
+        "script",
+        "niche",
+        "outline"
+      ],
+      "platform": "Claude",
+      "featured": true,
+      "published": true,
+      "views": 15240,
+      "favorites": 588,
+      "preview": null,
+      "previewEmoji": "🎭",
+      "previewColor": "#160e24",
+      "createdAt": "2026-08-28T09:00:00Z"
+    },
+    {
+      "id": 14,
+      "title": "Retention Curve Analyzer",
+      "description": "Feed in your retention graph and get diagnostic fixes for drop-off points.",
+      "prompt": "Given a YouTube audience retention curve with drops at [TIMESTAMPS], diagnose likely causes at each drop and give specific fixes (pacing, visual change, payoff timing, script tightening). Prioritize the top 3 that will move the curve most.",
+      "category": "YouTube",
+      "tags": [
+        "retention",
+        "analytics",
+        "diagnosis"
+      ],
+      "platform": "ChatGPT",
+      "featured": false,
+      "published": true,
+      "views": 7120,
+      "favorites": 194,
+      "preview": null,
+      "previewEmoji": "📉",
+      "previewColor": "#12221a",
+      "createdAt": "2026-08-30T14:00:00Z"
+    },
+    {
+      "id": 15,
+      "title": "Thumbnail A/B Test Matrix",
+      "description": "Design a structured A/B thumbnail test with variations that isolate one variable at a time.",
+      "prompt": "For a video about [TOPIC], create an A/B test plan with 4 thumbnail variations. Each variation changes only ONE element (face expression, text, background, color accent). For each, describe the visual, the psychological trigger, and predicted CTR impact.",
+      "category": "Thumbnails",
+      "tags": [
+        "thumbnail",
+        "a/b",
+        "ctr",
+        "matrix"
+      ],
+      "platform": "Midjourney",
+      "featured": false,
+      "published": true,
+      "views": 8340,
+      "favorites": 241,
+      "preview": null,
+      "previewEmoji": "🖼️",
+      "previewColor": "#201a0c",
+      "createdAt": "2026-08-29T11:00:00Z"
+    },
+    {
+      "id": 16,
+      "title": "Retention Fishing Articles/Scripts",
+      "description": "Rewrite dense scripts to be bingeable — tighten every paragraph into a hook-forward cut.",
+      "prompt": "Rewrite the following script to maximize retention: cut fluff, front-load payoff, add pattern interrupts and cliffhanger transitions every 60 seconds. Return the edited script with notes on what you changed and why.",
+      "category": "Editing",
+      "tags": [
+        "script",
+        "editing",
+        "pacing",
+        "rewrite"
+      ],
+      "platform": "Gemini",
+      "featured": false,
+      "published": true,
+      "views": 5990,
+      "favorites": 128,
+      "preview": null,
+      "previewEmoji": "✂️",
+      "previewColor": "#1c1610",
+      "createdAt": "2026-09-01T08:30:00Z"
+    },
+    {
+      "id": 17,
+      "title": "Short-Form Repurposing Engine",
+      "description": "Slice a long video into 10 short-form clips with scroll-stopping opens.",
+      "prompt": "From the transcript [PASTE], identify the 10 best 20-45 second clips for Shorts/TikTok. For each: give the timestamp, a rewritten scroll-stopping first line, on-screen caption text, and the hook that prevents skips. Rank by predicted completion.",
+      "category": "Shorts",
+      "tags": [
+        "shorts",
+        "tiktok",
+        "repurpose",
+        "captions"
+      ],
+      "platform": "ChatGPT",
+      "featured": true,
+      "published": true,
+      "views": 11180,
+      "favorites": 402,
+      "preview": null,
+      "previewEmoji": "🎬",
+      "previewColor": "#101a26",
+      "createdAt": "2026-09-02T10:00:00Z"
+    },
+    {
+      "id": 18,
+      "title": "B-Roll Shot List Generator",
+      "description": "Generate a shot-by-shot b-roll list that matches your narration beats.",
+      "prompt": "For the following narration script [PASTE], generate a b-roll shot list. Match each narration beat to 1-3 suggested shots with camera movement, focal length, and a stock-search keyword. Group by section.",
+      "category": "Production",
+      "tags": [
+        "b-roll",
+        "shot-list",
+        "production"
+      ],
+      "platform": "Claude",
+      "featured": false,
+      "published": true,
+      "views": 6480,
+      "favorites": 156,
+      "preview": null,
+      "previewEmoji": "📷",
+      "previewColor": "#122222",
+      "createdAt": "2026-09-03T09:00:00Z"
+    }
+  ]
+}

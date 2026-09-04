@@ -273,6 +273,7 @@ YC.palette = (function(){
       { label: 'Templates', hint: 'templates.html', href: 'templates.html' },
       { label: 'Video Templates', hint: 'video-templates.html', href: 'video-templates.html' },
       { label: 'Thumbnails', hint: 'thumbnail-templates.html', href: 'thumbnail-templates.html' },
+      { label: 'PSD Templates', hint: 'psd-templates.html', href: 'psd-templates.html' },
       { label: 'Book a Call', hint: 'index.html#book', href: 'index.html#book' }
     ];
     pages.forEach(function(p){ p.action = 'nav'; out.push(p); });
@@ -854,7 +855,8 @@ YC.buildChrome = function(opts){
     { label: 'AI Prompts', href: 'ai-prompts.html', idx: '02' },
     { label: 'Templates', href: 'templates.html', idx: '03' },
     { label: 'Video Templates', href: 'video-templates.html', idx: '04' },
-    { label: 'Thumbnails', href: 'thumbnail-templates.html', idx: '05' }
+    { label: 'Thumbnails', href: 'thumbnail-templates.html', idx: '05' },
+    { label: 'PSD Templates', href: 'psd-templates.html', idx: '06' }
   ];
   if(opts.active) nav = nav.map(function(n){ n.active = n.href === opts.active; return n; });
 

@@ -1,0 +1,201 @@
+{
+  "_meta": {
+    "version": 1,
+    "updatedAt": "2026-09-04T20:26:37.529Z",
+    "collection": "customers"
+  },
+  "data": [
+    {
+      "id": 1,
+      "name": "Sarah Jenkins",
+      "email": "sarah.j@techcreator.ai",
+      "phone": "+212 600 112 233",
+      "status": "active",
+      "registered": "2026-01-14T09:30:00Z"
+    },
+    {
+      "id": 2,
+      "name": "David K.",
+      "email": "davidk@finchannel.com",
+      "phone": "+1 415 555 0123",
+      "status": "active",
+      "registered": "2026-02-03T14:10:00Z"
+    },
+    {
+      "id": 3,
+      "name": "Marcus Vance",
+      "email": "marcus@scalemedia.io",
+      "phone": "+212 661 234 891",
+      "status": "active",
+      "registered": "2026-03-21T11:00:00Z"
+    },
+    {
+      "id": 4,
+      "name": "Amine Rahmani",
+      "email": "amine.rahmani@outlook.com",
+      "phone": "+212 612 998 102",
+      "status": "active",
+      "registered": "2026-04-09T16:45:00Z"
+    },
+    {
+      "id": 5,
+      "name": "Yassine El Amrani",
+      "email": "yassine.amrani@gmail.com",
+      "phone": "+212 665 430 217",
+      "status": "active",
+      "registered": "2026-05-02T10:20:00Z"
+    },
+    {
+      "id": 6,
+      "name": "Lina Benali",
+      "email": "lina.benali@gmail.com",
+      "phone": "+212 640 551 889",
+      "status": "active",
+      "registered": "2026-06-11T13:35:00Z"
+    },
+    {
+      "id": 7,
+      "name": "Omar Tazi",
+      "email": "omar.tazi@markethub.co",
+      "phone": "+212 618 004 335",
+      "status": "disabled",
+      "registered": "2026-03-30T09:00:00Z"
+    },
+    {
+      "id": 8,
+      "name": "Salma Idrissi",
+      "email": "salma.idrissi@gmail.com",
+      "phone": "+212 699 120 447",
+      "status": "active",
+      "registered": "2026-07-19T18:25:00Z"
+    },
+    {
+      "id": 9,
+      "name": "Nadia Belkadi",
+      "email": "nadia.belkadi@gmail.com",
+      "phone": "+212 670 782 314",
+      "status": "active",
+      "registered": "2026-05-28T08:40:00Z"
+    },
+    {
+      "id": 10,
+      "name": "Hanae Boutaleb",
+      "email": "hanae.b@gmail.com",
+      "phone": "+212 632 880 415",
+      "status": "active",
+      "registered": "2026-07-02T12:00:00Z"
+    },
+    {
+      "id": 11,
+      "name": "Karim Soussi",
+      "email": "karim.soussi@cinebox.ma",
+      "phone": "+212 655 220 908",
+      "status": "active",
+      "registered": "2026-02-21T09:15:00Z"
+    },
+    {
+      "id": 12,
+      "name": "Emily Carter",
+      "email": "emily.c@northstar.co",
+      "phone": "+1 646 555 0187",
+      "status": "active",
+      "registered": "2026-04-28T17:05:00Z"
+    },
+    {
+      "id": 13,
+      "name": "Zakaria Rafiq",
+      "email": "zak.rafiq@gmail.com",
+      "phone": "+212 678 310 552",
+      "status": "active",
+      "registered": "2026-01-30T10:00:00Z"
+    },
+    {
+      "id": 14,
+      "name": "Sara El Fassi",
+      "email": "sara.elfassi@outlook.com",
+      "phone": "+212 613 447 126",
+      "status": "active",
+      "registered": "2026-06-22T15:30:00Z"
+    },
+    {
+      "id": 15,
+      "name": "Mehdi Aziz",
+      "email": "mehdi.aziz@gentech.ma",
+      "phone": "+212 687 051 883",
+      "status": "active",
+      "registered": "2026-03-11T11:45:00Z"
+    },
+    {
+      "id": 16,
+      "name": "Alex Thompson",
+      "email": "alex.t@playlistpro.io",
+      "phone": "+44 20 7946 0958",
+      "status": "active",
+      "registered": "2026-05-19T14:00:00Z"
+    },
+    {
+      "id": 17,
+      "name": "Imane Chraibi",
+      "email": "imane.c@gmail.com",
+      "phone": "+212 660 219 774",
+      "status": "active",
+      "registered": "2026-07-30T09:50:00Z"
+    },
+    {
+      "id": 18,
+      "name": "Younes Berrada",
+      "email": "y.berrada@flanet.tv",
+      "phone": "+212 641 362 090",
+      "status": "disabled",
+      "registered": "2026-02-15T13:20:00Z"
+    },
+    {
+      "id": 19,
+      "name": "Chloe Martin",
+      "email": "chloe.m@fitframe.fr",
+      "phone": "+33 6 12 34 56 78",
+      "status": "active",
+      "registered": "2026-06-05T10:10:00Z"
+    },
+    {
+      "id": 20,
+      "name": "Rachid Ammari",
+      "email": "rachid.ammari@hotmail.com",
+      "phone": "+212 606 793 245",
+      "status": "active",
+      "registered": "2026-04-02T08:35:00Z"
+    },
+    {
+      "id": 21,
+      "name": "Fatima Zahra",
+      "email": "f.zahra@gmail.com",
+      "phone": "+212 674 118 339",
+      "status": "active",
+      "registered": "2026-08-04T16:00:00Z"
+    },
+    {
+      "id": 22,
+      "name": "Adam Bennett",
+      "email": "adam.b@contentstudio.com",
+      "phone": "+1 310 555 0199",
+      "status": "active",
+      "registered": "2026-07-11T12:40:00Z"
+    },
+    {
+      "id": 23,
+      "name": "Jihane Mernissi",
+      "email": "jihane.m@gmail.com",
+      "phone": "+212 691 045 620",
+      "status": "active",
+      "registered": "2026-06-30T09:05:00Z"
+    },
+    {
+      "id": 24,
+      "name": "Hamza Ouled",
+      "email": "hamza.o@sterra.dir",
+      "phone": "+212 684 226 117",
+      "status": "active",
+      "registered": "2026-08-12T14:25:00Z"
+    }
+  ]
+}

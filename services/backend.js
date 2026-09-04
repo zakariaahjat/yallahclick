@@ -26,7 +26,7 @@ window.YC = window.YC || {};
   var apiBase = API.replace(/\/+$/, '') + '/api';
   var COLLECTIONS = [
     'bookings','customers','prompts','templates','videoTemplates',
-    'thumbnailTemplates','promotions','settings','admins','files',
+    'thumbnailTemplates','psdTemplates','promotions','settings','admins','files',
     'categories','services'
   ];
 
@@ -67,6 +67,7 @@ window.YC = window.YC || {};
     // normalize yc:video-templates / yc:thumbnail-templates
     if (name === 'video-templates') name = 'videoTemplates';
     if (name === 'thumbnail-templates') name = 'thumbnailTemplates';
+    if (name === 'psd-templates') name = 'psdTemplates';
     return { name: name, arr: cache[name] };
   }
 

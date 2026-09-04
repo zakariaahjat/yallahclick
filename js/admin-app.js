@@ -1068,6 +1068,9 @@ YC.app.pages_content = function(){
     { file: 'thumbnail-templates.html', icon: 'thumbnail', name: 'Thumbnail Templates',
       desc: 'High-CTR thumbnail layouts with real preview images.',
       count: YC.services.thumbnailTemplates.all().length },
+    { file: 'psd-templates.html', icon: 'layers', name: 'PSD Templates',
+      desc: 'Editable Photoshop files: thumbnails, channel art, covers and overlays.',
+      count: YC.services.psdTemplates ? YC.services.psdTemplates.all().length : 0 },
     { file: 'files.html', icon: 'files', name: 'Files',
       desc: 'Brand assets, presets and downloadable resources.',
       count: YC.services.files ? YC.services.files.all().length : YC.data.files.length }
@@ -1294,6 +1297,18 @@ YC.app.pages_thumbnailTemplates = function(){
     typeFilter: '#filterThumbPlatform', statusFilter: '#filterThumbStatus',
     newBtn: '#btnNewThumbTemplate',
     title: 'Thumbnail template', eyebrow: 'Thumbnail Templates', platformFilter: true, thumb: true, folder: 'thumbnails'
+  });
+};
+
+/* ============================================================
+   PSD TEMPLATES
+   ============================================================ */
+YC.app.pages_psdTemplates = function(){
+  templatesPage(YC.services.psdTemplates, {
+    host: '#psdTemplatesTable', search: '#searchPsdTemplates',
+    typeFilter: '#filterPsdPlatform', statusFilter: '#filterPsdStatus',
+    newBtn: '#btnNewPsdTemplate',
+    title: 'PSD template', eyebrow: 'PSD Templates', platformFilter: true, folder: 'templates'
   });
 };
 
@@ -1834,6 +1849,7 @@ YC.app.pages_categories = function(){
     { key: 'templates', label: 'Templates' },
     { key: 'video-templates', label: 'Video Templates' },
     { key: 'thumbnail-templates', label: 'Thumbnail Templates' },
+    { key: 'psd-templates', label: 'PSD Templates' },
     { key: 'files', label: 'Files' },
     { key: 'services', label: 'Services' }
   ];
@@ -1844,6 +1860,7 @@ YC.app.pages_categories = function(){
       'templates': function(){ return YC.services.templates.all().filter(function(t){ return t.category === name; }).length; },
       'video-templates': function(){ return YC.services.videoTemplates.all().filter(function(t){ return t.category === name; }).length; },
       'thumbnail-templates': function(){ return YC.services.thumbnailTemplates.all().filter(function(t){ return t.category === name; }).length; },
+      'psd-templates': function(){ return YC.services.psdTemplates ? YC.services.psdTemplates.all().filter(function(t){ return t.category === name; }).length : 0; },
       'files': function(){ return YC.services.files ? YC.services.files.all().filter(function(f){ return f.category === name; }).length : 0; },
       'services': function(){ return YC.data.services.filter(function(s){ return s.id === name.toLowerCase().replace(/\s+/g, '-'); }).length || (YC.data.getService(name.replace(/\s+/g, '-') || name) ? 1 : 0); }
     };
@@ -2247,6 +2264,7 @@ document.addEventListener('DOMContentLoaded', function(){
     templates: YC.app.pages_templates,
     'video-templates': YC.app.pages_videoTemplates,
     'thumbnail-templates': YC.app.pages_thumbnailTemplates,
+    'psd-templates': YC.app.pages_psdTemplates,
     files: YC.app.pages_files,
     promotions: YC.app.pages_promotions,
     categories: YC.app.pages_categories,

@@ -1,12 +1,23 @@
 /* ============================================================
-   YallahClick — JSON file database (server-side)
-   Loads/seed data/db.json, persists atomically, and exposes
-   typed CRUD helpers shared by every API route.
+   YallahClick — JSON-file database (server-side)
+   Each content section lives in its OWN JSON file under /data:
 
-   The data/*.js seed files are browser modules (they build
-   `window.YC.data.xxx`). We shim a minimal `window` and load
-   them in a Node VM so the JSON DB seeds from the exact same
-   dataset the static demo uses.
+     data/bookings.json          data/customers.json
+     data/prompts.json           data/templates.json
+     data/video-templates.json   data/thumbnail-templates.json
+     data/psd-templates.json     data/promotions.json
+     data/settings.json          data/admins.json
+     data/files.json             data/categories.json
+     data/services.json
+
+   Every file holds ONLY that section's data (an array) plus a
+   small `_meta`. Writes are atomic (temp-file + rename) and the
+   loader seeds from the browser modules in data/*.js the first
+   time a section file is missing.
+
+   On Vercel/KV (YC_KV_REST_URL + YC_KV_REST_TOKEN present) each
+   section is persisted to its own KV key so the per-file split
+   is preserved durably even on a serverless filesystem.
    ============================================================ */
 'use strict';
 
@@ -16,40 +27,62 @@ const vm = require('vm');
 const crypto = require('crypto');
 
 const ROOT = path.join(__dirname, '..');
-const DATA_DIR = path.join(ROOT, 'data');
-const DB_FILE = process.env.YC_DB_FILE || path.join(ROOT, 'data', 'db.json');
+const DATA_DIR = process.env.YC_DATA_DIR || path.join(ROOT, 'data');
+/* The browser seed modules (data/*.js) always live in the repo's real
+   data dir; DATA_DIR (JSON files) may be redirected in tests. */
+const SEED_DIR = process.env.YC_SEED_DIR || path.join(ROOT, 'data');
 
-const COLLECTIONS = [
-  'bookings',
-  'customers',
-  'prompts',
-  'templates',
-  'videoTemplates',
-  'thumbnailTemplates',
-  'promotions',
-  'settings',
-  'admins',
-  'files',
-  'categories',
-  'services'
-];
+/* collection name -> JSON file (base name). Keeps API names in the
+   existing camelCase where the front-end services expect them, while
+   putting them in separate tidy files. */
+const COLLECTION_FILES = {
+  bookings: 'bookings.json',
+  customers: 'customers.json',
+  prompts: 'prompts.json',
+  templates: 'templates.json',
+  videoTemplates: 'video-templates.json',
+  thumbnailTemplates: 'thumbnail-templates.json',
+  psdTemplates: 'psd-templates.json',
+  promotions: 'promotions.json',
+  settings: 'settings.json',
+  admins: 'admins.json',
+  files: 'files.json',
+  categories: 'categories.json',
+  services: 'services.json'
+};
+const COLLECTIONS = Object.keys(COLLECTION_FILES);
 
-/* Internal in-memory snapshot. Writes go to disk via a serialized queue. */
-let state = {};
+function fileFor(name){
+  return path.join(DATA_DIR, COLLECTION_FILES[name]);
+}
 
-let writeQueue = Promise.resolve();
+/* Internal in-memory state: one array per collection. */
+const state = {};
+
+/* Per-collection write queues (serialized, lock-free). */
+const writeQueues = {};
+
+function queueFor(name){
+  if (!writeQueues[name]) writeQueues[name] = Promise.resolve();
+  return writeQueues[name];
+}
 
 /* --- optional durable remote store (Vercel/KV + Upstash REST) ---
-   When YC_KV_REST_URL + YC_KV_REST_TOKEN are present, the whole DB is
-   persisted as one JSON blob under YC_KV_KEY (works on Vercel). Otherwise
-   we use the local JSON file (works on any persistent Node host).    */
+   When YC_KV_REST_URL + YC_KV_REST_TOKEN are present, every section
+   is mirrored to its own KV key (yc:db:<file>) so the per-section
+   JSON files survive serverless cold starts / redeploys. Otherwise
+   we use the local per-section JSON files. */
 const KV_URL = process.env.YC_KV_REST_URL || '';
 const KV_TOKEN = process.env.YC_KV_REST_TOKEN || '';
-const KV_KEY = process.env.YC_KV_KEY || 'yc:db';
+const KV_PREFIX = process.env.YC_KV_KEY || 'yc:db';
 const KV_ENABLED = !!(KV_URL && KV_TOKEN);
 
-async function kvGet(){
-  const url = KV_URL.replace(/\/+$/, '') + '/get/' + encodeURIComponent(KV_KEY);
+function kvKeyFor(name){
+  return KV_PREFIX + ':' + COLLECTION_FILES[name].replace(/\.json$/, '');
+}
+
+async function kvGet(name){
+  const url = KV_URL.replace(/\/+$/, '') + '/get/' + encodeURIComponent(kvKeyFor(name));
   const res = await fetch(url, { headers: { 'Authorization': 'Bearer ' + KV_TOKEN } });
   if (!res.ok) return null;
   const json = await res.json();
@@ -58,53 +91,38 @@ async function kvGet(){
   try{ return JSON.parse(raw); }catch(e){ return null; }
 }
 
-async function kvSet(obj){
-  const url = KV_URL.replace(/\/+$/, '') + '/set/' + encodeURIComponent(KV_KEY);
+async function kvSet(name, arr){
+  const url = KV_URL.replace(/\/+$/, '') + '/set/' + encodeURIComponent(kvKeyFor(name));
+  const payload = JSON.stringify({ _meta: { version: 1, updatedAt: new Date().toISOString(), collection: name }, data: arr });
   await fetch(url, {
     method: 'POST',
     headers: { 'Authorization': 'Bearer ' + KV_TOKEN, 'Content-Type': 'application/json' },
-    body: JSON.stringify(JSON.stringify(obj)),
+    body: JSON.stringify(payload),
   });
 }
 
-/* --- atomic write with a lock-free queue (prevents lost updates) --- */
-function persist(){
-  const payload = JSON.stringify({ _meta: { version: 1, updatedAt: new Date().toISOString() }, ...state }, null, 2);
-  writeQueue = writeQueue.then(() => KV_ENABLED
-    ? kvSet(JSON.parse(payload))
-      .catch((e) => console.error('[db] kv persist failed: ' + e.message))
-    : new Promise((resolve, reject) => {
-      const tmp = DB_FILE + '.' + process.pid + '.tmp';
-      fs.writeFile(tmp, payload, 'utf8', (err) => {
-        if (err) return reject(err);
-        fs.rename(tmp, DB_FILE, (err2) => {
-          if (err2) return reject(err2);
-          resolve();
-        });
-      });
-    }));
-  return writeQueue;
+/* --- atomic write for one section (temp file + rename) --- */
+function writeFile(name, arr){
+  const file = fileFor(name);
+  const payload = JSON.stringify({ _meta: { version: 1, updatedAt: new Date().toISOString(), collection: name }, data: arr }, null, 2);
+  const tmp = file + '.' + process.pid + '.tmp';
+  return new Promise((resolve, reject) => {
+    fs.writeFile(tmp, payload, 'utf8', (err) => {
+      if (err) return reject(err);
+      fs.rename(tmp, file, (err2) => err2 ? reject(err2) : resolve());
+    });
+  });
 }
 
-/* Initiate an async load-and-apply from the remote store (Vercel only). */
-async function hydrateFromRemote(){
-  if (!KV_ENABLED) return false;
-  try{
-    const remote = await kvGet();
-    if (!remote) return false;
-    let changed = false;
-    for (const key of COLLECTIONS){
-      if (Array.isArray(remote[key])){
-        state[key] = remote[key];
-        changed = true;
-      }
-    }
-    if (changed) return true;
-    return false;
-  }catch(e){
-    console.error('[db] remote hydrate failed: ' + e.message);
-    return false;
-  }
+/* Persist one section (KV if enabled, else local file). Serialized
+   per collection so concurrent writes never clobber each other. */
+function persist(name){
+  const arr = state[name];
+  const q = queueFor(name).then(() => KV_ENABLED
+    ? kvSet(name, arr).catch((e) => console.error('[db] kv persist failed (' + name + '): ' + e.message))
+    : writeFile(name, arr).catch((e) => console.error('[db] file persist failed (' + name + '): ' + e.message)));
+  writeQueues[name] = q.catch(() => {});
+  return q;
 }
 
 /* --- load the browser seed modules and produce the initial data --- */
@@ -117,32 +135,30 @@ function loadSeeds(){
     clearTimeout,
     Date,
   };
-  // Some seed files use bare `YC` (e.g. data/services.js), others use
-  // `window.YC`. Point both at the same object.
   sandbox.YC = sandbox.window.YC = {};
   vm.createContext(sandbox);
 
   const seedFileOrder = [
     'services.js', 'categories.js', 'bookings.js', 'customers.js',
     'aiPrompts.js', 'templates.js', 'videoTemplates.js',
-    'thumbnailTemplates.js', 'promotions.js', 'settings.js',
-    'files.js', 'admins.js'
+    'thumbnailTemplates.js', 'psdTemplates.js', 'promotions.js',
+    'settings.js', 'files.js', 'admins.js'
   ];
 
   for (const f of seedFileOrder){
-    const p = path.join(DATA_DIR, f);
+    const p = path.join(SEED_DIR, f);
     if (!fs.existsSync(p)) continue;
     vm.runInContext(fs.readFileSync(p, 'utf8'), sandbox, { filename: f });
   }
 
   const data = (sandbox.window.YC && sandbox.window.YC.data) || {};
-  const out = {};
-  // map collection name -> seed data key (they differ: 'prompts' <- 'aiPrompts')
   const KEY_MAP = {
     prompts: 'aiPrompts',
     videoTemplates: 'videoTemplates',
     thumbnailTemplates: 'thumbnailTemplates',
+    psdTemplates: 'psdTemplates',
   };
+  const out = {};
   for (const key of COLLECTIONS){
     const src = KEY_MAP[key] || key;
     out[key] = data[src] || [];
@@ -150,58 +166,44 @@ function loadSeeds(){
   return out;
 }
 
-/* --- deep clone helper (strips functions/symbols) --- */
-function clone(v){
-  if (v === undefined || v === null) return v;
-  return JSON.parse(JSON.stringify(v));
+/* --- read one section file (or null if missing/corrupt) --- */
+function readFile(name){
+  const file = fileFor(name);
+  if (!fs.existsSync(file)) return null;
+  try{
+    const parsed = JSON.parse(fs.readFileSync(file, 'utf8'));
+    if (parsed && Array.isArray(parsed.data)) return parsed.data;
+    if (parsed && Array.isArray(parsed)) return parsed;
+    return null;
+  }catch(e){
+    console.error('[db] corrupted ' + COLLECTION_FILES[name] + ', re-seeding: ' + e.message);
+    return null;
+  }
 }
 
-/* --- boot: read existing db.json or seed fresh. Async so the
-   durable remote store (Vercel KV) can be hydrated before serving. --- */
-async function init(){
-  let seeded = false;
-  const hadFile = fs.existsSync(DB_FILE);
-  if (hadFile){
-    try{
-      const raw = fs.readFileSync(DB_FILE, 'utf8');
-      const parsed = JSON.parse(raw);
-      state = {};
-      for (const key of COLLECTIONS){
-        state[key] = Array.isArray(parsed[key]) ? parsed[key] : [];
-      }
-    }catch(e){
-      console.error('[db] corrupted db.json, re-seeding: ' + e.message);
-      state = loadSeeds();
-      seeded = true;
-    }
-  }else{
-    state = loadSeeds();
-    seeded = true;
-  }
-
-  // Backfill collections that are entirely absent from an older db.json
-  // so newly-introduced collections (e.g. settings) appear automatically.
-  // Note: only fills missing keys — never resurrects a deliberately
-  // emptied collection, so deleting every booking stays deleted.
-  if (hadFile && !seeded){
-    const seeds = loadSeeds();
-    for (const key of COLLECTIONS){
-      if (!(key in state)){
-        state[key] = seeds[key] || [];
-        seeded = true;
-      }
-    }
-  }
-
-  // If a durable store is configured, prefer its snapshot (it wins over file).
+/* --- load one collection: remote > file > seed --- */
+async function loadOne(name, seeds){
   if (KV_ENABLED){
-    const hydrated = await hydrateFromRemote();
-    if (!hydrated && seeded){
-      persist().catch((e) => console.error('[db] initial kv write failed: ' + e.message));
-    }
-  }else{
-    persist().catch((e) => console.error('[db] initial write failed: ' + e.message));
+    const remote = await kvGet(name);
+    if (Array.isArray(remote)) { state[name] = remote; return { loaded: true }; }
+    if (Array.isArray(remote && remote.data)) { state[name] = remote.data; return { loaded: true }; }
   }
+  const file = readFile(name);
+  if (Array.isArray(file)) { state[name] = file; return { loaded: true }; }
+  state[name] = seeds[name] || [];
+  return { loaded: false, seeded: true };
+}
+
+/* --- boot: load every section (KV > file > seed), persist seeds --- */
+async function init(){
+  const seeds = loadSeeds();
+  const jobs = [];
+  for (const name of COLLECTIONS){
+    jobs.push(loadOne(name, seeds).then((r) => {
+      if (r.seeded) persist(name).catch((e) => console.error('[db] seed persist failed (' + name + '): ' + e.message));
+    }));
+  }
+  await Promise.all(jobs);
   ready = Promise.resolve(true);
   return true;
 }
@@ -209,7 +211,7 @@ async function init(){
 let ready = Promise.resolve(true);
 function isReady(){ return ready; }
 
-/* --- generic collection helpers --- */
+/* --- generic collection helpers (API identical to before) --- */
 function nextId(list){
   return list.reduce((acc, x) => {
     const n = parseInt(x.id, 10);
@@ -239,7 +241,7 @@ function create(name, record){
     clone(record || {})
   );
   list.unshift(rec);
-  persist().catch((e) => console.error('[db] create persist failed: ' + e.message));
+  persist(name).catch((e) => console.error('[db] create persist failed (' + name + '): ' + e.message));
   return clone(rec);
 }
 
@@ -251,7 +253,7 @@ function update(name, id, patch){
   delete clean.id;
   delete clean.createdAt;
   list[i] = Object.assign({}, list[i], clean, { updatedAt: new Date().toISOString() });
-  persist().catch((e) => console.error('[db] update persist failed: ' + e.message));
+  persist(name).catch((e) => console.error('[db] update persist failed (' + name + '): ' + e.message));
   return clone(list[i]);
 }
 
@@ -260,7 +262,7 @@ function remove(name, id){
   const before = list.length;
   state[name] = list.filter((x) => String(x.id) !== String(id));
   if (state[name].length !== before){
-    persist().catch((e) => console.error('[db] remove persist failed: ' + e.message));
+    persist(name).catch((e) => console.error('[db] remove persist failed (' + name + '): ' + e.message));
     return true;
   }
   return false;
@@ -274,9 +276,20 @@ function collections(){
   return COLLECTIONS.slice();
 }
 
+function files(){
+  return Object.keys(COLLECTION_FILES).reduce((acc, name) => {
+    acc[name] = COLLECTION_FILES[name];
+    return acc;
+  }, {});
+}
+
 function dropAll(){
-  state = loadSeeds();
-  return persist().catch((e) => console.error('[db] reset persist failed: ' + e.message));
+  const tasks = [];
+  for (const name of COLLECTIONS){
+    state[name] = loadSeeds()[name] || [];
+    tasks.push(persist(name).catch((e) => console.error('[db] reset persist failed (' + name + '): ' + e.message)));
+  }
+  return Promise.all(tasks);
 }
 
 function stats(){
@@ -286,6 +299,12 @@ function stats(){
     out.total += state[key].length;
   }
   return out;
+}
+
+/* --- deep clone helper --- */
+function clone(v){
+  if (v === undefined || v === null) return v;
+  return JSON.parse(JSON.stringify(v));
 }
 
 /* token helpers (simple HMAC-signed session token) */
@@ -305,7 +324,6 @@ function verifyToken(token){
   const a = Buffer.from(expected);
   const b = Buffer.from(parts[1]);
   if (a.length !== b.length) return null;
-  // constant-time compare
   let diff = 0;
   for (let i = 0; i < a.length; i++) diff |= a[i] ^ b[i];
   if (diff !== 0) return null;
@@ -321,10 +339,13 @@ function hashPassword(password){
 }
 
 module.exports = {
-  DB_FILE,
+  DATA_DIR,
+  SEED_DIR,
+  COLLECTION_FILES,
   init,
   isReady,
   collections,
+  files,
   exists,
   getAll,
   getById,
@@ -341,4 +362,5 @@ module.exports = {
   clone,
   loadSeeds,
   KV_ENABLED,
+  DB_FILE: COLLECTION_FILES.settings, // informational
 };

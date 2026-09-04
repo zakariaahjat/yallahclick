@@ -15,6 +15,86 @@
 const express = require('express');
 const db = require('../db');
 
+/* ---- server-side validation -----------------------------------
+   Each known collection has an optional validate(record) that throws
+   { status, message } when the record is invalid. This keeps the API
+   honest: bad records never reach the JSON files. */
+const validators = {
+  prompts(p){
+    if (!p || !String(p.title || '').trim()) return 'title is required';
+    if (!String(p.category || '').trim()) return 'category is required';
+    if (!String(p.prompt || '').trim()) return 'prompt is required';
+    return null;
+  },
+  promotions(p){
+    if (!p || !String(p.title || '').trim()) return 'title is required';
+    const s = p.startDate, e = p.endDate;
+    if (s && !validIso(s)) return 'startDate must be a valid date';
+    if (e && !validIso(e)) return 'endDate must be a valid date';
+    return null;
+  },
+  videoTemplates(t){ return validateTemplate(t, 'video template'); },
+  thumbnailTemplates(t){ return validateTemplate(t, 'thumbnail template'); },
+  psdTemplates(t){ return validateTemplate(t, 'psd template'); },
+  templates(t){ return validateTemplate(t, 'template'); },
+  bookings(b){
+    if (!b || (!String(b.customerName || b.name || '').trim())) return 'customer name is required';
+    return null;
+  },
+  customers(c){
+    if (!c || !String(c.name || '').trim()) return 'name is required';
+    if (c.email && !validEmail(c.email)) return 'email is not a valid address';
+    return null;
+  },
+  categories(c){
+    if (!c || !String(c.name || '').trim()) return 'name is required';
+    return null;
+  },
+  settings(s){
+    if (s && s.contactEmail && !validEmail(s.contactEmail)) return 'contactEmail is not a valid address';
+    return null;
+  },
+  files(f){
+    if (!f || !String(f.name || '').trim()) return 'name is required';
+    if (f.url && !validUrl(f.url)) return 'url is not a valid URL';
+    return null;
+  },
+  services(s){
+    if (!s || !String(s.name || '').trim()) return 'name is required';
+    return null;
+  },
+  admins(a){
+    if (!a || !String(a.email || '').trim()) return 'email is required';
+    if (a.email && !validEmail(a.email)) return 'email is not a valid address';
+    return null;
+  }
+};
+
+function validEmail(v){
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(v || ''));
+}
+function validUrl(v){
+  return /^(https?:|data:|\/)/i.test(String(v || ''));
+}
+function validIso(v){
+  const d = new Date(v);
+  return !isNaN(d.getTime());
+}
+function validateTemplate(t, label){
+  if (!t) return label + ' record is required';
+  if (!String(t.title || '').trim()) return 'title is required';
+  if (t.preview && !validUrl(t.preview)) return 'preview is not a valid URL/path';
+  if (t.file && !validUrl(t.file) && !/^[a-z0-9._-]+$/i.test(String(t.file))) return 'file is not a valid name/URL';
+  return null;
+}
+
+function validate(name, record){
+  const fn = validators[name];
+  if (!fn) return null;
+  const err = fn(record);
+  if (err){ const e = new Error(err); e.status = 400; throw e; }
+}
+
 function matchField(record, field, value){
   // boolean coercion (true/false), numeric, or string
   const actual = record[field];
@@ -97,6 +177,7 @@ function routerFor(name){
 
   router.post('/', guard, (req, res, next) => {
     try{
+      validate(name, req.body || {});
       const rec = db.create(name, req.body || {});
       res.status(201).json({ data: rec });
     }catch(e){ next(e); }
@@ -112,6 +193,7 @@ function routerFor(name){
 
   router.put('/:id', guard, (req, res, next) => {
     try{
+      validate(name, Object.assign({}, db.getById(name, req.params.id) || {}, req.body || {}));
       const item = db.update(name, req.params.id, req.body || {});
       if (!item) return res.status(404).json({ error: 'not found' });
       res.json({ data: item });
@@ -120,6 +202,7 @@ function routerFor(name){
 
   router.patch('/:id', guard, (req, res, next) => {
     try{
+      validate(name, Object.assign({}, db.getById(name, req.params.id) || {}, req.body || {}));
       const item = db.update(name, req.params.id, req.body || {});
       if (!item) return res.status(404).json({ error: 'not found' });
       res.json({ data: item });

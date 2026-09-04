@@ -1,7 +1,7 @@
 {
   "name": "yallah-click",
   "version": "1.0.0",
-  "description": "YallahClick — studio admin + library site with a real Express JSON-file API (data/db.json) and full CRUD.",
+  "description": "YallahClick - studio admin + library site with a real Express JSON-file API (one JSON file per content section under data/) and full CRUD.",
   "main": "backend/server.js",
   "scripts": {
     "start": "node backend/server.js",

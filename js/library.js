@@ -406,7 +406,8 @@ document.addEventListener('DOMContentLoaded', function(){
     prompts: { type: 'prompts', svc: YC.services.prompts },
     templates: { type: 'templates', svc: YC.services.templates },
     video: { type: 'video', svc: YC.services.videoTemplates },
-    thumb: { type: 'thumb', svc: YC.services.thumbnailTemplates }
+    thumb: { type: 'thumb', svc: YC.services.thumbnailTemplates },
+    psd: { type: 'psd', svc: YC.services.psdTemplates }
   };
   var cfg = map[lib];
   if(cfg && cfg.svc){

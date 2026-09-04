@@ -1,6 +1,6 @@
 # YallahClick — Studio Admin + Content Website
 
-A fully dynamic, JSON-backed content management system. The **admin dashboard** and the **public website** share one backend API and one JSON database, so every create / edit / delete / activate / deactivate you make in the dashboard is persisted to JSON and automatically appears on the website after refresh — in any browser.
+A fully dynamic, JSON-backed content management system. The **admin dashboard** and the **public website** share one backend API and one JSON database, where **each content section lives in its own JSON file**, so every create / edit / delete / activate / deactivate you make in the dashboard is persisted to JSON and automatically appears on the website after refresh — in any browser.
 
 ---
 
@@ -13,45 +13,46 @@ ADMIN DASHBOARD  (admin/*.html)
    EXPRESS API   (backend/)
       │  read/write
       ▼
-   JSON DATABASE (data/db.json)  ← single source of truth
+   JSON DATABASE (data/*.json)  ← per-section JSON files (single source of truth)
       │  GET /api/:collection    (anonymous)
       ▼
-   PUBLIC WEBSITE (index.html, ai-prompts.html, templates.html, …)
+   PUBLIC WEBSITE (index.html, ai-prompts.html, templates.html, psd-templates.html, …)
 ```
 
-There is **one source of truth**: `data/db.json`. The website and dashboard both consume the same API. Nothing is hardcoded in React state or duplicated across files — the JSON database + API drive everything.
+Each content section has **its own JSON file** (e.g. `data/prompts.json`, `data/video-templates.json`). The website and dashboard both consume the same API. Nothing is hardcoded in React state or duplicated across files — the per-section JSON files + API drive everything. On Vercel, files are mirrored to Upstash Redis KV (`YC_KV_REST_URL` / `YC_KV_REST_TOKEN`) so admin changes survive serverless cold starts.
 
 ---
 
 ## 2. The JSON database
 
-All content is stored in **one JSON file**: `data/db.json`.
+All content is stored in **one JSON file per section** under `data/`:
 
 ```
-data/db.json            ← THE database (single source of truth)
-data/*.js               ← seed data used to (re)generate db.json
+data/*.json             ← per-section databases (single source of truth)
+data/*.js               ← seed data used to (re)generate the JSON files
 data/settings.js        ← default site settings (seeded)
 uploads/                ← admin-uploaded images/files (git-ignored)
 ```
 
-Collections in the DB (each maps to a REST endpoint):
+Sections (each maps to a REST endpoint):
 
-| Collection        | Endpoint           | Dashboard page            | Public page |
-|-------------------|--------------------|---------------------------|-------------|
-| `prompts`         | `/api/prompts`     | `admin/ai-prompts.html`   | `ai-prompts.html` |
-| `templates`       | `/api/templates`   | `admin/templates.html`    | `templates.html` |
-| `videoTemplates`  | `/api/video-templates` | `admin/video-templates.html` | `video-templates.html` |
-| `thumbnailTemplates` | `/api/thumbnail-templates` | `admin/thumbnail-templates.html` | `thumbnail-templates.html` |
-| `promotions`      | `/api/promotions`  | `admin/promotions.html`   | promo popup (all pages) |
-| `settings`        | `/api/settings`    | `admin/settings.html`     | site-wide config |
-| `bookings`        | `/api/bookings`    | `admin/bookings.html`     | booking form |
-| `customers`       | `/api/customers`   | `admin/customers.html`    | — |
-| `files`           | `/api/files`       | `admin/files.html`        | — |
-| `categories`      | `/api/categories`  | `admin/categories.html`   | filter options |
-| `services`        | `/api/services`    | —                         | services list |
-| `admins`          | `/api/admins`      | `admin/users.html`        | — |
+| Collection        | File                     | Endpoint           | Dashboard page            | Public page |
+|-------------------|--------------------------|--------------------|---------------------------|-------------|
+| `prompts`         | `data/prompts.json`      | `/api/prompts`     | `admin/ai-prompts.html`   | `ai-prompts.html` |
+| `templates`       | `data/templates.json`    | `/api/templates`   | `admin/templates.html`    | `templates.html` |
+| `videoTemplates`  | `data/video-templates.json` | `/api/video-templates` | `admin/video-templates.html` | `video-templates.html` |
+| `thumbnailTemplates` | `data/thumbnail-templates.json` | `/api/thumbnail-templates` | `admin/thumbnail-templates.html` | `thumbnail-templates.html` |
+| `psdTemplates`    | `data/psd-templates.json` | `/api/psd-templates` | `admin/psd-templates.html` | `psd-templates.html` |
+| `promotions`      | `data/promotions.json`  | `/api/promotions`  | `admin/promotions.html`   | promo popup (all pages) |
+| `settings`        | `data/settings.json`    | `/api/settings`    | `admin/settings.html`     | site-wide config |
+| `bookings`        | `data/bookings.json`    | `/api/bookings`    | `admin/bookings.html`     | booking form |
+| `customers`       | `data/customers.json`   | `/api/customers`   | `admin/customers.html`    | — |
+| `files`           | `data/files.json`       | `/api/files`       | `admin/files.html`        | — |
+| `categories`      | `data/categories.json`  | `/api/categories`  | `admin/categories.html`   | filter options |
+| `services`        | `data/services.json`    | `/api/services`    | —                         | services list |
+| `admins`          | `data/admins.json`      | `/api/admins`      | `admin/users.html`        | — |
 
-On first boot the server seeds `data/db.json` from the `data/*.js` seed files (identical dataset to the static demo). If a JSON file already exists, its data is preserved; newly introduced collections (e.g. `settings`) are backfilled automatically.
+On first boot the server seeds each JSON file from the `data/*.js` seed files (identical dataset to the static demo). If a JSON file already exists, its data is preserved; newly introduced collections (e.g. `settings`, `psdTemplates`) are backfilled automatically.
 
 ---
 
@@ -149,16 +150,16 @@ The dashboard **Settings** page (`admin/settings.html`) now saves to the `settin
 
 ## 8. How persistence works across browsers / refreshes
 
-- **Persistent hosts (local dev, Railway, Render, Fly):** writes go to `data/db.json` on disk atomically (temp-file + rename, serialized to prevent lost updates). The file survives restarts and is the same for every visitor.
-- **Vercel (serverless) — IMPORTANT:** the filesystem is **ephemeral and reset on cold starts**, so a plain JSON file does NOT persist. To make this durable on Vercel you must enable the built-in **Upstash/KV** remote store:
+- **Persistent hosts (local dev, Railway, Render, Fly):** writes go to the per-section files in `data/` (e.g. `data/prompts.json`) atomically (temp-file + rename, per-collection write queues to prevent lost updates). The files survive restarts and are the same for every visitor.
+- **Vercel (serverless) — IMPORTANT:** the filesystem is **ephemeral and reset on cold starts**, so plain JSON files do NOT persist. To make this durable on Vercel you must enable the built-in **Upstash/KV** remote store:
 
   1. Create a free Upstash KV (or Vercel KV) database.
   2. Copy its **REST URL** and **REST token**.
   3. In Vercel → project → **Settings → Environment variables**, add:
      - `YC_KV_REST_URL` = `https://...upstash.io`
      - `YC_KV_REST_TOKEN` = your token
-     - (optional) `YC_KV_KEY` = `yc:db`
-  4. Redeploy. The whole DB is then persisted as one JSON blob in Upstash KV; `YC_KV_ENABLED` becomes true and the server reads/writes from the durable store instead of the ephemeral disk.
+     - (optional) `YC_KV_ENABLED` = `1`
+  4. Redeploy. Each section is persisted to its own KV key (`yc:db:<section>`, e.g. `yc:db:prompts.json`) instead of one blob; `KV_ENABLED` becomes true and the server reads/writes from the durable store instead of the ephemeral disk.
 
   With KV enabled, dashboard edits persist across cold starts and all regions/browsers.
 
@@ -182,7 +183,7 @@ npm start            # → http://localhost:3000
 
 # checks
 npm run check        # syntax-check all backend files
-npm run seed         # regenerate data/db.json from data/*.js
+npm run seed         # regenerates every data/<section>.json from data/*.js
 npm test             # backend tests
 ```
 
@@ -197,10 +198,10 @@ $env:PORT = 4000; npm start
 | Variable         | Purpose                                        |
 |------------------|------------------------------------------------|
 | `PORT`           | HTTP port (default 3000)                       |
-| `YC_DB_FILE`     | Path to the JSON DB file                       |
+| `YC_DATA_DIR`    | Directory holding the per-section JSON files (default `./data`) |
+| `YC_SEED_DIR`    | Directory holding the `data/*.js` seed modules (default `./data`) |
 | `YC_KV_REST_URL` | **Vercel:** Upstash KV REST URL (for durability) |
 | `YC_KV_REST_TOKEN` | **Vercel:** Upstash KV REST token             |
-| `YC_KV_KEY`      | Upstash KV key name (default `yc:db`)          |
 | `YC_AUTH_SECRET` | Secret for signing admin tokens (set in prod)  |
 | `YC_LOG`         | Set `1` to log API requests                    |
 
@@ -214,8 +215,8 @@ $env:PORT = 4000; npm start
 | `backend/db.js` | JSON DB with typed CRUD, atomic writes, optional durable KV persistence |
 | `backend/routes/generic.js` | Generic REST CRUD router for every collection |
 | `backend/routes/auth.js` | Login / me / logout (HMAC-signed tokens) |
-| `data/db.json` | **The JSON database (source of truth)** |
-| `data/settings.js` | Default settings seed |
+| `data/*.json` | **The per-section JSON databases (source of truth)** |
+| `data/*.js` | Default seed modules (used to (re)generate the JSON files) |
 | `services/backend.js` | Client API bridge + sync (`YC.backend`) |
 | `services/storage.js` | `YC.Store` + `YC.createService` (CRUD factory) |
 | `js/shared.js` | Site-wide helpers incl. persistent `YC.settings` |

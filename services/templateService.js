@@ -114,8 +114,10 @@ YC.services = YC.services || {};
   YC.services.templates = factory('yc:templates', YC.data.templates, 'Template');
   YC.services.videoTemplates = factory('yc:video-templates', YC.data.videoTemplates, 'Video Template');
   YC.services.thumbnailTemplates = factory('yc:thumbnail-templates', YC.data.thumbnailTemplates, 'Thumbnail Template');
+  YC.services.psdTemplates = factory('yc:psd-templates', (YC.data.psdTemplates || []), 'PSD Template');
 
   YC.services.templates.seed();
   YC.services.videoTemplates.seed();
   YC.services.thumbnailTemplates.seed();
+  YC.services.psdTemplates.seed();
 })();

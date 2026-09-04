@@ -11,9 +11,12 @@ const path = require('path');
 const os = require('os');
 const http = require('http');
 
-// Point the DB at a throwaway temp file BEFORE requiring the server/db.
+// Point the DB at a throwaway temp DATA DIR BEFORE requiring the server/db.
+// Each collection loads from its own JSON file inside this dir.
 const SERVER_ID = 'yc-test-' + Date.now();
-process.env.YC_DB_FILE = path.join(os.tmpdir(), SERVER_ID + '.json');
+process.env.YC_DATA_DIR = path.join(os.tmpdir(), SERVER_ID);
+const fs = require('fs');
+fs.mkdirSync(process.env.YC_DATA_DIR, { recursive: true });
 
 const app = require('./server');
 const db = require('./db');
@@ -120,11 +123,15 @@ async function main(){
   r = await request(port, 'GET', '/api/prompts?filters=' + encodeURIComponent(JSON.stringify({ featured: true })));
   ok(r.status === 200 && r.body.data.every((p) => p.featured === true), 'prompts filter featured');
 
-  // 12) reset to seed
-  r = await request(port, 'POST', '/api/auth/reset-public');
-  ok(r.status === 200 && r.body.data.ok === true, 'reset to seed');
+  // 12) reset to seed (requires auth)
+  r = await request(port, 'POST', '/api/auth/reset-public', undefined, token);
+  ok(r.status === 200 && r.body.data.ok === true, 'reset to seed (authed)');
   r = await request(port, 'GET', '/api/bookings');
   ok(r.status === 200 && r.body.data.length === 45, 'bookings back to 45 after reset');
+
+  // 12b) reset is admin-only: unauthenticated reset rejected
+  r = await request(port, 'POST', '/api/auth/reset-public');
+  ok(r.status === 401, 'unauthenticated reset rejected');
 
   // 13) me
   r = await request(port, 'GET', '/api/auth/me', undefined, token);
@@ -133,7 +140,7 @@ async function main(){
   console.log('\n' + passed + ' passed, ' + failed + ' failed');
   server.close();
   db.persist();
-  try{ require('fs').unlinkSync(process.env.YC_DB_FILE); }catch(e){}
+  try{ require('fs').rmSync(process.env.YC_DATA_DIR, { recursive: true, force: true }); }catch(e){}
   process.exit(failed ? 1 : 0);
 }
 
