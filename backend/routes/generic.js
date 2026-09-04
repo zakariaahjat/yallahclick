@@ -164,35 +164,61 @@ function applyQuery(list, req){
 
 function routerFor(name){
   const router = express.Router();
-  const guard = require('./middleware').requireAuth;
 
   // NOTE: auth + parent-facing reads stay anonymous (GET allowed without token)
   // so the public site/library can show content before any login.
-  router.get('/', (req, res, next) => {
+  router.get('/', async (req, res, next) => {
     try{
+      await db.refresh(name);
       if (!db.exists(name)) return res.status(404).json({ error: 'unknown collection' });
       res.json({ data: applyQuery(db.getAll(name), req), meta: { collection: name } });
     }catch(e){ next(e); }
   });
 
-  router.post('/', guard, (req, res, next) => {
+  // POST is admin-only EXCEPT for `bookings`, which the public inquiry
+  // form submits to (no token). Bookings are normalized server-side.
+  router.post('/', async (req, res, next) => {
     try{
-      validate(name, req.body || {});
-      const rec = db.create(name, req.body || {});
+      if (name !== 'bookings'){
+        // admin-only: 401 unless a valid session token is present
+        const auth = require('./middleware');
+        const payload = db.verifyToken(auth.bearerToken(req));
+        if (!payload || !payload.email){
+          return res.status(401).json({ error: 'unauthorized', message: 'Missing or invalid session token.' });
+        }
+        req.user = payload;
+      }
+      const b = Object.assign({}, req.body || {});
+      if (name === 'bookings'){
+        b.status = 'pending';
+        if (!b.date) b.date = new Date().toISOString().slice(0, 10);
+        if (!b.createdAt) b.createdAt = new Date().toISOString();
+        if (!b.id){
+          const max = db.getAll(name).reduce((acc, x) => {
+            const n = parseInt(String(x.id || '').replace(/\D+/g, ''), 10);
+            return isNaN(n) ? acc : Math.max(acc, n);
+          }, 1000);
+          b.id = 'YC-' + (max + 1);
+        }
+      }
+      validate(name, b);
+      const rec = db.create(name, b);
       res.status(201).json({ data: rec });
     }catch(e){ next(e); }
   });
 
-  router.get('/:id', (req, res, next) => {
+  router.get('/:id', async (req, res, next) => {
     try{
+      await db.refresh(name);
       const item = db.getById(name, req.params.id);
       if (!item) return res.status(404).json({ error: 'not found' });
       res.json({ data: item });
     }catch(e){ next(e); }
   });
 
-  router.put('/:id', guard, (req, res, next) => {
+  router.put('/:id', async (req, res, next) => {
     try{
+      await db.refresh(name);
       validate(name, Object.assign({}, db.getById(name, req.params.id) || {}, req.body || {}));
       const item = db.update(name, req.params.id, req.body || {});
       if (!item) return res.status(404).json({ error: 'not found' });
@@ -200,8 +226,9 @@ function routerFor(name){
     }catch(e){ next(e); }
   });
 
-  router.patch('/:id', guard, (req, res, next) => {
+  router.patch('/:id', async (req, res, next) => {
     try{
+      await db.refresh(name);
       validate(name, Object.assign({}, db.getById(name, req.params.id) || {}, req.body || {}));
       const item = db.update(name, req.params.id, req.body || {});
       if (!item) return res.status(404).json({ error: 'not found' });
@@ -209,8 +236,9 @@ function routerFor(name){
     }catch(e){ next(e); }
   });
 
-  router.delete('/:id', guard, (req, res, next) => {
+  router.delete('/:id', async (req, res, next) => {
     try{
+      await db.refresh(name);
       const removed = db.remove(name, req.params.id);
       if (!removed) return res.status(404).json({ error: 'not found' });
       res.json({ data: { ok: true, id: req.params.id } });

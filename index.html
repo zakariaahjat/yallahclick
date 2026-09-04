@@ -3576,10 +3576,41 @@
     btn.textContent = 'Sending...';
     btn.setAttribute('aria-busy', 'true');
 
+    const serviceSelect = document.getElementById('service');
+    const serviceLabel = serviceSelect ? serviceSelect.value : 'Video Production';
+    const serviceIdMap = {
+      'Video Production': 'video-production',
+      'Motion Design': 'motion-design',
+      'Graphic Design': 'graphic-design',
+      'Marketing': 'marketing',
+      'Full Creative Service': 'full-creative-service'
+    };
+
+    // 1) Record the booking in the JSON DB (/api/bookings, public endpoint)
+    let bookingSaved = false;
+    try{
+      const bk = await fetch((window.location.origin || '') + '/api/bookings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify({
+          customerName: nameInput.value.trim(),
+          email: emailInput.value.trim(),
+          serviceId: serviceIdMap[serviceLabel] || 'video-production',
+          notes: document.getElementById('details').value.trim(),
+          source: 'web'
+        })
+      });
+      const bkJson = await bk.json().catch(() => ({}));
+      bookingSaved = bk.ok && bkJson && bkJson.data && bkJson.data.id;
+    }catch(err){
+      bookingSaved = false;
+    }
+
+    // 2) Also send the email notification (kept for the client's inbox)
     const payload = {
       name: nameInput.value.trim(),
       email: emailInput.value.trim(),
-      service: document.getElementById('service').value,
+      service: serviceLabel,
       project_details: document.getElementById('details').value.trim(),
       source_page: window.location.href,
       _subject: 'New Project Inquiry — Yallah Click',
@@ -3587,6 +3618,7 @@
       _honey: form.querySelector('[name="_honey"]').value
     };
 
+    let emailSent = false;
     try{
       const response = await fetch('https://formsubmit.co/ajax/yallahclick.contact@gmail.com', {
         method: 'POST',
@@ -3596,15 +3628,16 @@
         },
         body: JSON.stringify(payload)
       });
-
       const data = await response.json().catch(() => ({}));
-      if(!response.ok || data.success === false){
-        throw new Error(data.message || 'Unable to send the request.');
-      }
+      emailSent = !!(response.ok && data.success !== false);
+    }catch(error){
+      emailSent = false;
+    }
 
+    if(bookingSaved || emailSent){
       btn.textContent = 'Request Sent ✓';
       btn.style.background = '#5c1015';
-      showToast('Request sent successfully!');
+      showToast(bookingSaved ? 'Request sent successfully! We\'ll be in touch.' : 'Request sent (we noted it in the studio).');
       form.reset();
 
       setTimeout(() => {
@@ -3613,17 +3646,12 @@
         btn.disabled = false;
         btn.removeAttribute('aria-busy');
       }, 2500);
-    }catch(error){
-      console.error('Form submission error:', error);
+    }else{
       btn.textContent = 'Try Again';
       btn.style.background = '';
       btn.disabled = false;
       btn.removeAttribute('aria-busy');
       showToast('Message not sent. Please try again or email us directly.');
-
-      setTimeout(() => {
-        btn.textContent = original;
-      }, 2500);
     }
 
     return false;

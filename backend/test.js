@@ -83,9 +83,24 @@ async function main(){
   ok(r.status === 200 && r.body.data && r.body.data.token, 'login with valid creds -> token');
   const token = r.body.data.token;
 
-  // 3) unauthorized write without token
-  r = await request(port, 'POST', '/api/bookings', { customerName: 'Unauth' });
-  ok(r.status === 401 || r.status === 403, 'POST /api/bookings without token rejected');
+  // 3) bookings POST is the PUBLIC inquiry endpoint (no token required),
+  //    while all other collections stay admin-only
+  r = await request(port, 'POST', '/api/bookings', { customerName: 'Public Form', email: 'p@x.com', serviceId: 'video-production' });
+  ok(r.status === 201 && r.body.data && r.body.data.id, 'public booking (no token) -> 201');
+  ok(r.body.data.status === 'pending' && /^YC-\d+$/.test(r.body.data.id), 'public booking normalized (status=pending, id=YC-*)');
+  ok(r.body.data.createdAt, 'public booking gets createdAt');
+  const pubId = r.body.data.id;
+  r = await request(port, 'GET', '/api/bookings/' + pubId);
+  ok(r.status === 200 && r.body.data.customerName === 'Public Form', 'public booking readable back');
+  r = await request(port, 'DELETE', '/api/bookings/' + pubId, undefined, token);
+  ok(r.status === 200, 'cleanup public booking');
+
+  // 3b) non-bookings POST still requires auth
+  r = await request(port, 'POST', '/api/prompts', { title: 'x' });
+  ok(r.status === 401, 'POST /api/prompts without token rejected');
+  r = await request(port, 'POST', '/api/bookings', { customerName: 'Auth Check', serviceId: 'video-production' }, token);
+  ok(r.status === 201, 'authorized booking create still works');
+  await request(port, 'DELETE', '/api/bookings/' + r.body.data.id, undefined, token);
 
   // 4) CRUD create (authorized)
   r = await request(port, 'POST', '/api/bookings', { customerName: 'CRUD Test', serviceId: 'video-production' }, token);

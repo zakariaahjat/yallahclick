@@ -91,6 +91,22 @@ async function kvGet(name){
   try{ return JSON.parse(raw); }catch(e){ return null; }
 }
 
+/* Re-pull one collection from the durable store into the in-memory
+   state. On serverless (Vercel) warm instances keep a snapshot in
+   memory that can go stale; refreshing before each read/write keeps
+   every instance consistent with the KV source of truth. */
+async function refresh(name){
+  if (!KV_ENABLED || !(name in state)) return false;
+  try{
+    const remote = await kvGet(name);
+    let arr = null;
+    if (Array.isArray(remote)) arr = remote;
+    else if (Array.isArray(remote && remote.data)) arr = remote.data;
+    if (Array.isArray(arr)){ state[name] = arr; return true; }
+  }catch(e){}
+  return false;
+}
+
 async function kvSet(name, arr){
   const url = KV_URL.replace(/\/+$/, '') + '/set/' + encodeURIComponent(kvKeyFor(name));
   const payload = JSON.stringify({ _meta: { version: 1, updatedAt: new Date().toISOString(), collection: name }, data: arr });
@@ -355,6 +371,7 @@ module.exports = {
   dropAll,
   stats,
   persist,
+  refresh,
   nextId,
   signToken,
   verifyToken,
