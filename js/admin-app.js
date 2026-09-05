@@ -1890,7 +1890,7 @@ YC.app.pages_promotions = function(){
         { t: 'sw', name: 'popupEnabled', label: 'Show on website (popup)', value: editing ? v('popupEnabled') : true },
         { t: 'sw', name: 'countdownEnabled', label: 'Countdown in popup', value: editing ? v('countdownEnabled') : true },
         { t: 'sw', name: 'showOnce', label: 'Show only once per visitor', value: v('showOnce') },
-        { t: 'sw', name: 'showEveryVisit', label: 'Show on every visit', value: v('showEveryVisit') },
+        { t: 'sw', name: 'showEveryVisit', label: 'Show on every visit / refresh', value: editing ? v('showEveryVisit') : true },
         { t: 'sw', name: 'closeButton', label: 'Show close button', value: v('closeButton') !== false },
         { t: 'text', name: 'popupDelay', label: 'Popup delay (seconds)', value: v('popupDelay') || 5, type: 'number', min: 0 },
         { t: 'select', name: 'popupPosition', label: 'Popup position', value: v('popupPosition') || 'center',
