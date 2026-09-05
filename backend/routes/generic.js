@@ -24,6 +24,7 @@ const validators = {
     if (!p || !String(p.title || '').trim()) return 'title is required';
     if (!String(p.category || '').trim()) return 'category is required';
     if (!String(p.prompt || '').trim()) return 'prompt is required';
+    if (p.preview && !validUrl(p.preview)) return 'preview is not a valid URL/path';
     return null;
   },
   promotions(p){

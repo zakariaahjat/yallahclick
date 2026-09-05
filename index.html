@@ -3317,6 +3317,11 @@
             <input type="email" id="email" name="email" placeholder="you@awesomechannel.com" autocomplete="email" required>
             <div class="field-error">Please enter a valid email</div>
           </div>
+          <div class="field" id="fieldPhone">
+            <label for="phone">Phone / WhatsApp *</label>
+            <input type="tel" id="phone" name="phone" placeholder="+212 600 000 000" autocomplete="tel" required>
+            <div class="field-error">Please enter a valid phone number</div>
+          </div>
           <div class="field">
             <label for="service">What service do you need?</label>
             <select id="service" name="service">
@@ -3550,14 +3555,17 @@
     const form = e.target;
     const nameField = document.getElementById('fieldName');
     const emailField = document.getElementById('fieldEmail');
+    const phoneField = document.getElementById('fieldPhone');
     const nameInput = document.getElementById('name');
     const emailInput = document.getElementById('email');
+    const phoneInput = document.getElementById('phone');
     const btn = form.querySelector('.submit-btn');
     const original = btn.textContent;
     let valid = true;
 
     nameField.classList.remove('error');
     emailField.classList.remove('error');
+    if(phoneField) phoneField.classList.remove('error');
 
     if(!nameInput.value.trim()){
       nameField.classList.add('error');
@@ -3567,6 +3575,12 @@
     const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if(!emailRe.test(emailInput.value.trim())){
       emailField.classList.add('error');
+      valid = false;
+    }
+
+    const phoneRe = /^[+\d][\d\s().-]{6,}$/;
+    if(phoneInput && !phoneRe.test(phoneInput.value.trim())){
+      if(phoneField) phoneField.classList.add('error');
       valid = false;
     }
 
@@ -3595,6 +3609,7 @@
         body: JSON.stringify({
           customerName: nameInput.value.trim(),
           email: emailInput.value.trim(),
+          phone: phoneInput ? phoneInput.value.trim() : '',
           serviceId: serviceIdMap[serviceLabel] || 'video-production',
           notes: document.getElementById('details').value.trim(),
           source: 'web'
@@ -3610,6 +3625,7 @@
     const payload = {
       name: nameInput.value.trim(),
       email: emailInput.value.trim(),
+      phone: phoneInput ? phoneInput.value.trim() : '',
       service: serviceLabel,
       project_details: document.getElementById('details').value.trim(),
       source_page: window.location.href,
@@ -3658,7 +3674,7 @@
   }
 
   // inline error clear on input
-  ['name','email'].forEach(id=>{
+  ['name','email','phone'].forEach(id=>{
     document.getElementById(id).addEventListener('input', function(){
       this.closest('.field').classList.remove('error');
     });

@@ -453,6 +453,14 @@
 .promo-card .pc-date{display:flex;gap:8px;align-items:center;margin-top:12px;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--gray);}
 .promo-card .pc-date svg{width:13px;height:13px;color:var(--red);}
 .promo-card .pc-meta{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px;}
+.promo-card .pc-webswitch{
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
+  margin-top:14px;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--form-input-bg);
+}
+.promo-card .pc-webswitch-label{
+  display:inline-flex;align-items:center;gap:8px;font-size:12.5px;font-weight:700;color:var(--text);
+}
+.promo-card .pc-webswitch-label svg{width:14px;height:14px;color:var(--red);}
 .promo-card .pc-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px;padding-top:14px;border-top:1px solid var(--line);}
 .promo-card .pc-actions .btn-sm,.promo-card .pc-actions .btn-icon{flex-shrink:0;}
 

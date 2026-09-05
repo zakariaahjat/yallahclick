@@ -36,8 +36,12 @@ YC.services = YC.services || {};
 
       getActiveForPopup: function(){
         var self = this;
-        var active = this.allWithStatus().filter(function(p){
-          return p.status === 'active' && p.popupEnabled && p.serviceId;
+        /* The admin "Show on website" switch (popupEnabled) is
+           authoritative: whatever is switched on shows on the site,
+           and switching it off hides it — independent of the schedule
+           window (dates keep driving the countdown display only). */
+        var active = this.all().filter(function(p){
+          return p.popupEnabled === true && p.active !== false && p.serviceId;
         });
         if(!active.length) return null;
         active.sort(function(a, b){
@@ -45,6 +49,12 @@ YC.services = YC.services || {};
           return String(b.startDate).localeCompare(String(a.startDate));
         });
         return active[0];
+      },
+
+      toggleWebVisible: function(id){
+        var p = this.getById(id);
+        if(!p) return null;
+        return this.update(id, { popupEnabled: p.popupEnabled !== true });
       },
 
       toggleActive: function(id){

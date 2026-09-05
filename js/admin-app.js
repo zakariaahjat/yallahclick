@@ -1205,8 +1205,9 @@ YC.app.pages_prompts = function(){
         { t: 'select', name: 'category', label: 'Category', value: v('category'), required: true, options: catOptions },
         { t: 'select', name: 'platform', label: 'Platform', value: v('platform'), required: true, options: svc.PLATFORMS },
         { t: 'text', name: 'tags', label: 'Tags (comma separated)', value: editing ? (row.tags || []).join(', ') : '' },
-        { t: 'text', name: 'previewEmoji', label: 'Preview emoji', value: v('previewEmoji') || '✨' },
-        { t: 'text', name: 'previewColor', label: 'Preview color', value: v('previewColor') || '#101216', type: 'color' },
+        { t: 'upload', name: 'preview', label: 'Image (upload a file or paste a link)', value: v('preview'), folder: 'prompts', accept: 'image/*' },
+        { t: 'text', name: 'previewEmoji', label: 'Fallback emoji', value: v('previewEmoji') || '✨' },
+        { t: 'text', name: 'previewColor', label: 'Fallback color', value: v('previewColor') || '#101216', type: 'color' },
         { t: 'sw', name: 'featured', label: 'Featured on homepage', value: v('featured') },
         { t: 'sw', name: 'published', label: 'Published', value: editing ? v('published') : true }
       ],
@@ -1220,7 +1221,7 @@ YC.app.pages_prompts = function(){
         }else{
           data.views = data.views || 0;
           data.favorites = data.favorites || 0;
-          data.preview = null;
+          if(!data.preview) data.preview = null;
           svc.create(data);
           YC.toast.success('Prompt created.');
         }
@@ -1686,6 +1687,11 @@ YC.app.pages_promotions = function(){
       codeRow +
       '<div class="pc-date"><span class="ic">' + YC.icons.get('calendar') + '</span>' + YC.fmtDate(p.startDate) + ' &rarr; ' + YC.fmtDate(p.endDate) + '</div>' +
       '<div class="pc-meta">' + meta.join('') + '</div>' +
+      '<div class="pc-webswitch">' +
+        '<span class="pc-webswitch-label"><span class="ic">' + YC.icons.get(p.popupEnabled ? 'star' : 'starOutline') + '</span>' +
+        (p.popupEnabled ? 'Showing on website' : 'Hidden from website') + '</span>' +
+        '<label class="switch"><input type="checkbox" data-webswitch="' + p.id + '"' + (p.popupEnabled ? ' checked' : '') + '><span class="track"></span></label>' +
+      '</div>' +
       '<div class="pc-actions">' +
         '<button type="button" class="btn btn-soft btn-sm" data-preview="' + p.id + '">Preview</button>' +
         '<button type="button" class="btn btn-soft btn-sm" data-edit="' + p.id + '">Edit</button>' +
@@ -1736,6 +1742,15 @@ YC.app.pages_promotions = function(){
         if(!p) return;
         svc.toggleActive(p.id);
         YC.toast.info(p.active === false ? 'Promotion enabled.' : 'Promotion paused.');
+        grid(); stats();
+      });
+    });
+    YC.app.$$('#promoGrid [data-webswitch]').forEach(function(b){
+      b.addEventListener('change', function(){
+        var p = svc.getById(b.getAttribute('data-webswitch'));
+        if(!p) return;
+        svc.toggleWebVisible(p.id);
+        YC.toast.success(b.checked ? p.title + ' is now visible on the website.' : p.title + ' hidden from the website.');
         grid(); stats();
       });
     });
@@ -1798,7 +1813,7 @@ YC.app.pages_promotions = function(){
         { t: 'text', name: 'startTime', label: 'Start time', value: v('startTime') || '09:00', type: 'time' },
         { t: 'text', name: 'endDate', label: 'End date', value: v('endDate'), type: 'date', required: true },
         { t: 'text', name: 'endTime', label: 'End time', value: v('endTime') || '23:59', type: 'time' },
-        { t: 'sw', name: 'popupEnabled', label: 'Show as popup', value: v('popupEnabled') },
+        { t: 'sw', name: 'popupEnabled', label: 'Show on website (popup)', value: v('popupEnabled') },
         { t: 'sw', name: 'countdownEnabled', label: 'Countdown in popup', value: v('countdownEnabled') },
         { t: 'sw', name: 'showOnce', label: 'Show only once per visitor', value: v('showOnce') },
         { t: 'sw', name: 'showEveryVisit', label: 'Show on every visit', value: v('showEveryVisit') },
