@@ -1882,12 +1882,12 @@ YC.app.pages_promotions = function(){
         { t: 'select', name: 'discountType', label: 'Discount type', value: v('discountType') || 'percentage',
           options: ['percentage', 'fixed'] },
         { t: 'text', name: 'discountValue', label: 'Discount value', value: v('discountValue') || 10, type: 'number', min: 1 },
-        { t: 'text', name: 'promoCode', label: 'Promo code (coupon-type promos)', value: v('promoCode') },
+        { t: 'text', name: 'promoCode', label: 'Promo code (leave empty to auto-generate)', value: v('promoCode') },
         { t: 'text', name: 'startDate', label: 'Start date', value: v('startDate'), type: 'date', required: true },
         { t: 'text', name: 'startTime', label: 'Start time', value: v('startTime') || '09:00', type: 'time' },
         { t: 'text', name: 'endDate', label: 'End date', value: v('endDate'), type: 'date', required: true },
         { t: 'text', name: 'endTime', label: 'End time', value: v('endTime') || '23:59', type: 'time' },
-        { t: 'sw', name: 'popupEnabled', label: 'Show on website (popup)', value: v('popupEnabled') },
+        { t: 'sw', name: 'popupEnabled', label: 'Show on website (popup)', value: editing ? v('popupEnabled') : true },
         { t: 'sw', name: 'countdownEnabled', label: 'Countdown in popup', value: editing ? v('countdownEnabled') : true },
         { t: 'sw', name: 'showOnce', label: 'Show only once per visitor', value: v('showOnce') },
         { t: 'sw', name: 'showEveryVisit', label: 'Show on every visit', value: v('showEveryVisit') },
@@ -1901,8 +1901,12 @@ YC.app.pages_promotions = function(){
       ],
       onSubmit: function(data, form){
         var missing = YC.app.required(data, ['title', 'description', 'startDate', 'endDate', 'ctaText']);
-        if(data.promoType !== 'discount'){
-          missing = missing.concat(YC.app.required(data, ['promoCode']));
+        /* Coupon-type promos need a code - auto-generate one instead of
+           blocking the save, so "New promotion -> Save" never dead-ends. */
+        var generatedCode = '';
+        if(data.promoType !== 'discount' && !String(data.promoCode || '').trim()){
+          generatedCode = 'YC' + Math.random().toString(36).slice(2, 6).toUpperCase();
+          data.promoCode = generatedCode;
         }
         if(missing.length){ YC.app.markErrors(form, missing); return; }
         if(data.endDate < data.startDate){
@@ -1920,7 +1924,9 @@ YC.app.pages_promotions = function(){
           YC.toast.success('Promotion updated.');
         }else{
           svc.create(data);
-          YC.toast.success('Promotion created.');
+          YC.toast.success(generatedCode
+            ? 'Promotion created. Promo code: ' + generatedCode
+            : 'Promotion created. It is live on the website.');
         }
         YC.modal.close(); grid(); stats();
       }
