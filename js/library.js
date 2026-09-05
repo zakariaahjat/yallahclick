@@ -46,6 +46,33 @@ YC.lib.hl = function(text, q){
   return out;
 };
 
+/* True when the item carries an actual downloadable URL (root-relative
+   /uploads/... path, http(s) link, or data URI). Bare demo filenames
+   like "pack.zip" are NOT real downloads. */
+YC.lib.hasRealFile = function(x){
+  var f = x && (x.file || x.url);
+  return !!f && /^(https?:|data:|\/)/i.test(f);
+};
+
+/* Build an inline player for a watch link: YouTube (watch/shorts/youtu.be/
+   /embed/), a direct video file, or Vimeo. Returns html or '' when the
+   link is arbitrary (e.g. Drive) - those fall back to the Watch button. */
+YC.lib.watchEmbed = function(w){
+  if(!w) return '';
+  var m, id;
+  if((m = /(?:youtube\.com\/(?:watch\?v=|shorts\/|embed\/)|youtu\.be\/)([\w-]{6,})/.exec(w))){
+    id = m[1];
+    return '<div class="watch-embed"><iframe src="https://www.youtube.com/embed/' + id + '" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>';
+  }
+  if((m = /vimeo\.com\/(\d+)/.exec(w))){
+    return '<div class="watch-embed"><iframe src="https://player.vimeo.com/video/' + m[1] + '" frameborder="0" allow="autoplay; fullscreen" allowfullscreen></iframe></div>';
+  }
+  if(/\.(mp4|webm|mov|m4v|ogv)(\?|#|$)/i.test(w)){
+    return '<div class="watch-embed"><video controls preload="metadata" src="' + YC.esc(w) + '"></video></div>';
+  }
+  return '';
+};
+
 YC.lib.render = function(opts){
   var type = opts.type;            // 'prompts' | 'templates' | 'video' | 'thumb'
   var svc = opts.svc;              // YC.services.prompts | templates | videoTemplates | thumbnailTemplates
@@ -128,7 +155,10 @@ YC.lib.render = function(opts){
           '<div class="p-tags">' + x.tags.slice(0, 3).map(function(t){ return '<span class="plat-badge" style="color:var(--gray)"><span class="pdot"></span>#' + YC.esc(t) + '</span>'; }).join('') + '</div>' +
           '<div class="p-foot">' +
             '<span class="p-views"><b>' + YC.esc(YC.abbrNum(x.views || 0)) + '</b> views</span>' +
-            '<button type="button" class="p-fav' + (YC.lib.getFavs(type)[String(x.id)] ? ' faved' : '') + '" data-fav="' + x.id + '" aria-label="Favorite"><span class="ic">' + YC.icons.get('star') + '</span></button>' +
+            '<div class="p-foot-actions">' +
+              (YC.lib.hasRealFile(x) || x.watchUrl ? '<button type="button" class="p-dl" data-dl="' + x.id + '">' + (YC.lib.hasRealFile(x) ? 'Download' : 'Watch') + '</button>' : '') +
+              '<button type="button" class="p-fav' + (YC.lib.getFavs(type)[String(x.id)] ? ' faved' : '') + '" data-fav="' + x.id + '" aria-label="Favorite"><span class="ic">' + YC.icons.get('star') + '</span></button>' +
+            '</div>' +
           '</div>' +
         '</div>' +
       '</article>';
@@ -151,7 +181,8 @@ YC.lib.render = function(opts){
           (x.category ? '<span class="plat-badge other" style="color:var(--gray)"><span class="pdot"></span>' + YC.esc(x.category) + '</span>' : '') +
         '</div>' +
         '<div class="t-foot">' +
-          (isPrompt ? '' : '<button type="button" class="btn btn-primary" data-dl="' + x.id + '">Download</button>') +
+          (isPrompt || !YC.lib.hasRealFile(x) ? '' : '<button type="button" class="btn btn-primary" data-dl="' + x.id + '">Download</button>') +
+          (x.watchUrl ? '<a class="btn btn-ghost" href="' + YC.esc(x.watchUrl) + '" target="_blank" rel="noopener">Watch</a>' : '') +
           '<button type="button" class="btn btn-ghost" data-view="' + x.id + '">Details</button>' +
         '</div>' +
       '</div>' +
@@ -220,8 +251,9 @@ YC.lib.render = function(opts){
         e.stopPropagation();
         var x = svc.getById(b.getAttribute('data-dl'));
         svc.incrementDownloads(x.id);
-        YC.downloadFile(x);
-        YC.toast.success('Download started.');
+        var res = YC.downloadFile(x);
+        if(res === 'file') YC.toast.success('Download started.');
+        else if(res === 'watch') YC.toast.info('Opening video...');
       });
     });
     var favs = document.querySelectorAll('[data-fav]');
@@ -292,6 +324,8 @@ YC.lib.render = function(opts){
       return '<img loading="lazy" decoding="async" src="' + YC.esc(g) + '" alt="" data-gtab>';
     }).join('') + '</div>' : '';
 
+    var watchBox = YC.lib.watchEmbed(x.watchUrl) ? '<div class="detail-watch">' + YC.lib.watchEmbed(x.watchUrl) + '</div>' : '';
+
     var body =
       '<div class="detail-hero" style="background:' + YC.esc(x.previewColor || '#101216') + '">' + hero +
         (x.platform ? '<span class="d-platform">' + YC.esc(x.platform) + '</span>' : '') +
@@ -302,6 +336,7 @@ YC.lib.render = function(opts){
       '<p class="detail-desc">' + YC.esc(x.description) + '</p>' +
       '<div class="meta-list">' + meta.join('') + '</div>' +
       gallery +
+      watchBox +
       (isPrompt ? '<div class="detail-section-title">The prompt</div>' +
         '<div class="prompt-full" id="promptFull">' + YC.esc(x.prompt).replace(/\n/g, '\n') + '</div>' +
         '<div class="detail-section-title">Tags</div><div class="detail-tags">' + x.tags.map(function(t){ return '<span class="plat-badge" style="color:var(--gray)"><span class="pdot"></span>#' + YC.esc(t) + '</span>'; }).join('') + '</div>'
@@ -312,9 +347,10 @@ YC.lib.render = function(opts){
       eyebrow: isPrompt ? 'AI Prompt' : 'Template',
       size: 'lg',
       body: body,
-      footer: (isPrompt
-        ? '<button type="button" class="btn btn-primary" data-copy-prompt>Copy prompt</button>'
-        : '<button type="button" class="btn btn-primary" data-dl-detail>Download</button>') +
+      footer:
+        (x.watchUrl ? '<a type="button" class="btn btn-primary" data-watch href="' + YC.esc(x.watchUrl) + '" target="_blank" rel="noopener">Watch</a>' : '') +
+        (YC.lib.hasRealFile(x) ? '<button type="button" class="btn btn-primary" data-dl-detail>Download</button>' : '') +
+        (isPrompt ? '<button type="button" class="btn btn-ghost" data-copy-prompt>Copy prompt</button>' : '') +
         '<button type="button" class="btn btn-ghost" data-close-modal>Close</button>',
       onMount: function(card){
         var cp = card.querySelector('[data-copy-prompt]');
@@ -329,8 +365,17 @@ YC.lib.render = function(opts){
         if(dl){
           dl.addEventListener('click', function(){
             svc.incrementDownloads(x.id);
-            YC.downloadFile(x);
-            YC.toast.success('Download started.');
+            var res = YC.downloadFile(x);
+            if(res === 'file') YC.toast.success('Download started.');
+            else if(res === 'watch') YC.toast.info('Opening video...');
+          });
+        }
+        var watch = card.querySelector('[data-watch]');
+        if(watch){
+          watch.addEventListener('click', function(e){
+            e.preventDefault();
+            var res = YC.downloadFile(x);
+            if(res === 'file') YC.toast.success('Download started.');
           });
         }
         var main = card.querySelector('.detail-hero img');

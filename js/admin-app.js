@@ -1214,6 +1214,8 @@ YC.app.pages_prompts = function(){
         { t: 'upload', name: 'preview', label: 'Image (upload a file or paste a link)', value: v('preview'), folder: 'prompts', accept: 'image/*' },
         { t: 'text', name: 'previewEmoji', label: 'Fallback emoji', value: v('previewEmoji') || '✨' },
         { t: 'text', name: 'previewColor', label: 'Fallback color', value: v('previewColor') || '#101216', type: 'color' },
+        { t: 'upload', name: 'file', label: 'Download file (upload a file or paste a link)', value: v('file'), folder: 'prompts', accept: '.zip,.pdf,.json,.txt,.png,.jpg,.ppt,.pptx' },
+        { t: 'text', name: 'watchUrl', label: 'Watch link (YouTube video, Vimeo or a .mp4 URL)', value: v('watchUrl'), placeholder: 'https://www.youtube.com/watch?v=...' },
         { t: 'sw', name: 'featured', label: 'Featured on homepage', value: v('featured') },
         { t: 'sw', name: 'published', label: 'Published', value: editing ? v('published') : true }
       ],
@@ -1451,7 +1453,8 @@ function templatesPage(svc, cfg){
       );
     }
     fields.push(
-      { t: 'upload', name: 'file', label: 'Download file', value: v('file'), folder: cfg.folder || 'content', accept: '.zip,.psd,.pdf,.mp4,.webm,.png,.jpg,.ppt,.pptx,.fig,.sketch,.ep,.ai,.afdesign,.mov,.jpg,.jpeg' },
+      { t: 'upload', name: 'file', label: 'Download file (upload a file or paste a link)', value: v('file'), folder: cfg.folder || 'content', accept: '.zip,.psd,.pdf,.mp4,.webm,.png,.jpg,.ppt,.pptx,.fig,.sketch,.ep,.ai,.afdesign,.mov,.jpeg' },
+      { t: 'text', name: 'watchUrl', label: 'Watch link (YouTube video, Vimeo or a .mp4 URL)', value: v('watchUrl'), placeholder: 'https://www.youtube.com/watch?v=...' },
       { t: 'text', name: 'fileSize', label: 'File size', value: v('fileSize'), placeholder: '24 MB' },
       isVideo || isThumb ? { t: 'text', name: 'software', label: 'Software', value: v('software'), required: true } : { t: 'text', name: 'fileSizeFake', label: '', value: '' },
       { t: 'sw', name: 'featured', label: 'Featured', value: v('featured') },

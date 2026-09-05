@@ -719,20 +719,31 @@ YC.abbrNum = function(n){
 };
 
 /* ---------- download helpers ---------- */
+/* Real download only when the item carries an actual URL (http(s), a
+   root-relative /uploads/... path, or data:). A `watchUrl` (YouTube,
+   YouTube Shorts, youtu.be, or direct video file) opens for viewing.
+   Bare demo filenames like "pack.zip" are treated as "no file yet" so
+   the live site never triggers a broken 404 download or a fake .txt.
+   Returns 'file' | 'watch' | false so callers can toast accordingly. */
 YC.downloadFile = function(x){
   var file = x && (x.file || x.url);
-  if (file && (/^(https?:)?\/\//i.test(file) || file.indexOf('/') === 0 || /\.(zip|psd|pdf|mp4|webm|png|jpe?g|ppt|pptx|fig|sketch|ep|ai|afdesign|mov)$/i.test(file))){
+  if (file && /^(https?:|data:|\/)/i.test(file)){
     var a = document.createElement('a');
     a.href = file;
-    a.download = (file.split('/').pop() || 'file');
+    a.setAttribute('download', '');
     a.rel = 'noopener';
     a.target = '_blank';
     document.body.appendChild(a);
     a.click();
     setTimeout(function(){ document.body.removeChild(a); }, 300);
-  }else{
-    YC.downloadDemo(file || 'file');
+    return 'file';
   }
+  if (x && x.watchUrl){
+    try{ window.open(x.watchUrl, '_blank', 'noopener'); }
+    catch(e){ location.href = x.watchUrl; }
+    return 'watch';
+  }
+  return false;
 };
 
 /* ---------- download helper (static demo) ---------- */
