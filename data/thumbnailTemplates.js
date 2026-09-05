@@ -1,5 +1,5 @@
 /* ============================================================
-   YallahClick — Thumbnail Templates (mock/static demo files)
+   YallahClick - Thumbnail Templates (mock/static demo files)
    Previews use the real thumbnail images inside /images/thump.
    ============================================================ */
 window.YC = window.YC || {};
@@ -57,7 +57,7 @@ YC.data.thumbnailTemplates = [
   {
     id: 4,
     title: "Podcast Studio Grid",
-    description: "Clean podcast thumbnail grid — 2–4 guest slots with guest-name captions baked in.",
+    description: "Clean podcast thumbnail grid - 2-4 guest slots with guest-name captions baked in.",
     platform: "YouTube",
     dimensions: "1280x720",
     category: "Podcasts",
@@ -89,7 +89,7 @@ YC.data.thumbnailTemplates = [
   {
     id: 6,
     title: "Vlog Storytime Vertical",
-    description: "Vertical vlog thumbnail for Shorts/TikTok — big text zone, safe area guides.",
+    description: "Vertical vlog thumbnail for Shorts/TikTok - big text zone, safe area guides.",
     platform: "YouTube Shorts",
     dimensions: "1080x1920",
     category: "Shorts",
@@ -121,7 +121,7 @@ YC.data.thumbnailTemplates = [
   {
     id: 8,
     title: "Podcast Season Announce",
-    description: "Big-name season announcement template — huge title type, spotlighting the host.",
+    description: "Big-name season announcement template - huge title type, spotlighting the host.",
     platform: "Instagram",
     dimensions: "1080x1350",
     category: "Podcasts",

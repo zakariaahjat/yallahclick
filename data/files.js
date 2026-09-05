@@ -1,6 +1,6 @@
 /* ============================================================
-   YallahClick — Files / Resources (mock/static demo files)
-   `url` is a fake storage URL — swap for real CDN later.
+   YallahClick - Files / Resources (mock/static demo files)
+   `url` is a fake storage URL - swap for real CDN later.
    ============================================================ */
 window.YC = window.YC || {};
 YC.data = YC.data || {};

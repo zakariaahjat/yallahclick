@@ -1,5 +1,5 @@
 /* ============================================================
-   YallahClick — AI Prompt service
+   YallahClick - AI Prompt service
    ============================================================ */
 window.YC = window.YC || {};
 YC.services = YC.services || {};

@@ -1,5 +1,5 @@
 /* ============================================================
-   YallahClick — Shared UI utilities (theme, toast, icons,
+   YallahClick - Shared UI utilities (theme, toast, icons,
    modal, charts, public site chrome). No framework required.
    ============================================================ */
 window.YC = window.YC || {};
@@ -28,14 +28,14 @@ YC.uid = function(prefix){
 
 /* ---------- date helpers ---------- */
 YC.fmtDate = function(iso){
-  if(!iso) return '—';
+  if(!iso) return '-';
   var d = new Date(iso.length <= 10 ? iso + 'T00:00:00' : iso);
   if(isNaN(d.getTime())) return iso;
   var m = String(d.getMonth() + 1).padStart(2, '0');
   return d.getDate() + ' ' + m + ' ' + d.getFullYear();
 };
 YC.fmtDateTime = function(iso){
-  if(!iso) return '—';
+  if(!iso) return '-';
   var d = new Date(iso);
   if(isNaN(d.getTime())) return iso;
   var h = String(d.getHours()).padStart(2, '0');
@@ -43,9 +43,9 @@ YC.fmtDateTime = function(iso){
   return YC.fmtDate(iso) + ' · ' + h + ':' + min;
 };
 YC.timeAgo = function(iso){
-  if(!iso) return '—';
+  if(!iso) return '-';
   var d = new Date(iso);
-  if(isNaN(d.getTime())) return '—';
+  if(isNaN(d.getTime())) return '-';
   var s = Math.floor((Date.now() - d.getTime()) / 1000);
   if(s < 60) return 'just now';
   var m = Math.floor(s / 60);
@@ -623,7 +623,7 @@ YC.charts = (function(){
         '<path d="' + line + '" fill="none" stroke="' + color + '" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>' +
         pts.map(function(p, i){
           var extra = (i === pts.length - 1) ? ' class="svg-pulse"' : '';
-          return '<circle' + extra + ' cx="' + p.x + '" cy="' + p.y + '" r="3.2" fill="' + color + '" stroke="' + css().white + '" stroke-width="1.5"><title>' + p.d.label + ' — ' + p.d.value + '</title></circle>';
+          return '<circle' + extra + ' cx="' + p.x + '" cy="' + p.y + '" r="3.2" fill="' + color + '" stroke="' + css().white + '" stroke-width="1.5"><title>' + p.d.label + ' - ' + p.d.value + '</title></circle>';
         }).join('') +
         pts.filter(function(p, i){ return i % Math.ceil(data.length / 6) === 0; }).map(function(p){
           return '<text x="' + p.x + '" y="' + (h - 10) + '" text-anchor="middle" font-size="10" fill="' + css().gray + '">' + p.d.label + '</text>';
@@ -648,7 +648,7 @@ YC.charts = (function(){
         var bh = Math.max(2, (d.value / max) * innerH);
         var x = pad.l + i * slot + (slot - bw) / 2;
         var y = pad.t + innerH - bh;
-        return '<rect class="svg-bar" x="' + x + '" y="' + y + '" width="' + bw + '" height="' + bh + '" rx="5" fill="' + color + '" opacity=".92" style="transform-origin:' + (x + bw / 2) + 'px ' + (y + bh) + 'px"><title>' + d.label + ' — ' + d.value + '</title></rect>' +
+        return '<rect class="svg-bar" x="' + x + '" y="' + y + '" width="' + bw + '" height="' + bh + '" rx="5" fill="' + color + '" opacity=".92" style="transform-origin:' + (x + bw / 2) + 'px ' + (y + bh) + 'px"><title>' + d.label + ' - ' + d.value + '</title></rect>' +
                '<text x="' + (x + bw / 2) + '" y="' + (y - 6) + '" text-anchor="middle" font-size="10" fill="' + css().white + '" font-family="JetBrains Mono,monospace">' + d.value + '</text>' +
                '<text x="' + (x + bw / 2) + '" y="' + (h - 10) + '" text-anchor="middle" font-size="10" fill="' + css().gray + '">' + d.label + '</text>';
       }).join('') +
@@ -679,7 +679,7 @@ YC.charts = (function(){
       var frac = item.value / total;
       var len = frac * c;
       var off = acc * c; acc += frac;
-      return '<circle cx="' + cx + '" cy="' + cy + '" r="' + r + '" fill="none" stroke="' + (palette[i % palette.length]) + '" stroke-width="16" stroke-dasharray="' + len.toFixed(2) + ' ' + c.toFixed(2) + '" stroke-dashoffset="' + (-off).toFixed(2) + '" transform="rotate(-90 ' + cx + ' ' + cy + ')"><title>' + item.label + ' — ' + item.value + ' (' + Math.round(frac * 100) + '%)</title></circle>';
+      return '<circle cx="' + cx + '" cy="' + cy + '" r="' + r + '" fill="none" stroke="' + (palette[i % palette.length]) + '" stroke-width="16" stroke-dasharray="' + len.toFixed(2) + ' ' + c.toFixed(2) + '" stroke-dashoffset="' + (-off).toFixed(2) + '" transform="rotate(-90 ' + cx + ' ' + cy + ')"><title>' + item.label + ' - ' + item.value + ' (' + Math.round(frac * 100) + '%)</title></circle>';
     }).join('');
     el.innerHTML =
       '<svg class="svg-chart" viewBox="0 0 200 200" role="img">' + segs +
@@ -718,10 +718,27 @@ YC.abbrNum = function(n){
   return String(n);
 };
 
+/* ---------- download helpers ---------- */
+YC.downloadFile = function(x){
+  var file = x && (x.file || x.url);
+  if (file && (/^(https?:)?\/\//i.test(file) || file.indexOf('/') === 0 || /\.(zip|psd|pdf|mp4|webm|png|jpe?g|ppt|pptx|fig|sketch|ep|ai|afdesign|mov)$/i.test(file))){
+    var a = document.createElement('a');
+    a.href = file;
+    a.download = (file.split('/').pop() || 'file');
+    a.rel = 'noopener';
+    a.target = '_blank';
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(function(){ document.body.removeChild(a); }, 300);
+  }else{
+    YC.downloadDemo(file || 'file');
+  }
+};
+
 /* ---------- download helper (static demo) ---------- */
 YC.downloadDemo = function(fileName, note){
   var content = [
-    'YallahClick — demo file',
+    'YallahClick - demo file',
     '=========================',
     'File: ' + fileName,
     'Note: ' + (note || 'Static demo. Real file hosting connects later.'),
@@ -866,7 +883,7 @@ YC.buildChrome = function(opts){
   header.id = 'siteHeader';
   header.innerHTML =
     '<div class="nav-shell"><div class="nav-inner">' +
-      '<a href="index.html" class="logo" aria-label="Yallah Click — Home">' +
+      '<a href="index.html" class="logo" aria-label="Yallah Click - Home">' +
         '<img class="logo-light" src="images/Yalah Click WH.png" alt="Yallah Click">' +
         '<img class="logo-dark" src="images/yallahclick.png" alt="Yallah Click">' +
         '<span class="logo-status"><i></i> Taking projects</span>' +

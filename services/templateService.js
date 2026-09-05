@@ -1,5 +1,5 @@
 /* ============================================================
-   YallahClick — Template service (design / video / thumbnail)
+   YallahClick - Template service (design / video / thumbnail)
    ============================================================ */
 window.YC = window.YC || {};
 YC.services = YC.services || {};

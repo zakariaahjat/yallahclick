@@ -1,5 +1,5 @@
 /* ============================================================
-   YallahClick — Public library pages (prompts / templates)
+   YallahClick - Public library pages (prompts / templates)
    Renders grids from YC.services, wires search + filters,
    favorites (localStorage) and the detail modal.
    ============================================================ */
@@ -220,8 +220,8 @@ YC.lib.render = function(opts){
         e.stopPropagation();
         var x = svc.getById(b.getAttribute('data-dl'));
         svc.incrementDownloads(x.id);
-        YC.downloadDemo(x.file || x.title);
-        YC.toast.success('Demo file download started.');
+        YC.downloadFile(x);
+        YC.toast.success('Download started.');
       });
     });
     var favs = document.querySelectorAll('[data-fav]');
@@ -329,8 +329,8 @@ YC.lib.render = function(opts){
         if(dl){
           dl.addEventListener('click', function(){
             svc.incrementDownloads(x.id);
-            YC.downloadDemo(x.file || x.title);
-            YC.toast.success('Demo file download started.');
+            YC.downloadFile(x);
+            YC.toast.success('Download started.');
           });
         }
         var main = card.querySelector('.detail-hero img');

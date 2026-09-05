@@ -1,5 +1,5 @@
 /* ============================================================
-   YallahClick — Express application server
+   YallahClick - Express application server
    - Serves the JAMstack front-end (html/css/js/images) from <root>
    - Exposes /api/* REST (CRUD + auth) backed by data/db.json
    - Provides /api/health and /api/meta/counts for the UI
@@ -93,25 +93,33 @@ api.post('/upload', requireAuth, (req, res, next) => {
     let buf = Buffer.alloc(0);
     req.on('data', (c) => { buf = Buffer.concat([buf, c]); });
 
-    req.on('end', () => {
+    req.on('end', async () => {
       try{
         const parsed = parseMultipart(buf, boundary);
         if (!parsed || !parsed.file){
           return res.status(400).json({ error: 'no_file' });
         }
-        fs.mkdirSync(UPLOAD_DIR, { recursive: true });
         const safe = (s) => String(s || '').replace(/[^a-z0-9._-]/gi, '_');
         const ext = path.extname(parsed.file.filename || '').toLowerCase();
-        const fileName = 'u_' + crypto.randomBytes(6).toString('hex') + ext;
-        const sub = String(parsed.fields.folder === 'promotions' ? 'promotions'
-          : parsed.fields.folder === 'files' ? 'files'
-          : parsed.fields.folder || 'content');
-        const dir = path.join(UPLOAD_DIR, safe(sub));
-        fs.mkdirSync(dir, { recursive: true });
-        const abs = path.join(dir, fileName);
-        fs.writeFileSync(abs, parsed.file.data);
-        const url = '/uploads/' + safe(sub) + '/' + fileName;
-        res.status(201).json({ data: { url, filename: fileName, folder: safe(sub), size: parsed.file.data.length } });
+        const uName = 'u_' + crypto.randomBytes(6).toString('hex') + ext;
+        if (parsed.file.data.length > 3 * 1024 * 1024){
+          return res.status(413).json({ error: 'file_too_large', message: 'Files over ~3 MB are not supported yet. Use a hosted link (Google Drive, Dropbox...) and paste it here instead.' });
+        }
+        let stored = false;
+        if (db.KV_ENABLED){
+          const mime = parsed.file.contentType || 'application/octet-stream';
+          await db.assetPut(uName, parsed.file.data, mime);
+          stored = true;
+        }else{
+          const sub = String(parsed.fields.folder === 'promotions' ? 'promotions'
+            : parsed.fields.folder === 'files' ? 'files'
+            : parsed.fields.folder || 'content');
+          const dir = path.join(UPLOAD_DIR, safe(sub));
+          fs.mkdirSync(dir, { recursive: true });
+          fs.writeFileSync(path.join(dir, uName), parsed.file.data);
+        }
+        const url = stored ? '/uploads/' + uName : '/uploads/' + safe(String(parsed.fields.folder || 'content')) + '/' + uName;
+        res.status(201).json({ data: { url, filename: uName, folder: stored ? 'kv' : 'content', size: parsed.file.data.length } });
       }catch(e){ next(e); }
     });
     req.on('error', next);
@@ -168,7 +176,21 @@ api.use('/auth', authRouter);
 
 app.use('/api', api);
 
-/* uploaded files are served publicly so /uploads/... paths resolve */
+/* uploaded files are served publicly so /uploads/... paths resolve.
+   On serverless (Vercel) they come back from KV; locally express.static
+   picks up the on-disk uploads dir as a fallback. */
+app.get('/uploads/:name', async (req, res, next) => {
+  try{
+    const asset = await db.assetGet(req.params.name);
+    if (asset){
+      res.setHeader('Content-Type', asset.mime);
+      res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+      res.setHeader('Content-Length', asset.buf.length);
+      return res.end(asset.buf);
+    }
+    next();
+  }catch(e){ next(e); }
+});
 app.use('/uploads', express.static(UPLOAD_DIR, { fallthrough: true }));
 
 /* ---- static site (root = repo root so relative html/css/img resolve) ---- */

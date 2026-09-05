@@ -1,5 +1,5 @@
 /* ============================================================
-   YallahClick — Storage layer + base service factory
+   YallahClick - Storage layer + base service factory
    Static demo: reads/writes localStorage seeded from /data.
    Backend-ready: swap the mapping layer; UI code unchanged.
    ============================================================ */
@@ -41,7 +41,7 @@ YC.Store = {
   }
 };
 
-/* Generic CRUD service factory — used by all domain services.
+/* Generic CRUD service factory - used by all domain services.
    Each service manages a single localStorage key seeded with mock data. */
 YC.createService = function(key, seedFn, options){
   options = options || {};

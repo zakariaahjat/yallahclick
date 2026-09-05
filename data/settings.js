@@ -1,5 +1,5 @@
 /* ============================================================
-   YallahClick — Settings (default site configuration)
+   YallahClick - Settings (default site configuration)
    Modeled as a single-record collection so it flows through the
    same REST CRUD + sync bridge as every other collection.
    The dashboard "Settings" page reads/writes this one object.

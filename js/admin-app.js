@@ -1,6 +1,6 @@
 /* ============================================================
-   YallahClick — Admin application controllers
-   One controller per <body data-page="…"> value.
+   YallahClick - Admin application controllers
+   One controller per <body data-page="..."> value.
    ============================================================ */
 window.YC = window.YC || {};
 YC.app = {};
@@ -214,7 +214,7 @@ YC.app.initUploads = function(form){
       var f = fileInput.files[0];
       var label = urlInput.closest('.field').querySelector('label');
       var before = label ? label.textContent : '';
-      if(label){ label.textContent = 'Uploading…'; }
+      if(label){ label.textContent = 'Uploading...'; }
       YC.app.uploadFile(f, folder).then(function(url){
         if(urlInput) urlInput.value = url;
         if(label && before){ label.textContent = before; }
@@ -231,7 +231,7 @@ YC.app.uploadFile = function(file, folder){
   return new Promise(function(resolve, reject){
     if(!file) return reject(new Error('No file selected.'));
     if(!YC.backend){ return reject(new Error('Backend not available.')); }
-    if(!YC.backend.isOnline()){ return reject(new Error('Backend offline — uploads need the API.')); }
+    if(!YC.backend.isOnline()){ return reject(new Error('Backend offline - uploads need the API.')); }
     var fd = new FormData();
     fd.append('file', file);
     if(folder) fd.append('folder', folder);
@@ -663,7 +663,7 @@ YC.app.pages_dashboard = function(){
     feed.innerHTML = bookings.slice().sort(function(a, b){ return String(b.createdAt).localeCompare(String(a.createdAt)); }).slice(0, 7).map(function(b){
       var t = b.status === 'pending' ? 'New booking request' : (b.status === 'confirmed' ? 'Booking confirmed' : (b.status === 'completed' ? 'Booking completed' : 'Booking cancelled'));
       return '<div class="feed-item"><span class="feed-dot ' + actColor(b) + '"></span>' +
-        '<div class="feed-main"><div class="t">' + t + '</div><div class="s">' + YC.esc(b.customerName) + ' — ' + YC.esc(YC.app.svcName(b.serviceId)) + '</div></div>' +
+        '<div class="feed-main"><div class="t">' + t + '</div><div class="s">' + YC.esc(b.customerName) + ' - ' + YC.esc(YC.app.svcName(b.serviceId)) + '</div></div>' +
         '<div class="feed-time">' + YC.timeAgo(b.createdAt) + '</div></div>';
     }).join('') || '<div class="empty-state" style="padding:30px"><strong>No recent activity.</strong></div>';
   }
@@ -869,7 +869,7 @@ YC.app.pages_bookings = function(){
       '<div class="kv"><span>Booking</span><b>' + YC.esc(row.id) + '</b></div>' +
       '<div class="kv"><span>Customer</span><b>' + YC.esc(row.customerName) + '</b></div>' +
       '<div class="kv"><span>Email</span><b>' + YC.esc(row.email) + '</b></div>' +
-      '<div class="kv"><span>Phone</span><b>' + YC.esc(row.phone || '—') + '</b></div>' +
+      '<div class="kv"><span>Phone</span><b>' + YC.esc(row.phone || '-') + '</b></div>' +
       '<div class="kv"><span>Service</span><b>' + YC.esc(service ? service.short : row.serviceId) + '</b></div>' +
       '<div class="kv"><span>Date &amp; time</span><b>' + YC.fmtDate(row.date) + ' &middot; ' + YC.esc(row.time) + '</b></div>' +
       '<div class="kv"><span>People</span><b>' + YC.esc(row.people) + '</b></div>' +
@@ -947,7 +947,7 @@ YC.app.pages_customers = function(){
       { title: 'Bookings', key: 'bookingCount', sort: true },
       { title: 'Last booking', key: 'lastBooking',
         render: function(r){
-          return r.lastBooking ? r.lastBooking.date + '<div class="cell-sub">' + YC.esc(r.lastBooking.serviceName) + '</div>' : '—';
+          return r.lastBooking ? r.lastBooking.date + '<div class="cell-sub">' + YC.esc(r.lastBooking.serviceName) + '</div>' : '-';
         } },
       { title: 'Status', key: 'status',
         render: function(r){ return YC.pill(r.status); } },
@@ -1024,7 +1024,7 @@ YC.app.pages_customers = function(){
       '<div class="kv-grid">' +
       '<div class="kv"><span>Name</span><b>' + YC.esc(row.name) + '</b></div>' +
       '<div class="kv"><span>Email</span><b>' + YC.esc(row.email) + '</b></div>' +
-      '<div class="kv"><span>Phone</span><b>' + YC.esc(row.phone || '—') + '</b></div>' +
+      '<div class="kv"><span>Phone</span><b>' + YC.esc(row.phone || '-') + '</b></div>' +
       '<div class="kv"><span>Status</span><b>' + YC.pill(row.status) + '</b></div>' +
       '<div class="kv"><span>Registered</span><b>' + YC.fmtDate(row.registered) + '</b></div>' +
       '<div class="kv"><span>Total bookings</span><b>' + (row.bookingCount || 0) + '</b></div>' +
@@ -1387,7 +1387,7 @@ function templatesPage(svc, cfg){
     ],
     onAction: function(act, id, row){
       if(act === 'view') viewTemplate(row);
-      else if(act === 'download'){ svc.incrementDownloads(id); YC.downloadDemo(row.file || row.title); YC.toast.success('Downloading demo file…'); table.refresh(); stats(); }
+      else if(act === 'download'){ svc.incrementDownloads(id); YC.downloadFile(row); YC.toast.success('Downloading file...'); table.refresh(); stats(); }
       else if(act === 'edit') editTemplate(row);
       else if(act === 'delete'){
         YC.app.confirm('Delete this template?', function(){
@@ -1501,10 +1501,10 @@ function templatesPage(svc, cfg){
         '<div class="kv-grid">' +
           (row.platform ? '<div class="kv"><span>Platform</span><b>' + YC.esc(row.platform) + '</b></div>' : '') +
           (row.dimensions ? '<div class="kv"><span>Dimensions</span><b>' + YC.esc(row.dimensions) + '</b></div>' : '') +
-          '<div class="kv"><span>Software</span><b>' + YC.esc(row.software || '—') + '</b></div>' +
-          '<div class="kv"><span>Version</span><b>' + YC.esc(row.version || '—') + '</b></div>' +
-          '<div class="kv"><span>File</span><b>' + YC.esc(row.file || '—') + '</b></div>' +
-          '<div class="kv"><span>Size</span><b>' + YC.esc(row.fileSize || '—') + '</b></div>' +
+          '<div class="kv"><span>Software</span><b>' + YC.esc(row.software || '-') + '</b></div>' +
+          '<div class="kv"><span>Version</span><b>' + YC.esc(row.version || '-') + '</b></div>' +
+          '<div class="kv"><span>File</span><b>' + YC.esc(row.file || '-') + '</b></div>' +
+          '<div class="kv"><span>Size</span><b>' + YC.esc(row.fileSize || '-') + '</b></div>' +
           '<div class="kv"><span>Downloads</span><b>' + YC.esc(row.downloads || 0) + '</b></div>' +
           '<div class="kv"><span>Created</span><b>' + YC.fmtDate(row.createdAt) + '</b></div>' +
         '</div>',
@@ -1513,8 +1513,8 @@ function templatesPage(svc, cfg){
       onMount: function(card){
         card.querySelector('[data-dl]').addEventListener('click', function(){
           svc.incrementDownloads(row.id);
-          YC.downloadDemo(row.file || row.title);
-          YC.toast.success('Downloading demo file…');
+          YC.downloadFile(row);
+          YC.toast.success('Downloading file...');
           YC.modal.close(); table.refresh(); stats();
         });
         card.querySelector('[data-close-modal]').addEventListener('click', function(){ YC.modal.close(); });
@@ -1594,7 +1594,7 @@ YC.app.pages_files = function(){
         } }
     ],
     onAction: function(act, id, row){
-      if(act === 'download'){ YC.downloadDemo(row.name); YC.toast.success('Downloading demo file…'); }
+      if(act === 'download'){ YC.downloadFile(row); YC.toast.success('Downloading file...'); }
       else if(act === 'edit') editFile(row);
       else if(act === 'delete'){
         YC.app.confirm('Delete file ' + row.name + '?', function(){
@@ -1702,7 +1702,7 @@ YC.app.pages_promotions = function(){
               '<button type="button" class="btn btn-soft btn-sm" data-live-edit="' + live.id + '">Edit</button>' +
               '<button type="button" class="btn btn-soft btn-sm" data-live-preview="' + live.id + '">Preview popup</button>'
             : '<span class="pill neutral">NOT SHOWING</span>' +
-              '<span class="promo-live-empty">Toggle “Show on website” on a card below (or create a promotion) to put one in front of visitors.</span>')
+              '<span class="promo-live-empty">Toggle "Show on website" on a card below (or create a promotion) to put one in front of visitors.</span>')
         + '</div>' +
       '</div>';
     host.innerHTML = html;
@@ -1859,8 +1859,8 @@ YC.app.pages_promotions = function(){
         { t: 'text', name: 'title', label: 'Title', value: v('title'), required: true },
         { t: 'select', name: 'promoType', label: 'Promotion type', value: v('promoType') || 'code', required: true,
           options: [
-            { value: 'code', label: 'Coupon code — visitor copies a code' },
-            { value: 'discount', label: 'Direct discount — no code needed' }
+            { value: 'code', label: 'Coupon code - visitor copies a code' },
+            { value: 'discount', label: 'Direct discount - no code needed' }
           ] },
         { t: 'select', name: 'serviceId', label: 'Apply to service', value: v('serviceId') || 'all', required: true,
           options: [{ value: 'all', label: 'All services' }].concat(YC.data.services.map(function(s){ return { value: s.id, label: s.short }; })) },
@@ -2318,7 +2318,7 @@ YC.app.pages_users = function(){
           YC.toast.success('User updated.');
         }else{
           svc.create(data);
-          YC.toast.success('User added — they can now sign in.');
+          YC.toast.success('User added - they can now sign in.');
         }
         YC.modal.close(); table.refresh(); stats();
       }

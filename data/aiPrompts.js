@@ -1,5 +1,5 @@
 /* ============================================================
-   YallahClick — AI Prompts (mock data)
+   YallahClick - AI Prompts (mock data)
    preview: use a real image URL OR null → rendered as a themed
    gradient with the platform emoji.
    ============================================================ */
@@ -27,7 +27,7 @@ YC.data.aiPrompts = [
   {
     id: 2,
     title: "Cinematic Color Grade Prompt",
-    description: "Reliable color grading brief for editors — works as a shot list handed to your colorist or graded in DaVinci.",
+    description: "Reliable color grading brief for editors - works as a shot list handed to your colorist or graded in DaVinci.",
     prompt: "Create a cinematic color grade for [FOOTAGE] with:\n- Mood: [MOOD]\n- Reference: [REFERENCE FILM]\nDeliver a 3-step plan: 1) Primary correction (WB, exposure, contrast), 2) Secondary look (lift/gamma/gain), 3) Signature LUT suggestion. Include scopes targets and node order for DaVinci Resolve.",
     category: "Color Grading",
     tags: ["color", "cinematic", "davinci", "editing"],
@@ -95,7 +95,7 @@ YC.data.aiPrompts = [
   {
     id: 6,
     title: "DALL-E Podcast Cover Art",
-    description: "Prompt a modern, minimal podcast cover with strong contrast — tuned to pop on mobile podcast apps.",
+    description: "Prompt a modern, minimal podcast cover with strong contrast - tuned to pop on mobile podcast apps.",
     prompt: "Minimal podcast cover art, [SHOW NAME], bold geometric shapes, [2-COLOR] palette with strong contrast, high-contrast typography area, no tiny text, centered subject, soft vignette, 3000x3000, flat vector style, DALL-E",
     category: "Branding",
     tags: ["dall-e", "podcast", "cover", "art"],
@@ -197,7 +197,7 @@ YC.data.aiPrompts = [
   {
     id: 12,
     title: "Ad Concept Sprint",
-    description: "Generate a full video ad concept — hook, structure, VO script, shot list and CTA — in one prompt.",
+    description: "Generate a full video ad concept - hook, structure, VO script, shot list and CTA - in one prompt.",
     prompt: "Create a 45-second video ad concept for [PRODUCT]. Deliver: 1) 5 hook options, 2) shot-by-shot storyboard (12-15 shots), 3) VO script with pauses, 4) on-screen text overlays, 5) CTA strategies + 3 variants for the end card.",
     category: "Ads",
     tags: ["ads", "concept", "sales", "script"],
@@ -214,7 +214,7 @@ YC.data.aiPrompts = [
   {
     id: 13,
     title: "Faceless Channel Script Blueprint",
-    description: "Structure a full faceless YouTube video — intro, content beats, b-roll prompts and CTA — for any niche.",
+    description: "Structure a full faceless YouTube video - intro, content beats, b-roll prompts and CTA - for any niche.",
     prompt: "Act as a scriptwriter for faceless YouTube channels. For the niche [NICHE] and title [TITLE], write a full video outline: hook (0-15s), main sections with b-roll shot descriptions, narration script, and an end CTA that drives comments. Keep narration natural and conversational.",
     category: "YouTube",
     tags: ["faceless", "script", "niche", "outline"],
@@ -265,7 +265,7 @@ YC.data.aiPrompts = [
   {
     id: 16,
     title: "Retention Fishing Articles/Scripts",
-    description: "Rewrite dense scripts to be bingeable — tighten every paragraph into a hook-forward cut.",
+    description: "Rewrite dense scripts to be bingeable - tighten every paragraph into a hook-forward cut.",
     prompt: "Rewrite the following script to maximize retention: cut fluff, front-load payoff, add pattern interrupts and cliffhanger transitions every 60 seconds. Return the edited script with notes on what you changed and why.",
     category: "Editing",
     tags: ["script", "editing", "pacing", "rewrite"],

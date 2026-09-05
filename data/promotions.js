@@ -1,5 +1,5 @@
 /* ============================================================
-   YallahClick — Promotions (mock data)
+   YallahClick - Promotions (mock data)
    Structure is backend-ready: swap for GET /api/promotions/active
    without touching the popup component.
 
@@ -27,7 +27,7 @@ YC.data = YC.data || {};
       promoType: "discount",
       serviceId: "all",
       servicesLabel: "Editing & Templates",
-      description: "40% off all video editing services and templates — just for the next 48 hours.",
+      description: "40% off all video editing services and templates - just for the next 48 hours.",
       discountType: "percentage",
       discountValue: 40,
       promoCode: "",
@@ -53,7 +53,7 @@ YC.data = YC.data || {};
       title: "Motion Design Launch",
       promoType: "code",
       serviceId: "motion-design",
-      description: "Launch offer — 15% off any motion design project.",
+      description: "Launch offer - 15% off any motion design project.",
       discountType: "percentage",
       discountValue: 15,
       promoCode: "MOTION15",
@@ -103,7 +103,7 @@ YC.data = YC.data || {};
       title: "Friends & Family",
       promoType: "code",
       serviceId: "all",
-      description: "Flat $30 off any service — for returning clients.",
+      description: "Flat $30 off any service - for returning clients.",
       discountType: "fixed",
       discountValue: 30,
       promoCode: "FAMILY30",

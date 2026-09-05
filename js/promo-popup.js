@@ -1,5 +1,5 @@
 /* ============================================================
-   YallahClick — Promo popup engine
+   YallahClick - Promo popup engine
    Public sites call YC.PromoPopup.init(); admin calls
    YC.PromoPopup.preview(promo) to preview a card.
    localStorage holds ONLY display prefs (dismissed / last seen).

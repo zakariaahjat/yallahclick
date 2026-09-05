@@ -1,5 +1,5 @@
 /* ============================================================
-   YallahClick — Generic REST CRUD router
+   YallahClick - Generic REST CRUD router
    Mounted at /api/:collection for every known collection.
    Full create / read / update / delete with query support.
 

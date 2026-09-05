@@ -1,5 +1,5 @@
 /* ============================================================
-   YallahClick — Categories (mock data)
+   YallahClick - Categories (mock data)
    Organized by content type. `count` is derived by the service.
    ============================================================ */
 window.YC = window.YC || {};

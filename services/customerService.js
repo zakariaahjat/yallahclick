@@ -1,5 +1,5 @@
 /* ============================================================
-   YallahClick — Customer service
+   YallahClick - Customer service
    Derives booking counts from the booking service.
    ============================================================ */
 window.YC = window.YC || {};

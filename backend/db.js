@@ -1,5 +1,5 @@
 /* ============================================================
-   YallahClick — JSON-file database (server-side)
+   YallahClick - JSON-file database (server-side)
    Each content section lives in its OWN JSON file under /data:
 
      data/bookings.json          data/customers.json
@@ -132,6 +132,45 @@ async function kvRawSet(key, value){
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
+/* --- persistent binary assets (uploads that must survive serverless
+   cold starts). Content is stored base64 in KV, chunked so each
+   per-key payload stays well under the REST API's ~1 MB limit. --- */
+const ASSET_CHUNK_BYTES = 512 * 1024;      // 512 KB raw -> ~683 KB base64
+const ASSET_MAX_BYTES = 3 * 1024 * 1024;   // ~3 MB (Vercel hobby req limit)
+
+function assetKeys(name){
+  return {
+    meta: 'yc:asset:' + name,
+    chunk: (i) => 'yc:asset:' + name + '/c' + i
+  };
+}
+
+async function assetPut(name, buf, mime){
+  if (!KV_ENABLED) return false;
+  const keys = assetKeys(name);
+  const b64 = buf.toString('base64');
+  const chunks = Math.ceil(b64.length / (ASSET_CHUNK_BYTES * 4 / 3));
+  await kvRawSet(keys.meta, { mime: String(mime || 'application/octet-stream'), chunks, size: buf.length });
+  for (let i = 0; i < chunks; i++){
+    await kvRawSet(keys.chunk(i), b64.slice(i * Math.ceil(b64.length / chunks), (i + 1) * Math.ceil(b64.length / chunks)));
+  }
+  return true;
+}
+
+async function assetGet(name){
+  if (!KV_ENABLED) return null;
+  const keys = assetKeys(name);
+  const meta = await kvRawGet(keys.meta);
+  if (!meta || typeof meta !== 'object' || !meta.chunks) return null;
+  let out = '';
+  for (let i = 0; i < meta.chunks; i++){
+    const part = await kvRawGet(keys.chunk(i));
+    if (typeof part !== 'string') return null;
+    out += part;
+  }
+  return { mime: meta.mime || 'application/octet-stream', buf: Buffer.from(out, 'base64'), size: meta.size };
+}
+
 /* Fetch a value from the durable store.
    Returns: the parsed value when the key EXISTS;
             null when the key is a true miss (HTTP 200, result null);
@@ -176,7 +215,7 @@ async function kvGet(name){
    memory that can go stale; refreshing before each read/write keeps
    every instance consistent with the KV source of truth.
    Returns 'fresh' (pulled KV), 'missing' (key absent), 'error'
-   (KV unreachable — callers may refuse to write), or 'off'. */
+   (KV unreachable - callers may refuse to write), or 'off'. */
 async function refresh(name){
   if (!KV_ENABLED || !(name in state)) return 'off';
   try{
@@ -298,7 +337,7 @@ async function loadOne(name, seeds){
       const remote = await kvGet(name);
       if (Array.isArray(remote)) { state[name] = remote; return { loaded: true }; }
       if (Array.isArray(remote && remote.data)) { state[name] = remote.data; return { loaded: true }; }
-      // true miss (HTTP 200, key absent): fall through — first-run seeding allowed
+      // true miss (HTTP 200, key absent): fall through - first-run seeding allowed
     }catch(e){
       // KV read failed transiently at boot. Use whatever local data exists
       // for memory, but NEVER persist seeds into KV: a cold-start blip must
@@ -507,5 +546,7 @@ module.exports = {
   clone,
   loadSeeds,
   KV_ENABLED,
+  assetPut,
+  assetGet,
   DB_FILE: COLLECTION_FILES.settings, // informational
 };

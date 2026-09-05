@@ -1,5 +1,5 @@
 /* ============================================================
-   YallahClick — Admin accounts service
+   YallahClick - Admin accounts service
    Used by the admin Users page (CRUD) and by the login flow.
    ============================================================ */
 window.YC = window.YC || {};

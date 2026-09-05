@@ -1,5 +1,5 @@
 /* ============================================================
-   YallahClick — Auth router (/api/auth)
+   YallahClick - Auth router (/api/auth)
    Server-side admin login issues an HMAC-signed session token.
    Passwords are hashed when admins are created/updated.
    ============================================================ */

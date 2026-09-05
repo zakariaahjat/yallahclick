@@ -1,5 +1,5 @@
 /* ============================================================
-   YallahClick — Customers (mock data)
+   YallahClick - Customers (mock data)
    bookingCount / lastBooking are derived by customerService.js
    from the bookings dataset.
    ============================================================ */

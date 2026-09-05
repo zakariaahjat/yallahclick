@@ -1,5 +1,5 @@
 /* ============================================================
-   YallahClick — Backend integration test
+   YallahClick - Backend integration test
    Starts the app on a random port and exercises the REST API:
    health, auth login (valid/invalid), CRUD on a collection
    (create/read/update/delete), query filters, and the reset
@@ -74,11 +74,11 @@ async function main(){
   let r = await request(port, 'GET', '/api/health');
   ok(r.status === 200 && r.body.status === 'ok', 'GET /api/health returns ok');
 
-  // 1) auth — invalid
+  // 1) auth - invalid
   r = await request(port, 'POST', '/api/auth/login', { email: 'admin@yallahclick.com', password: 'wrong' });
   ok(r.status === 401, 'login with wrong password -> 401');
 
-  // 2) auth — valid
+  // 2) auth - valid
   r = await request(port, 'POST', '/api/auth/login', { email: 'admin@yallahclick.com', password: 'admin123' });
   ok(r.status === 200 && r.body.data && r.body.data.token, 'login with valid creds -> token');
   const token = r.body.data.token;
@@ -143,6 +143,47 @@ async function main(){
   ok(r.status === 200 && r.body.data.length >= 1, 'alias /api/psd-templates serves psdTemplates');
   r = await request(port, 'GET', '/api/video-templates');
   ok(r.status === 200 && Array.isArray(r.body.data), 'alias /api/video-templates works');
+
+  // 11c) file upload -> persistent /uploads/<name> (asset store or disk)
+  const pngBytes = Buffer.from('89504e470d0a1a0a0000000d49484452000000010000000108060000001f15c4890000000d4944415478da63f8cfc0f01f0005000180036d7fd97d0000000049454e44ae426082', 'hex');
+  const boundary = '----yc-test-' + Date.now();
+  const parts = [
+    '--' + boundary + '\r\n',
+    'Content-Disposition: form-data; name="folder"\r\n\r\nprompts\r\n',
+    '--' + boundary + '\r\n',
+    'Content-Disposition: form-data; name="file"; filename="cover.png"\r\n',
+    'Content-Type: image/png\r\n\r\n'
+  ].join('');
+  const body = Buffer.concat([Buffer.from(parts, 'utf8'), pngBytes, Buffer.from('\r\n--' + boundary + '--\r\n', 'utf8')]);
+  const up = await new Promise((resolve, reject) => {
+    const req = http.request({
+      host: '127.0.0.1', port, method: 'POST', path: '/api/upload',
+      headers: {
+        'Content-Type': 'multipart/form-data; boundary=' + boundary,
+        'Content-Length': body.length,
+        'Authorization': 'Bearer ' + token
+      }
+    }, (res) => {
+      let raw = '';
+      res.on('data', (c) => raw += c);
+      res.on('end', () => { try{ resolve({ status: res.statusCode, body: JSON.parse(raw) }); }catch(e){ resolve({ status: res.statusCode, body: null }); } });
+    });
+    req.on('error', reject);
+    req.write(body);
+    req.end();
+  });
+  ok(up.status === 201 && up.body.data && /^\/uploads\/(?:[a-z0-9_-]+\/)?u_[a-f0-9]+\.png$/.test(up.body.data.url), 'upload returns /uploads/.../u_*.png');
+  const assetPath = up.body && up.body.data && up.body.data.url;
+  const assetReq = await new Promise((resolve, reject) => {
+    const req = http.request({ host: '127.0.0.1', port, method: 'GET', path: assetPath || '/none' }, (res) => {
+      const chunks = [];
+      res.on('data', (c) => chunks.push(c));
+      res.on('end', () => resolve({ status: res.statusCode, headers: res.headers, bytes: Buffer.concat(chunks) }));
+    });
+    req.on('error', reject);
+    req.end();
+  });
+  ok(assetReq.status === 200 && assetReq.headers['content-type'] === 'image/png' && assetReq.bytes.length === pngBytes.length, 'GET uploads/name serves the stored bytes');
 
   // 12) reset to seed (requires auth)
   r = await request(port, 'POST', '/api/auth/reset-public', undefined, token);

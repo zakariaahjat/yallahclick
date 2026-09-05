@@ -1,5 +1,5 @@
 /* ============================================================
-   YallahClick — Public page bootstrap (library pages)
+   YallahClick - Public page bootstrap (library pages)
    Builds the site header/footer, wires theme toggle + mobile
    drawer, then reveals content and (optionally) promo popups.
    ============================================================ */

@@ -1,5 +1,5 @@
 /* ============================================================
-   YallahClick — Design Templates (mock/static demo files)
+   YallahClick - Design Templates (mock/static demo files)
    `file` names point to demo files (not hosted yet). The
    download button generates a static demo file for now.
    ============================================================ */
@@ -50,7 +50,7 @@ YC.data.templates = [
   {
     id: 3,
     title: "Canva Podcast Cover Kit",
-    description: "3 polished Canva cover templates for podcast feeds — audio-wave motif, duotone theme and minimal grid.",
+    description: "3 polished Canva cover templates for podcast feeds - audio-wave motif, duotone theme and minimal grid.",
     type: "Canva",
     category: "Podcasts",
     tags: ["canva", "podcast", "cover", "kit"],
@@ -155,7 +155,7 @@ YC.data.templates = [
   {
     id: 8,
     title: "PowerPoint Pitch Deck (Creator)",
-    description: "Clean 12-slide pitch deck for creators and agencies — dark theme, metric pages, full bleed media.",
+    description: "Clean 12-slide pitch deck for creators and agencies - dark theme, metric pages, full bleed media.",
     type: "PowerPoint",
     category: "Business",
     tags: ["powerpoint", "deck", "pitch", "business"],
@@ -176,7 +176,7 @@ YC.data.templates = [
   {
     id: 9,
     title: "Illustrator Stream Overlay Set",
-    description: "Open source stream overlay — camera frame, alerts, chat box, and logo badge in vector format.",
+    description: "Open source stream overlay - camera frame, alerts, chat box, and logo badge in vector format.",
     type: "Illustrator",
     category: "Streaming",
     tags: ["illustrator", "overlay", "stream", "vector"],
@@ -197,7 +197,7 @@ YC.data.templates = [
   {
     id: 10,
     title: "YouTube Shorts Hook Pack (PNG)",
-    description: "20 transparent PNG hook cards and arrows for Shorts/TikTok — drag onto your timeline.",
+    description: "20 transparent PNG hook cards and arrows for Shorts/TikTok - drag onto your timeline.",
     type: "PNG",
     category: "Shorts",
     tags: ["png", "shorts", "tiktok", "hooks", "overlay"],

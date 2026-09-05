@@ -1,5 +1,5 @@
 /* ============================================================
-   YallahClick — Admin accounts (mock data)
+   YallahClick - Admin accounts (mock data)
    Backend-ready: swap for GET /api/users without touching the
    admin Users page or the login flow.
    ============================================================ */

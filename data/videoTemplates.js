@@ -1,5 +1,5 @@
 /* ============================================================
-   YallahClick — Video Templates (mock/static demo files)
+   YallahClick - Video Templates (mock/static demo files)
    ============================================================ */
 window.YC = window.YC || {};
 YC.data = YC.data || {};
@@ -92,7 +92,7 @@ YC.data.videoTemplates = [
   {
     id: 5,
     title: "Product Promo 15s",
-    description: "Agency-grade 15s product promo — clean type treatment, soft 3D reveals and punchy SFX.",
+    description: "Agency-grade 15s product promo - clean type treatment, soft 3D reveals and punchy SFX.",
     platform: "Facebook",
     category: "Ads",
     duration: "15s",
@@ -134,7 +134,7 @@ YC.data.videoTemplates = [
   {
     id: 7,
     title: "News Style Lower Thirds",
-    description: "Broadcast-style lower thirds with animated backgrounds — 10 ready variants.",
+    description: "Broadcast-style lower thirds with animated backgrounds - 10 ready variants.",
     platform: "YouTube",
     category: "Titles",
     duration: "Presets",

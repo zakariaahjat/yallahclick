@@ -1,5 +1,5 @@
 /* ============================================================
-   YallahClick — Promotion service
+   YallahClick - Promotion service
    Computes SCHEDULED / ACTIVE / EXPIRED / INACTIVE status
    from dates + the admin `active` flag.
    ============================================================ */
@@ -38,7 +38,7 @@ YC.services = YC.services || {};
         var self = this;
         /* The admin "Show on website" switch (popupEnabled) is
            authoritative: whatever is switched on shows on the site,
-           and switching it off hides it — independent of the schedule
+           and switching it off hides it - independent of the schedule
            window (dates keep driving the countdown display only). */
         var active = this.all().filter(function(p){
           return p.popupEnabled === true && p.active !== false && p.serviceId;

@@ -1,5 +1,5 @@
 /* ============================================================
-   YallahClick — Booking service
+   YallahClick - Booking service
    ============================================================ */
 window.YC = window.YC || {};
 YC.services = YC.services || {};

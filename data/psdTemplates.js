@@ -1,5 +1,5 @@
 /* ============================================================
-   YallahClick — PSD Templates (design assets)
+   YallahClick - PSD Templates (design assets)
    Dedicated section for editable Photoshop (PSD) templates.
    Follows the same schema as video/template services.
    ============================================================ */
@@ -116,7 +116,7 @@ YC.data.psdTemplates = [
   {
     id: 6,
     title: "Stream Overlay + Panel PSD",
-    description: "Full stream package: camera frame, alerts, panels and logo badge — all layered PSDs ready to rebrand.",
+    description: "Full stream package: camera frame, alerts, panels and logo badge - all layered PSDs ready to rebrand.",
     type: "PSD",
     category: "Streaming",
     tags: ["stream", "overlay", "panels", "psd"],

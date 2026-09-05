@@ -1,5 +1,5 @@
 /* ============================================================
-   YallahClick — Admin Dashboard Design
+   YallahClick - Admin Dashboard Design
    Built on the YallahClick design tokens (css/shared.css).
    ============================================================ */
 
@@ -278,7 +278,7 @@
   display:grid;grid-template-columns:1fr 1fr;overflow:hidden;
 }
 
-/* ===== BRAND PANEL (LEFT) — always dark black ===== */
+/* ===== BRAND PANEL (LEFT) - always dark black ===== */
 .login-brand-panel{
   position:relative;overflow:hidden;padding:56px 52px;
   display:flex;align-items:center;
@@ -316,7 +316,7 @@
 .brand-dots{display:flex;gap:8px;margin-top:36px;}
 .brand-dots span{width:9px;height:9px;border-radius:50%;display:block;}
 
-/* ===== FORM PANEL (RIGHT) — always white ===== */
+/* ===== FORM PANEL (RIGHT) - always white ===== */
 .login-form-panel{padding:52px 48px;display:flex;align-items:center;justify-content:center;background:#ffffff !important;}
 .login-card{width:100%;max-width:420px;position:relative;}
 .login-card::before{

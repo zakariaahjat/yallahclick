@@ -1,5 +1,5 @@
 /* ============================================================
-   YallahClick — Vercel serverless entry
+   YallahClick - Vercel serverless entry
    Vercel runs this as a single Node function. It reuses the full
    Express app from backend/server.js and ensures the DB is ready
    before handling the first request.

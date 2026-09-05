@@ -1,9 +1,9 @@
 /* ============================================================
-   YallahClick — Services
+   YallahClick - Services
    Reuses the services already present on the existing website
    (the service options in the homepage booking form).
    `page` is where the CTA should lead. Swap for real service
-   routes later (e.g. /services/video-production) — no redesign.
+   routes later (e.g. /services/video-production) - no redesign.
    ============================================================ */
 window.YC = window.YC || {};
 YC.data = YC.data || {};

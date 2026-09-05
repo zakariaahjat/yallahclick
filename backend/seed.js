@@ -1,5 +1,5 @@
 /* ============================================================
-   YallahClick — Seed generator
+   YallahClick - Seed generator
    Reads the browser seed modules (data/*.js), then writes each
    section to its OWN JSON file under /data so the per-section
    JSON DB ships with the repo and is reloadable anywhere.

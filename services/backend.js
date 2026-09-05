@@ -1,9 +1,9 @@
 /* ============================================================
-   YallahClick — Backend client + sync bridge
+   YallahClick - Backend client + sync bridge
    Talks to the Express /api (REST CRUD over data/db.json) and
    exposes:
      YC.backend.base(), hydrate(), persist(), request(),
-     YC.backend.ready (Promise) — resolves once data is hydrated
+     YC.backend.ready (Promise) - resolves once data is hydrated
    The existing YC.Store/localStorage layer is bridged: reads come
    from an in-memory cache hydrated from the API, and every write
    is pushed back to the API. When the API is unreachable (e.g.

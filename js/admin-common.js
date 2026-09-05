@@ -1,5 +1,5 @@
 /* ============================================================
-   YallahClick — Admin common (auth + shell chrome)
+   YallahClick - Admin common (auth + shell chrome)
    ============================================================ */
 window.YC = window.YC || {};
 YC.admin = YC.admin || {};
@@ -41,7 +41,7 @@ YC.auth = {
     return attemptApi().then(function(res){
       // Only use the local demo credentials when the backend is genuinely
       // unreachable (static-file demo). On the live site a failed login
-      // must show the API's answer — a fake 'local-...' token would make
+      // must show the API's answer - a fake 'local-...' token would make
       // every later dashboard write 401 silently.
       if (res === null){
         var backendOff = !(window.YC && YC.backend) || YC.backend.isOnline() === false;
@@ -450,7 +450,7 @@ YC.admin.initPalette = function(){
       '<div class="palette-box" role="dialog" aria-modal="true" aria-label="Quick search">' +
         '<div class="palette-search">' +
           '<span class="palette-ico">' + YC.icons.get('search') + '</span>' +
-          '<input id="paletteInput" type="text" placeholder="Jump to a booking, customer, prompt, template or file…" autocomplete="off" spellcheck="false">' +
+          '<input id="paletteInput" type="text" placeholder="Jump to a booking, customer, prompt, template or file..." autocomplete="off" spellcheck="false">' +
           '<kbd>ESC</kbd>' +
         '</div>' +
         '<div class="palette-body"><div class="palette-list" id="paletteList"></div></div>' +
@@ -511,7 +511,7 @@ YC.admin.initPalette = function(){
     }) : allItems.slice();
     activeIndex = -1;
     if(!pool.length){
-      list.innerHTML = '<div class="palette-empty">' + (q ? 'No matches for “' + q + '”.' : 'No results.') + '</div>';
+      list.innerHTML = '<div class="palette-empty">' + (q ? 'No matches for "' + q + '".' : 'No results.') + '</div>';
       return;
     }
     list.innerHTML = pool.map(function(it, i){
