@@ -45,6 +45,9 @@ YC.services = YC.services || {};
         });
         if(!active.length) return null;
         active.sort(function(a, b){
+          /* newest-created first so a just-added promotion shows right away */
+          var ac = String(a.createdAt || ''), bc = String(b.createdAt || '');
+          if(ac && bc && ac !== bc) return bc.localeCompare(ac);
           if(!!a.featured !== !!b.featured) return a.featured ? -1 : 1;
           return String(b.startDate).localeCompare(String(a.startDate));
         });
