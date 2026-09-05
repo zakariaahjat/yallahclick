@@ -106,8 +106,12 @@ async function kvGet(name){
         if (raw === null || raw === undefined || raw === '') return null;
         try{
           let parsed = JSON.parse(raw);
-          // legacy: old writer double-encoded the payload
-          if (typeof parsed === 'string') parsed = JSON.parse(parsed);
+          // legacy: old writer double-encoded the payload; decode once more
+          // ONLY when the second parse succeeds (a plain string value like
+          // the auth secret must not be re-parsed).
+          if (typeof parsed === 'string'){
+            try{ parsed = JSON.parse(parsed); }catch(_){ /* keep string as-is */ }
+          }
           return parsed;
         }
         catch(pe){ lastErr = new Error('kv get malformed value'); }
@@ -148,6 +152,26 @@ async function kvSet(name, arr){
         method: 'POST',
         headers: { 'Authorization': 'Bearer ' + KV_TOKEN, 'Content-Type': 'application/json' },
         body: payload,
+        signal: AbortSignal.timeout(8000)
+      });
+      if (res.ok) return true;
+      lastErr = new Error('kv set HTTP ' + res.status);
+    }catch(e){ lastErr = e; }
+    if (attempt < 2) await sleep(200 * (attempt + 1));
+  }
+  throw lastErr || new Error('kv set failed');
+}
+
+/* Store an arbitrary scalar value (JSON-encoded) in the durable store. */
+async function kvSetRaw(name, value){
+  const url = KV_URL.replace(/\/+$/, '') + '/set/' + encodeURIComponent(kvKeyFor(name));
+  let lastErr = null;
+  for (let attempt = 0; attempt < 3; attempt++){
+    try{
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: { 'Authorization': 'Bearer ' + KV_TOKEN, 'Content-Type': 'application/json' },
+        body: JSON.stringify(value),
         signal: AbortSignal.timeout(8000)
       });
       if (res.ok) return true;
@@ -370,20 +394,48 @@ function clone(v){
   return JSON.parse(JSON.stringify(v));
 }
 
-/* token helpers (simple HMAC-signed session token) */
-const TOKEN_SECRET = process.env.YC_AUTH_SECRET || crypto.randomBytes(32).toString('hex');
+/* token helpers (simple HMAC-signed session token)
+   Secret precedence: YC_AUTH_SECRET env -> fixed value persisted in
+   the durable store -> one generated at boot. Persisting it in KV is
+   what makes tokens verify on ANY serverless instance (each cold boot
+   would otherwise draw its own random secret and reject tokens issued
+   by sibling lambdas). */
+const AUTH_SECRET_KEY = 'yc:auth-secret';
+let TOKEN_SECRET = process.env.YC_AUTH_SECRET || null;
+let tokenSecretPromise = null;
 
-function signToken(payload){
+function loadTokenSecret(){
+  if (TOKEN_SECRET) return Promise.resolve(TOKEN_SECRET);
+  if (tokenSecretPromise) return tokenSecretPromise;
+  tokenSecretPromise = (async () => {
+    try{
+      const v = await kvGet(AUTH_SECRET_KEY);
+      if (typeof v === 'string' && v.length >= 16){
+        TOKEN_SECRET = v;
+        return TOKEN_SECRET;
+      }
+    }catch(e){ /* not readable yet; generate below */ }
+    const fresh = crypto.randomBytes(32).toString('hex');
+    TOKEN_SECRET = fresh;
+    try{ await kvSetRaw(AUTH_SECRET_KEY, fresh); }catch(e){ /* non-fatal */ }
+    return TOKEN_SECRET;
+  })();
+  return tokenSecretPromise;
+}
+
+async function signToken(payload){
+  const secret = await loadTokenSecret();
   const body = Buffer.from(JSON.stringify(payload)).toString('base64');
-  const sig = crypto.createHmac('sha256', TOKEN_SECRET).update(body).digest('base64');
+  const sig = crypto.createHmac('sha256', secret).update(body).digest('base64');
   return body + '.' + sig;
 }
 
-function verifyToken(token){
+async function verifyToken(token){
+  const secret = await loadTokenSecret();
   if (!token || typeof token !== 'string') return null;
   const parts = token.split('.');
   if (parts.length !== 2) return null;
-  const expected = crypto.createHmac('sha256', TOKEN_SECRET).update(parts[0]).digest('base64');
+  const expected = crypto.createHmac('sha256', secret).update(parts[0]).digest('base64');
   const a = Buffer.from(expected);
   const b = Buffer.from(parts[1]);
   if (a.length !== b.length) return null;

@@ -16,7 +16,7 @@ function publicAdmin(a){
   return safe;
 }
 
-router.post('/login', (req, res, next) => {
+router.post('/login', async (req, res, next) => {
   try{
     const email = String((req.body && req.body.email) || '').trim().toLowerCase();
     const password = String((req.body && req.body.password) || '');
@@ -32,7 +32,7 @@ router.post('/login', (req, res, next) => {
       return res.status(401).json({ error: 'invalid_credentials', message: 'Incorrect email or password.' });
     }
 
-    const token = db.signToken({
+    const token = await db.signToken({
       sub: admin.id,
       email: admin.email,
       name: admin.name,

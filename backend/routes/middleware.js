@@ -15,18 +15,21 @@ function bearerToken(req){
 
 function requireAuth(req, res, next){
   const token = bearerToken(req);
-  const payload = db.verifyToken(token);
-  if (!payload || !payload.email){
-    return res.status(401).json({ error: 'unauthorized', message: 'Missing or invalid session token.' });
-  }
-  req.user = payload;
-  next();
+  db.verifyToken(token).then((payload) => {
+    if (!payload || !payload.email){
+      return res.status(401).json({ error: 'unauthorized', message: 'Missing or invalid session token.' });
+    }
+    req.user = payload;
+    next();
+  }).catch(next);
 }
 
 function optionalAuth(req, res, next){
   const token = bearerToken(req);
-  req.user = db.verifyToken(token) || null;
-  next();
+  db.verifyToken(token).then((payload) => {
+    req.user = payload || null;
+    next();
+  }).catch(() => { req.user = null; next(); });
 }
 
 module.exports = { requireAuth, optionalAuth, bearerToken };

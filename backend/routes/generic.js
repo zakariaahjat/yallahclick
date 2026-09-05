@@ -185,7 +185,7 @@ function routerFor(name){
       if (name !== 'bookings'){
         // admin-only: 401 unless a valid session token is present
         const auth = require('./middleware');
-        const payload = db.verifyToken(auth.bearerToken(req));
+        const payload = await db.verifyToken(auth.bearerToken(req));
         if (!payload || !payload.email){
           return res.status(401).json({ error: 'unauthorized', message: 'Missing or invalid session token.' });
         }
