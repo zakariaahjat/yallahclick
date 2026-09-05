@@ -257,7 +257,6 @@ function create(name, record){
     clone(record || {})
   );
   list.unshift(rec);
-  persist(name).catch((e) => console.error('[db] create persist failed (' + name + '): ' + e.message));
   return clone(rec);
 }
 
@@ -269,7 +268,6 @@ function update(name, id, patch){
   delete clean.id;
   delete clean.createdAt;
   list[i] = Object.assign({}, list[i], clean, { updatedAt: new Date().toISOString() });
-  persist(name).catch((e) => console.error('[db] update persist failed (' + name + '): ' + e.message));
   return clone(list[i]);
 }
 
@@ -277,10 +275,7 @@ function remove(name, id){
   const list = collection(name);
   const before = list.length;
   state[name] = list.filter((x) => String(x.id) !== String(id));
-  if (state[name].length !== before){
-    persist(name).catch((e) => console.error('[db] remove persist failed (' + name + '): ' + e.message));
-    return true;
-  }
+  if (state[name].length !== before) return true;
   return false;
 }
 

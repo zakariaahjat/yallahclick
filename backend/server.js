@@ -53,19 +53,19 @@ api.get('/meta/counts', (req, res) => {
   res.json({ data: s.collections, total: s.total });
 });
 
-api.post('/auth/reset', requireAuth, (req, res, next) => {
+api.post('/auth/reset', requireAuth, async (req, res, next) => {
   try{
-    db.dropAll();
+    await db.dropAll();
     res.json({ data: { ok: true, message: 'Database reset to seed data.' } });
   }catch(e){ next(e); }
 });
 
-api.post('/auth/reset-public', requireAuth, (req, res, next) => {
+api.post('/auth/reset-public', requireAuth, async (req, res, next) => {
   // Reset is now admin-only. The generic POST /auth/reset already covers
   // authenticated resets; this alias is kept for the dashboard reset button
   // but no longer exposed unauthenticated.
   try{
-    db.dropAll();
+    await db.dropAll();
     res.json({ data: { ok: true } });
   }catch(e){ next(e); }
 });

@@ -179,6 +179,7 @@ function routerFor(name){
   // form submits to (no token). Bookings are normalized server-side.
   router.post('/', async (req, res, next) => {
     try{
+      await db.refresh(name);
       if (name !== 'bookings'){
         // admin-only: 401 unless a valid session token is present
         const auth = require('./middleware');
@@ -203,6 +204,10 @@ function routerFor(name){
       }
       validate(name, b);
       const rec = db.create(name, b);
+      // Durability: wait for the KV/file write to finish BEFORE responding so
+      // serverless instances never report success for a record that wasn't
+      // yet written to the durable store.
+      await db.persist(name).catch(() => {});
       res.status(201).json({ data: rec });
     }catch(e){ next(e); }
   });
@@ -222,6 +227,7 @@ function routerFor(name){
       validate(name, Object.assign({}, db.getById(name, req.params.id) || {}, req.body || {}));
       const item = db.update(name, req.params.id, req.body || {});
       if (!item) return res.status(404).json({ error: 'not found' });
+      await db.persist(name).catch(() => {});
       res.json({ data: item });
     }catch(e){ next(e); }
   });
@@ -232,6 +238,7 @@ function routerFor(name){
       validate(name, Object.assign({}, db.getById(name, req.params.id) || {}, req.body || {}));
       const item = db.update(name, req.params.id, req.body || {});
       if (!item) return res.status(404).json({ error: 'not found' });
+      await db.persist(name).catch(() => {});
       res.json({ data: item });
     }catch(e){ next(e); }
   });
@@ -241,6 +248,7 @@ function routerFor(name){
       await db.refresh(name);
       const removed = db.remove(name, req.params.id);
       if (!removed) return res.status(404).json({ error: 'not found' });
+      await db.persist(name).catch(() => {});
       res.json({ data: { ok: true, id: req.params.id } });
     }catch(e){ next(e); }
   });
