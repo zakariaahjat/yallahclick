@@ -1910,6 +1910,11 @@ YC.app.pages_promotions = function(){
           YC.toast.error('End date must be after the start date.');
           return;
         }
+        /* Activating a promo popup implies the site-wide popup master
+           should be on, otherwise users "activate" and nothing shows. */
+        if(data.popupEnabled && YC.settings && YC.settings.save){
+          YC.settings.save({ promoPopupsEnabled: true });
+        }
         if(editing){
           svc.update(row.id, data);
           YC.toast.success('Promotion updated.');
