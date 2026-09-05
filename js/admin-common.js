@@ -17,8 +17,9 @@ YC.auth = {
     var self = this;
     var me = { email: String(email || '').trim(), password: String(password || '') };
 
-    // 1) try the backend first (async)
-    var attemptApi = function(){
+    // 1) try the backend first (async). Retry once on transport errors so
+    //    a transient cold-start hiccup doesn't masquerade as "offline".
+    var attemptApi = function(attempt){
       if(!window.YC || !YC.backend) return Promise.resolve({ ok: false, error: 'Backend not loaded.' });
       return fetch(YC.backend.base + '/auth/login', {
         method: 'POST',
@@ -26,6 +27,7 @@ YC.auth = {
         body: JSON.stringify({ email: me.email, password: me.password })
       }).then(function(res){ return res.json().catch(function(){ return {}; }); })
         .then(function(json){
+          // API answered: honor it (never a silent local fallback)
           if (json && json.data && json.data.token){
             self._setSession(json.data.user, json.data.token, remember);
             if (YC.backend) YC.backend.token = function(){ return json.data.token; };
@@ -33,19 +35,25 @@ YC.auth = {
           }
           return { ok: false, error: (json && json.message) || 'Incorrect email or password.' };
         })
-        .catch(function(){ return null; }); // API unreachable
+        .catch(function(){ return (attempt) ? null : attemptApi(true); }); // transport error
     };
 
     return attemptApi().then(function(res){
-      // 3) backend rejected or offline: try local demo creds (offline fallback)
-      if (res === null || (res && res.ok === false)){
-        var demo = self.DEMO;
-        if (String(me.email).trim().toLowerCase() === demo.email && me.password === demo.password){
-          var user = { email: demo.email, name: 'YallahClick Admin', role: 'owner' };
-          self._setSession(user, 'local-' + Date.now(), remember);
-          return { ok: true };
+      // Only use the local demo credentials when the backend is genuinely
+      // unreachable (static-file demo). On the live site a failed login
+      // must show the API's answer — a fake 'local-...' token would make
+      // every later dashboard write 401 silently.
+      if (res === null){
+        var backendOff = !(window.YC && YC.backend) || YC.backend.isOnline() === false;
+        if (backendOff){
+          var demo = self.DEMO;
+          if (String(me.email).trim().toLowerCase() === demo.email && me.password === demo.password){
+            var user = { email: demo.email, name: 'YallahClick Admin', role: 'owner' };
+            self._setSession(user, 'local-' + Date.now(), remember);
+            return { ok: true };
+          }
         }
-        return res || { ok: false, error: 'Incorrect email or password.' };
+        return { ok: false, error: 'Backend unreachable.' };
       }
       return res;
     });

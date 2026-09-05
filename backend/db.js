@@ -81,6 +81,55 @@ function kvKeyFor(name){
   return KV_PREFIX + ':' + COLLECTION_FILES[name].replace(/\.json$/, '');
 }
 
+/* Raw-key variants for arbitrary (non-collection) values like the auth
+   secret. The name is used AS the full key. */
+async function kvRawGet(key){
+  const url = KV_URL.replace(/\/+$/, '') + '/get/' + encodeURIComponent(key);
+  let lastErr = null;
+  for (let attempt = 0; attempt < 3; attempt++){
+    try{
+      const res = await fetch(url, {
+        headers: { 'Authorization': 'Bearer ' + KV_TOKEN },
+        signal: AbortSignal.timeout(8000)
+      });
+      if (!res.ok){ lastErr = new Error('kv get HTTP ' + res.status); }
+      else{
+        const json = await res.json();
+        const raw = json && (json.result || (json.data && json.data.value));
+        if (raw === null || raw === undefined || raw === '') return null;
+        try{
+          let parsed = JSON.parse(raw);
+          if (typeof parsed === 'string'){
+            try{ parsed = JSON.parse(parsed); }catch(_){ /* keep */ }
+          }
+          return parsed;
+        }catch(pe){ lastErr = new Error('kv get malformed value'); }
+      }
+    }catch(e){ lastErr = e; }
+    if (attempt < 2) await sleep(200 * (attempt + 1));
+  }
+  throw lastErr || new Error('kv get failed');
+}
+
+async function kvRawSet(key, value){
+  const url = KV_URL.replace(/\/+$/, '') + '/set/' + encodeURIComponent(key);
+  let lastErr = null;
+  for (let attempt = 0; attempt < 3; attempt++){
+    try{
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: { 'Authorization': 'Bearer ' + KV_TOKEN, 'Content-Type': 'application/json' },
+        body: JSON.stringify(value),
+        signal: AbortSignal.timeout(8000)
+      });
+      if (res.ok) return true;
+      lastErr = new Error('kv set HTTP ' + res.status);
+    }catch(e){ lastErr = e; }
+    if (attempt < 2) await sleep(200 * (attempt + 1));
+  }
+  throw lastErr || new Error('kv set failed');
+}
+
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 /* Fetch a value from the durable store.
@@ -152,26 +201,6 @@ async function kvSet(name, arr){
         method: 'POST',
         headers: { 'Authorization': 'Bearer ' + KV_TOKEN, 'Content-Type': 'application/json' },
         body: payload,
-        signal: AbortSignal.timeout(8000)
-      });
-      if (res.ok) return true;
-      lastErr = new Error('kv set HTTP ' + res.status);
-    }catch(e){ lastErr = e; }
-    if (attempt < 2) await sleep(200 * (attempt + 1));
-  }
-  throw lastErr || new Error('kv set failed');
-}
-
-/* Store an arbitrary scalar value (JSON-encoded) in the durable store. */
-async function kvSetRaw(name, value){
-  const url = KV_URL.replace(/\/+$/, '') + '/set/' + encodeURIComponent(kvKeyFor(name));
-  let lastErr = null;
-  for (let attempt = 0; attempt < 3; attempt++){
-    try{
-      const res = await fetch(url, {
-        method: 'POST',
-        headers: { 'Authorization': 'Bearer ' + KV_TOKEN, 'Content-Type': 'application/json' },
-        body: JSON.stringify(value),
         signal: AbortSignal.timeout(8000)
       });
       if (res.ok) return true;
@@ -409,7 +438,7 @@ function loadTokenSecret(){
   if (tokenSecretPromise) return tokenSecretPromise;
   tokenSecretPromise = (async () => {
     try{
-      const v = await kvGet(AUTH_SECRET_KEY);
+      const v = await kvRawGet(AUTH_SECRET_KEY);
       if (typeof v === 'string' && v.length >= 16){
         TOKEN_SECRET = v;
         return TOKEN_SECRET;
@@ -417,7 +446,7 @@ function loadTokenSecret(){
     }catch(e){ /* not readable yet; generate below */ }
     const fresh = crypto.randomBytes(32).toString('hex');
     TOKEN_SECRET = fresh;
-    try{ await kvSetRaw(AUTH_SECRET_KEY, fresh); }catch(e){ /* non-fatal */ }
+    try{ await kvRawSet(AUTH_SECRET_KEY, fresh); }catch(e){ /* non-fatal */ }
     return TOKEN_SECRET;
   })();
   return tokenSecretPromise;
