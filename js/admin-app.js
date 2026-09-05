@@ -1656,18 +1656,79 @@ YC.app.pages_promotions = function(){
 
   function stats(){
     var all = svc.allWithStatus();
+    var live = svc.getActiveForPopup();
     YC.app.renderStats([
       { icon: 'promotions', num: all.length, label: 'Total promotions' },
       { icon: 'check', num: all.filter(function(p){ return p.status === 'active'; }).length, label: 'Active now' },
-      { icon: 'clock', num: all.filter(function(p){ return p.status === 'scheduled'; }).length, label: 'Scheduled' },
-      { icon: 'layers', num: all.filter(function(p){ return p.popupEnabled; }).length, label: 'Popup enabled' }
+      { icon: 'layers', num: all.filter(function(p){ return p.popupEnabled; }).length, label: 'Shown on website' },
+      { icon: 'star', num: live ? 1 : 0, label: 'Showing right now' }
     ]);
   }
   stats();
+  renderLive();
+
+  function masterEnabled(){
+    var s = (YC.settings && YC.settings.all) ? YC.settings.all() : null;
+    return !s || s.promoPopupsEnabled !== false;
+  }
+  function livePromo(){
+    return svc.getActiveForPopup() || null;
+  }
+  function renderLive(){
+    var host = YC.app.$('#promoLiveStrip');
+    if(!host) return;
+    var enabled = masterEnabled();
+    var live = livePromo();
+    var disc = live && live.discountValue != null
+      ? (live.discountType === 'percentage' ? live.discountValue + '% OFF' : '$' + live.discountValue + ' OFF')
+      : '';
+    var html =
+      '<div class="card promo-live' + (enabled && live ? ' is-live' : '') + '">' +
+        '<div class="promo-live-main">' +
+          '<span class="promo-live-dot"></span>' +
+          '<div class="promo-live-info">' +
+            '<b>' + (enabled ? 'Promo popups are LIVE on the website' : 'Promo popups are paused site-wide') + '</b>' +
+            '<small>' + (enabled
+              ? 'Any promotion switched on below appears to visitors automatically.'
+              : 'Flip the switch to instantly show or hide all popups across every page.') + '</small>' +
+          '</div>' +
+        '</div>' +
+        '<label class="switch promo-live-master"><input type="checkbox" id="promoMasterSwitch"' + (enabled ? ' checked' : '') + '><span class="track"></span><span class="switch-label">Popups on site</span></label>' +
+        '<div class="promo-live-now">' +
+          (live
+            ? '<span class="pill active">NOW SHOWING</span>' +
+              '<b class="promo-live-title">' + YC.esc(live.title) + '</b>' +
+              '<span class="promo-live-disc">' + YC.esc(disc) + '</span>' +
+              '<button type="button" class="btn btn-soft btn-sm" data-live-edit="' + live.id + '">Edit</button>' +
+              '<button type="button" class="btn btn-soft btn-sm" data-live-preview="' + live.id + '">Preview popup</button>'
+            : '<span class="pill neutral">NOT SHOWING</span>' +
+              '<span class="promo-live-empty">Toggle “Show on website” on a card below (or create a promotion) to put one in front of visitors.</span>')
+        + '</div>' +
+      '</div>';
+    host.innerHTML = html;
+    var master = host.querySelector('#promoMasterSwitch');
+    if(master){
+      master.addEventListener('change', function(){
+        YC.settings.save({ promoPopupsEnabled: !!master.checked });
+        YC.toast.success(master.checked ? 'Promo popups enabled site-wide.' : 'All promo popups hidden site-wide.');
+        renderLive(); grid(); stats();
+      });
+    }
+    var eb = host.querySelector('[data-live-edit]');
+    if(eb) eb.addEventListener('click', function(){ editPromo(svc.getById(eb.getAttribute('data-live-edit'))); });
+    var pb = host.querySelector('[data-live-preview]');
+    if(pb) pb.addEventListener('click', function(){
+      var pd = svc.getById(pb.getAttribute('data-live-preview'));
+      if(pd) YC.PromoPopup.preview(Object.assign({}, pd, { status: svc.computeStatus(pd) }));
+    });
+  }
 
   function pcard(p){
     var disc = p.discountType === 'percentage' ? (p.discountValue + '% OFF') : '$' + p.discountValue + ' OFF';
     var statusPill = YC.pill(p.status);
+    var live = livePromo();
+    var isLivePill = (live && String(live.id) === String(p.id))
+      ? '<span class="pill live">LIVE NOW</span>' : '';
     var meta = [];
     meta.push('<span class="pill neutral">' + (p.promoType === 'discount' ? 'Direct discount' : 'Coupon code') + '</span>');
     if(p.popupEnabled) meta.push('<span class="pill active">Popup ON</span>');
@@ -1679,10 +1740,13 @@ YC.app.pages_promotions = function(){
       ? '<div class="code-row"><span class="pc-code">No code &middot; auto-applied</span></div>'
       : '<div class="code-row"><span class="pc-code">' + YC.esc(p.promoCode || '') + '</span>' +
         '<button type="button" class="btn-link" data-copy-code="' + YC.esc(p.promoCode || '') + '">&#128203; Copy</button></div>';
+    var hero = p.promotionsImage || p.image
+      ? '<div class="pc-banner"><img src="' + YC.esc(p.promotionsImage || p.image) + '" alt=""><span class="pc-banner-badge">' + YC.esc(disc) + '</span></div>'
+      : '<div class="pc-gradient"><span>' + YC.esc(disc) + '</span></div>';
     return '<div class="card card-pad promo-card">' +
+      hero +
       '<div class="pc-top"><div><h3>' + YC.esc(p.title) + '</h3>' +
-      '<div class="pc-service">' + YC.esc(YC.app.svcName(p.serviceId)) + '</div></div>' + statusPill + '</div>' +
-      '<div class="pc-discount">' + YC.esc(disc) + '</div>' +
+      '<div class="pc-service">' + YC.esc(YC.app.svcName(p.serviceId)) + '</div></div>' + isLivePill + statusPill + '</div>' +
       '<div class="pc-description">' + YC.esc(p.description || '') + '</div>' +
       codeRow +
       '<div class="pc-date"><span class="ic">' + YC.icons.get('calendar') + '</span>' + YC.fmtDate(p.startDate) + ' &rarr; ' + YC.fmtDate(p.endDate) + '</div>' +
@@ -1713,6 +1777,7 @@ YC.app.pages_promotions = function(){
       : '<div class="empty-state" style="padding:40px;grid-column:1/-1"><span class="empty-ico">' + YC.icons.get('promotions') + '</span><strong>No promotions match your filters.</strong></div>';
     host.innerHTML = '<div class="dash-grid-3">' + html + '</div>';
     wireGrid();
+    renderLive();
   }
 
   function wireGrid(){

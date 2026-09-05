@@ -26,6 +26,12 @@ YC.PromoPopup = (function(){
     return p.discountLabel || 'Special Offer';
   }
 
+  function discountGlyph(p){
+    if(p.discountType === 'percentage') return p.discountValue ? p.discountValue + '%' : 'SALE';
+    if(p.discountType === 'fixed') return '$' + p.discountValue;
+    return p.discountLabel || 'SALE';
+  }
+
   function serviceName(p){
     if(p.servicesLabel) return p.servicesLabel;
     if(!p.serviceId || p.serviceId === 'all') return 'All Services';
@@ -59,21 +65,37 @@ YC.PromoPopup = (function(){
     var inner = document.createElement('div');
     inner.className = 'promo-popup-inner';
 
-    /* optional banner image */
-    var imgWrap = null;
+    /* hero: banner image when set, otherwise a branded gradient block */
     if(p.image){
-      imgWrap = document.createElement('div');
-      imgWrap.className = 'promo-banner';
-      var img = document.createElement('img');
-      img.src = p.image;
-      img.alt = p.title || 'Promotion';
-      img.addEventListener('error', function(){ imgWrap && imgWrap.remove(); });
-      imgWrap.appendChild(img);
+      var banner = document.createElement('div');
+      banner.className = 'promo-banner';
+      var bImg = document.createElement('img');
+      bImg.src = p.image;
+      bImg.alt = p.title || 'Promotion';
+      bImg.addEventListener('error', function(){ banner && banner.remove(); });
+      var shade = document.createElement('div');
+      shade.className = 'promo-banner-shade';
+      var heroBadge = span(discountGlyph(p), 'promo-hero-badge');
+      banner.appendChild(bImg);
+      banner.appendChild(shade);
+      banner.appendChild(heroBadge);
+      inner.appendChild(banner);
+    }else{
+      var hero = document.createElement('div');
+      hero.className = 'promo-hero';
+      var heroGlyph = document.createElement('div');
+      heroGlyph.className = 'promo-hero-glyph';
+      heroGlyph.textContent = discountGlyph(p);
+      var heroLine = span(p.promoType === 'discount' ? 'Auto-applied discount' : 'Use this promo code', 'promo-hero-line');
+      hero.appendChild(heroGlyph);
+      hero.appendChild(heroLine);
+      inner.appendChild(hero);
     }
 
-    /* tag + service + discount */
-    var tag = span(p.promoType === 'discount' ? 'Auto-applied discount' : 'Limited-time offer', 'promo-tag');
+    /* tag + service + title */
+    var tag = span('Limited-time offer', 'promo-tag');
     var svc = span(serviceName(p), 'promo-service');
+    var titleEl = span(p.title || '', 'promo-title');
     var disc = span(discountLabel(p), 'promo-discount');
     var desc = span(p.description || '', 'promo-desc');
 
@@ -103,9 +125,9 @@ YC.PromoPopup = (function(){
     cta.href = ctaDest(p);
     cta.textContent = p.ctaText || 'Get This Offer';
 
-    if(imgWrap) inner.appendChild(imgWrap);
     inner.appendChild(tag);
     inner.appendChild(svc);
+    inner.appendChild(titleEl);
     inner.appendChild(disc);
     inner.appendChild(desc);
     inner.appendChild(codeBox);
@@ -115,6 +137,12 @@ YC.PromoPopup = (function(){
       inner.appendChild(countdown(p));
     }
 
+    var ring1 = document.createElement('span');
+    ring1.className = 'promo-orb orb-a';
+    var ring2 = document.createElement('span');
+    ring2.className = 'promo-orb orb-b';
+    card.appendChild(ring1);
+    card.appendChild(ring2);
     card.appendChild(inner);
 
     if(p.closeButton !== false){
@@ -131,17 +159,32 @@ YC.PromoPopup = (function(){
   function countdown(p){
     var box = document.createElement('div');
     box.className = 'promo-countdown';
-    box.appendChild(span('Offer ends in', 'cd-title'));
+    var head = document.createElement('div');
+    head.className = 'cd-head';
+    head.appendChild(span('Offer ends in', 'cd-title'));
+    box.appendChild(head);
+
     var cells = { d: null, h: null, m: null, s: null };
-    ['d', 'h', 'm', 's'].forEach(function(k, i){
-      if(i) box.appendChild(span(':', 'cd-sep'));
-      var c = document.createElement('span');
+    var cellsRow = document.createElement('div');
+    cellsRow.className = 'cd-cells';
+    var defs = [['d', 'Days'], ['h', 'Hours'], ['m', 'Mins'], ['s', 'Secs']];
+    defs.forEach(function(def, i){
+      if(i) cellsRow.appendChild(span(':', 'cd-sep'));
+      var c = document.createElement('div');
       c.className = 'cd-cell';
-      c.dataset.cell = k;
-      c.textContent = '00';
-      cells[k] = c;
-      box.appendChild(c);
+      var num = document.createElement('b');
+      num.dataset.cell = def[0];
+      num.textContent = '00';
+      var lab = document.createElement('span');
+      lab.className = 'cd-unit';
+      lab.textContent = def[1];
+      c.appendChild(num);
+      c.appendChild(lab);
+      cells[def[0]] = num;
+      cellsRow.appendChild(c);
     });
+    box.appendChild(cellsRow);
+
     var end = new Date(p.endDate + 'T' + (p.endTime || '23:59'));
     var pad = function(n){ return (n < 10 ? '0' : '') + n; };
     function tick(){

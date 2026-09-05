@@ -463,6 +463,67 @@
 .promo-card .pc-webswitch-label svg{width:14px;height:14px;color:var(--red);}
 .promo-card .pc-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px;padding-top:14px;border-top:1px solid var(--line);}
 .promo-card .pc-actions .btn-sm,.promo-card .pc-actions .btn-icon{flex-shrink:0;}
+.promo-card .pc-top .pill{margin-left:4px;}
+
+/* promo card hero banner / gradient */
+.promo-card .pc-banner,.promo-card .pc-gradient{
+  height:110px;margin:-22px -22px 18px;
+  border-bottom:1px solid var(--line);position:relative;overflow:hidden;
+}
+.promo-card .pc-banner img{width:100%;height:100%;object-fit:cover;display:block;}
+.promo-card .pc-banner::after{
+  content:"";position:absolute;inset:0;
+  background:linear-gradient(180deg,rgba(6,8,12,.05) 40%,rgba(6,8,12,.78) 100%);
+}
+.promo-card .pc-banner-badge{
+  position:absolute;left:14px;bottom:10px;z-index:2;
+  font-family:'Anton',sans-serif;font-size:26px;text-transform:uppercase;line-height:1;
+  background:linear-gradient(110deg,#fff,var(--red) 130%);
+  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+  text-shadow:0 4px 18px rgba(0,0,0,.5);
+}
+.promo-card .pc-gradient{
+  display:flex;align-items:center;justify-content:center;
+  background:
+    radial-gradient(circle at 75% 15%,rgba(255,51,68,.35),transparent 55%),
+    radial-gradient(circle at 15% 100%,rgba(255,138,116,.22),transparent 55%),
+    linear-gradient(135deg,#171b24,#0b0e14);
+}
+.promo-card .pc-gradient span{
+  font-family:'Anton',sans-serif;font-size:30px;text-transform:uppercase;letter-spacing:.02em;
+  background:linear-gradient(110deg,var(--red),#ff8a74);
+  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+}
+
+/* ========== PROMO LIVE STRIP ========== */
+.promo-live{
+  padding:20px 22px;display:flex;align-items:center;gap:22px;flex-wrap:wrap;
+  border:1px solid var(--line);border-radius:16px;margin-bottom:22px;position:relative;overflow:hidden;
+}
+.promo-live.is-live::before{
+  content:"";position:absolute;inset:0;
+  background:radial-gradient(circle at 0% 0%,rgba(255,51,68,.14),transparent 45%);
+  pointer-events:none;
+}
+.promo-live-main{display:flex;align-items:center;gap:14px;flex:1;min-width:250px;}
+.promo-live-dot{width:12px;height:12px;border-radius:50%;background:var(--gray);flex-shrink:0;}
+.promo-live.is-live .promo-live-dot{background:var(--success);box-shadow:0 0 0 0 rgba(71,209,108,.5);animation:livePulse 1.8s infinite;}
+.promo-live-info b{display:block;font-size:15px;font-weight:800;}
+.promo-live-info small{display:block;font-size:12px;color:var(--gray);margin-top:3px;line-height:1.5;}
+.promo-live .promo-live-master{flex-shrink:0;}
+.promo-live .switch-label{font-size:11.5px;color:var(--gray);}
+.promo-live-now{
+  flex:1 1 100%;display:flex;align-items:center;gap:12px;flex-wrap:wrap;
+  padding-top:16px;margin-top:4px;border-top:1px solid var(--line);
+}
+.promo-live-title{font-size:15px;font-weight:800;}
+.promo-live-disc{
+  font-family:'Anton',sans-serif;font-size:22px;text-transform:uppercase;
+  background:linear-gradient(110deg,var(--red),#ff8a74);
+  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+}
+.promo-live-empty{font-size:12.5px;color:var(--gray);}
+.promo-live-now .btn{margin-left:auto;}
 
 /* ========== SETTINGS ========== */
 .settings-grid{display:grid;grid-template-columns:220px 1fr;gap:22px;align-items:start;}
