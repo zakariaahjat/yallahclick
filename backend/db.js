@@ -81,40 +81,74 @@ function kvKeyFor(name){
   return KV_PREFIX + ':' + COLLECTION_FILES[name].replace(/\.json$/, '');
 }
 
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+
+/* Fetch a value from the durable store.
+   Returns: the parsed value when the key EXISTS;
+            null when the key is a true miss (HTTP 200, result null);
+            THROWS on any transport/HTTP/parse error so callers can
+            tell "absent" apart from "temporarily unreachable". */
 async function kvGet(name){
   const url = KV_URL.replace(/\/+$/, '') + '/get/' + encodeURIComponent(kvKeyFor(name));
-  const res = await fetch(url, { headers: { 'Authorization': 'Bearer ' + KV_TOKEN } });
-  if (!res.ok) return null;
-  const json = await res.json();
-  const raw = json && (json.result || (json.data && json.data.value));
-  if (!raw) return null;
-  try{ return JSON.parse(raw); }catch(e){ return null; }
+  let lastErr = null;
+  for (let attempt = 0; attempt < 3; attempt++){
+    try{
+      const res = await fetch(url, {
+        headers: { 'Authorization': 'Bearer ' + KV_TOKEN },
+        signal: AbortSignal.timeout(8000)
+      });
+      if (!res.ok){ lastErr = new Error('kv get HTTP ' + res.status); }
+      else{
+        const json = await res.json();
+        const raw = json && (json.result || (json.data && json.data.value));
+        if (raw === null || raw === undefined || raw === '') return null;
+        try{ return JSON.parse(raw); }
+        catch(pe){ lastErr = new Error('kv get malformed value'); }
+      }
+    }catch(e){ lastErr = e; }
+    if (attempt < 2) await sleep(200 * (attempt + 1));
+  }
+  throw lastErr || new Error('kv get failed');
 }
 
 /* Re-pull one collection from the durable store into the in-memory
    state. On serverless (Vercel) warm instances keep a snapshot in
    memory that can go stale; refreshing before each read/write keeps
-   every instance consistent with the KV source of truth. */
+   every instance consistent with the KV source of truth.
+   Returns 'fresh' (pulled KV), 'missing' (key absent), 'error'
+   (KV unreachable — callers may refuse to write), or 'off'. */
 async function refresh(name){
-  if (!KV_ENABLED || !(name in state)) return false;
+  if (!KV_ENABLED || !(name in state)) return 'off';
   try{
     const remote = await kvGet(name);
     let arr = null;
     if (Array.isArray(remote)) arr = remote;
     else if (Array.isArray(remote && remote.data)) arr = remote.data;
-    if (Array.isArray(arr)){ state[name] = arr; return true; }
-  }catch(e){}
-  return false;
+    if (Array.isArray(arr)){ state[name] = arr; return 'fresh'; }
+    return 'missing';
+  }catch(e){
+    return 'error';
+  }
 }
 
 async function kvSet(name, arr){
   const url = KV_URL.replace(/\/+$/, '') + '/set/' + encodeURIComponent(kvKeyFor(name));
   const payload = JSON.stringify({ _meta: { version: 1, updatedAt: new Date().toISOString(), collection: name }, data: arr });
-  await fetch(url, {
-    method: 'POST',
-    headers: { 'Authorization': 'Bearer ' + KV_TOKEN, 'Content-Type': 'application/json' },
-    body: JSON.stringify(payload),
-  });
+  let lastErr = null;
+  for (let attempt = 0; attempt < 3; attempt++){
+    try{
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: { 'Authorization': 'Bearer ' + KV_TOKEN, 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+        signal: AbortSignal.timeout(8000)
+      });
+      if (res.ok) return true;
+      lastErr = new Error('kv set HTTP ' + res.status);
+    }catch(e){ lastErr = e; }
+    if (attempt < 2) await sleep(200 * (attempt + 1));
+  }
+  throw lastErr || new Error('kv set failed');
 }
 
 /* --- atomic write for one section (temp file + rename) --- */
@@ -200,9 +234,20 @@ function readFile(name){
 /* --- load one collection: remote > file > seed --- */
 async function loadOne(name, seeds){
   if (KV_ENABLED){
-    const remote = await kvGet(name);
-    if (Array.isArray(remote)) { state[name] = remote; return { loaded: true }; }
-    if (Array.isArray(remote && remote.data)) { state[name] = remote.data; return { loaded: true }; }
+    try{
+      const remote = await kvGet(name);
+      if (Array.isArray(remote)) { state[name] = remote; return { loaded: true }; }
+      if (Array.isArray(remote && remote.data)) { state[name] = remote.data; return { loaded: true }; }
+      // true miss (HTTP 200, key absent): fall through — first-run seeding allowed
+    }catch(e){
+      // KV read failed transiently at boot. Use whatever local data exists
+      // for memory, but NEVER persist seeds into KV: a cold-start blip must
+      // not clobber the durable store with stale bundled data.
+      const file = readFile(name);
+      if (Array.isArray(file)){ state[name] = file; return { loaded: true, kvError: true }; }
+      state[name] = seeds[name] || [];
+      return { loaded: false, seeded: false, kvError: true };
+    }
   }
   const file = readFile(name);
   if (Array.isArray(file)) { state[name] = file; return { loaded: true }; }
