@@ -110,29 +110,35 @@ window.YC = window.YC || {};
   }
 
   /* Persist a collection's full array back to the server.
-     Full sync: POST brand-new records, PATCH changed existing records,
-     and DELETE records that were removed locally. */
+     Only records that actually changed (vs. snapshot at hydrate)
+     are PATCHed, preventing parallel full-sync writes from clobbering
+     each other's edits on serverless backends. */
   function pushCollection(name, arr){
     if (!online || !arr) return Promise.resolve();
     var ids = {};
     var jobs = [];
+    var prev = snapshot[name] || [];
+    var prevMap = {};
+    prev.forEach(function(p){ if(p && p && p.id != null) prevMap[String(p.id)] = p; });
+    function clean(o){
+      var c = Object.assign({}, o);
+      delete c._synced; delete c._clientId;
+      return c;
+    }
     arr.forEach(function(x){
       if(!x) return;
       var id = String(x.id);
       ids[id] = true;
-      var clean = function(o){
-        var c = Object.assign({}, o);
-        delete c._synced; delete c._clientId;
-        return c;
-      };
       if (x._synced){
-        // known server record -> PATCH to propagate edits
-        jobs.push(request('PATCH', '/' + name + '/' + encodeURIComponent(id), clean(x)));
+        var old = prevMap[id];
+        var cleanNew = clean(x);
+        var cleanOld = old ? clean(old) : null;
+        if (!cleanOld || JSON.stringify(cleanNew) !== JSON.stringify(cleanOld)){
+          jobs.push(request('PATCH', '/' + name + '/' + encodeURIComponent(id), cleanNew));
+        }
       }else{
         // brand-new local record -> POST to create
         jobs.push(request('POST', '/' + name, clean(x)).then(function(r){
-          // mark it as server-backed + adopt the returned id to avoid
-          // re-creating duplicates on the next write of this session.
           if (r.ok && r.body && r.body.data && r.body.data.id){
             x.id = r.body.data.id;
             x._synced = true;
