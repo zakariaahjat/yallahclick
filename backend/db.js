@@ -87,7 +87,9 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
    Returns: the parsed value when the key EXISTS;
             null when the key is a true miss (HTTP 200, result null);
             THROWS on any transport/HTTP/parse error so callers can
-            tell "absent" apart from "temporarily unreachable". */
+            tell "absent" apart from "temporarily unreachable".
+   Historical values were double-encoded by a buggy writer; decode
+   them too so old KV data is still readable. */
 async function kvGet(name){
   const url = KV_URL.replace(/\/+$/, '') + '/get/' + encodeURIComponent(kvKeyFor(name));
   let lastErr = null;
@@ -102,7 +104,12 @@ async function kvGet(name){
         const json = await res.json();
         const raw = json && (json.result || (json.data && json.data.value));
         if (raw === null || raw === undefined || raw === '') return null;
-        try{ return JSON.parse(raw); }
+        try{
+          let parsed = JSON.parse(raw);
+          // legacy: old writer double-encoded the payload
+          if (typeof parsed === 'string') parsed = JSON.parse(parsed);
+          return parsed;
+        }
         catch(pe){ lastErr = new Error('kv get malformed value'); }
       }
     }catch(e){ lastErr = e; }
@@ -140,7 +147,7 @@ async function kvSet(name, arr){
       const res = await fetch(url, {
         method: 'POST',
         headers: { 'Authorization': 'Bearer ' + KV_TOKEN, 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
+        body: payload,
         signal: AbortSignal.timeout(8000)
       });
       if (res.ok) return true;
