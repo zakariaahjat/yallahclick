@@ -240,7 +240,13 @@ YC.app.uploadFile = function(file, folder){
       method: 'POST',
       headers: t ? { 'Authorization': 'Bearer ' + t } : {},
       body: fd
-    }).then(function(res){ return res.json().catch(function(){ return {}; }); })
+    }).then(function(res){
+      if(res.status === 401 && YC.backend && YC.backend.token()){
+        try{ localStorage.removeItem('yc-auth'); sessionStorage.removeItem('yc-auth'); localStorage.removeItem('yc-token'); sessionStorage.removeItem('yc-token'); }catch(e){}
+        try{ window.dispatchEvent(new CustomEvent('yc:session-expired', { detail: { at: Date.now() } })); }catch(e){}
+      }
+      return res.json().catch(function(){ return {}; });
+    })
       .then(function(json){
         if(json && json.data && json.data.url) return resolve(json.data.url);
         reject(new Error((json && json.message) || 'Upload failed.'));
@@ -1879,7 +1885,7 @@ YC.app.pages_promotions = function(){
         { t: 'text', name: 'endDate', label: 'End date', value: v('endDate'), type: 'date', required: true },
         { t: 'text', name: 'endTime', label: 'End time', value: v('endTime') || '23:59', type: 'time' },
         { t: 'sw', name: 'popupEnabled', label: 'Show on website (popup)', value: v('popupEnabled') },
-        { t: 'sw', name: 'countdownEnabled', label: 'Countdown in popup', value: v('countdownEnabled') },
+        { t: 'sw', name: 'countdownEnabled', label: 'Countdown in popup', value: editing ? v('countdownEnabled') : true },
         { t: 'sw', name: 'showOnce', label: 'Show only once per visitor', value: v('showOnce') },
         { t: 'sw', name: 'showEveryVisit', label: 'Show on every visit', value: v('showEveryVisit') },
         { t: 'sw', name: 'closeButton', label: 'Show close button', value: v('closeButton') !== false },

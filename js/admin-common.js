@@ -588,4 +588,14 @@ YC.admin.boot = function(opts){
     YC.admin.initPalette();
     YC.undoStack.bind();
   });
+
+  /* a stale/invalid token (401) ends every signed call with
+     "Missing or invalid session token." - recover by returning the
+     admin to the sign-in screen with a clear message. */
+  window.addEventListener('yc:session-expired', function(){
+    try{
+      YC.toast.error('Your session expired. Please sign in again.');
+    }catch(e){}
+    setTimeout(function(){ location.href = 'login.html'; }, 1200);
+  }, false);
 };

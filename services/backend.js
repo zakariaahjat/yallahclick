@@ -48,12 +48,29 @@ window.YC = window.YC || {};
     return h;
   }
 
+  /* On 401 the stored session token is stale/invalid (e.g. the auth
+     secret changed server-side). Clear it and let the admin shell
+     bounce the user back to the sign-in screen with a friendly
+     message instead of surfacing "Missing or invalid session token". */
+  function expireSession(){
+    try{
+      localStorage.removeItem('yc-auth');
+      sessionStorage.removeItem('yc-auth');
+      localStorage.removeItem('yc-token');
+      sessionStorage.removeItem('yc-token');
+    }catch(e){}
+    try{
+      window.dispatchEvent(new CustomEvent('yc:session-expired', { detail: { at: Date.now() } }));
+    }catch(e){}
+  }
+
   /* Low-level fetch wrapper. Returns { ok, status, data } or throws. */
   function request(method, path, body){
     var url = apiBase + path;
     var opts = { method: method, headers: headers(body !== undefined) };
     if (body !== undefined) opts.body = JSON.stringify(body);
     return fetch(url, opts).then(function(res){
+      if (res.status === 401 && token()) expireSession();
       return res.json().catch(function(){ return {}; }).then(function(json){
         return { ok: res.ok, status: res.status, body: json };
       });
