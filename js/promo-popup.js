@@ -281,10 +281,11 @@ YC.PromoPopup = (function(){
   var onDismiss = null;
 
   function dismiss(){
-    if(!overlay) return;
-    overlay.classList.remove('show');
-    setTimeout(function(){ if(overlay && overlay.parentNode) overlay.remove(); }, 380);
+    var ovl = overlay;
+    if(!ovl) return;
     overlay = null;
+    ovl.classList.remove('show');
+    setTimeout((function(el){ return function(){ if(el && el.parentNode) el.remove(); }; })(ovl), 380);
     if(onDismiss){ var cb = onDismiss; onDismiss = null; cb(); }
   }
 
