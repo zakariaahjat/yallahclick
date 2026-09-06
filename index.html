@@ -3550,6 +3550,24 @@
   }
 
   // ========== FORM VALIDATION + EMAIL DELIVERY ==========
+
+  // Never let the third-party email relay hang the UI - if it doesn't
+  // answer within EMAIL_TIMEOUT_MS it is treated as failed and the form
+  // still completes based on the API booking (which is the source of truth).
+  const EMAIL_TIMEOUT_MS = 7000;
+  function fetchWithTimeout(url, opts, ms){
+    let timer;
+    const timeoutP = new Promise(function(resolve){
+      timer = setTimeout(function(){ resolve({ timedOut: true }); }, ms);
+    });
+    return Promise.race([
+      fetch(url, opts).then(function(r){
+        return r.json().catch(function(){ return {}; }).then(function(d){ return { res: r, data: d }; });
+      }),
+      timeoutP
+    ]).finally(function(){ clearTimeout(timer); });
+  }
+
   async function handleSubmit(e){
     e.preventDefault();
 
@@ -3622,7 +3640,7 @@
       bookingSaved = false;
     }
 
-    // 2) Also send the email notification (kept for the client's inbox)
+    // 2) Also send the email notification (best-effort; never blocks the UI).
     const payload = {
       name: nameInput.value.trim(),
       email: emailInput.value.trim(),
@@ -3635,26 +3653,45 @@
       _honey: form.querySelector('[name="_honey"]').value
     };
 
+    const notifyEmail = fetchWithTimeout('https://formsubmit.co/ajax/yallahclick.contact@gmail.com', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      body: JSON.stringify(payload)
+    }, EMAIL_TIMEOUT_MS).then(function(out){
+      if(out && out.timedOut) return false;
+      return !!(out && out.res && out.res.ok && out.data && out.data.success !== false);
+    }).catch(function(){ return false; });
+
+    // The API booking is the source of truth; finish the UI as soon as it is
+    // saved so the button never gets stuck on "Sending...". The email relay
+    // keeps running in the background (capped by EMAIL_TIMEOUT_MS) and only
+    // matters when the booking itself could not be saved.
     let emailSent = false;
-    try{
-      const response = await fetch('https://formsubmit.co/ajax/yallahclick.contact@gmail.com', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json'
-        },
-        body: JSON.stringify(payload)
-      });
-      const data = await response.json().catch(() => ({}));
-      emailSent = !!(response.ok && data.success !== false);
-    }catch(error){
-      emailSent = false;
+    if(bookingSaved){
+      notifyEmail.then(null, function(){ return false; }); // background, no-op
+    }else{
+      emailSent = await notifyEmail;
     }
 
-    if(bookingSaved || emailSent){
+    if(bookingSaved){
       btn.textContent = 'Request Sent ✓';
       btn.style.background = '#5c1015';
-      showToast(bookingSaved ? 'Request sent successfully! We\'ll be in touch.' : 'Request sent (we noted it in the studio).');
+      showToast('Request sent successfully! We\'ll be in touch.');
+      form.reset();
+
+      setTimeout(() => {
+        btn.textContent = original;
+        btn.style.background = '';
+        btn.disabled = false;
+        btn.removeAttribute('aria-busy');
+      }, 2500);
+    }else if(emailSent){
+      btn.textContent = 'Request Sent ✓';
+      btn.style.background = '#5c1015';
+      showToast('Request sent (we noted it in the studio).');
       form.reset();
 
       setTimeout(() => {
