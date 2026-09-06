@@ -172,8 +172,9 @@ YC.PromoPopup = (function(){
     var ovl = overlay;
     if(!ovl) return;
     overlay = null;
+    ovl.classList.add('closing');
     ovl.classList.remove('show');
-    setTimeout((function(el){ return function(){ if(el && el.parentNode) el.remove(); }; })(ovl), 380);
+    setTimeout((function(el){ return function(){ if(el && el.parentNode) el.remove(); }; })(ovl), 440);
     if(onDismiss){ var cb = onDismiss; onDismiss = null; cb(); }
   }
 

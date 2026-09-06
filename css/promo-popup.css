@@ -26,9 +26,10 @@
 
   position:fixed;inset:0;z-index:9000;
   background:var(--scrim-bg);
-  -webkit-backdrop-filter:blur(12px) saturate(120%);backdrop-filter:blur(12px) saturate(120%);
+  -webkit-backdrop-filter:blur(14px) saturate(125%);backdrop-filter:blur(14px) saturate(125%);
   display:flex;align-items:center;justify-content:center;padding:20px;
   opacity:0;pointer-events:none;transition:opacity .4s ease;
+  perspective:900px;
 }
 .promo-popup-overlay.show{opacity:1;pointer-events:auto;}
 .promo-popup-card{
@@ -41,14 +42,24 @@
   border:1px solid var(--card-border);border-radius:28px;
   box-shadow:var(--shadow-pop), inset 0 1px 0 rgba(255,255,255,.09);
   position:relative;overflow:hidden;
-  transform:scale(.88) translateY(28px);
-  transition:transform .55s cubic-bezier(.22,1,.36,1);
+  opacity:0;transform:scale(.84) translateY(46px) rotateX(12deg);
+  transform-origin:50% 100%;
+  will-change:transform,opacity;
   max-height:calc(100vh - 40px);
 }
 .promo-popup-card.has-image{
   background-size:cover;background-position:center;background-repeat:no-repeat;
 }
-.promo-popup-overlay.show .promo-popup-card{transform:scale(1) translateY(0);}
+.promo-popup-overlay.show .promo-popup-card{
+  opacity:1;
+  animation:promoIn .72s cubic-bezier(.22,1,.36,1) both;
+}
+@keyframes promoIn{
+  0%{opacity:0;transform:scale(.84) translateY(46px) rotateX(12deg);}
+  55%{opacity:1;transform:scale(1.03) translateY(-5px) rotateX(-1.5deg);}
+  74%{transform:scale(.99) translateY(2px) rotateX(.5deg);}
+  100%{opacity:1;transform:scale(1) translateY(0) rotateX(0);}
+}
 .promo-popup-card::before{
   content:"";position:absolute;top:-90px;right:-90px;width:320px;height:320px;
   background:radial-gradient(circle,var(--red-glow),transparent 70%);pointer-events:none;
@@ -67,9 +78,26 @@
   -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);
   color:var(--white);cursor:pointer;
   display:flex;align-items:center;justify-content:center;font-size:18px;line-height:1;
+  opacity:0;transform:scale(.6) rotate(-120deg);
   transition:all .22s;
 }
+.promo-popup-overlay.show .promo-close{
+  opacity:1;transform:scale(1) rotate(0);
+  transition:opacity .3s ease .5s, transform .5s cubic-bezier(.34,1.56,.64,1) .5s;
+}
 .promo-close:hover{border-color:var(--red);background:var(--red);color:#fff;transform:rotate(90deg) scale(1.05);}
+.promo-popup-inner > *{
+  opacity:0;transform:translateY(18px);
+  transition:opacity .55s ease, transform .55s cubic-bezier(.22,1,.36,1);
+}
+.promo-popup-overlay.show .promo-popup-inner > *{opacity:1;transform:none;}
+.promo-popup-overlay.show .promo-popup-inner > *:nth-child(1){transition-delay:.1s;}
+.promo-popup-overlay.show .promo-popup-inner > *:nth-child(2){transition-delay:.16s;}
+.promo-popup-overlay.show .promo-popup-inner > *:nth-child(3){transition-delay:.22s;}
+.promo-popup-overlay.show .promo-popup-inner > *:nth-child(4){transition-delay:.28s;}
+.promo-popup-overlay.show .promo-popup-inner > *:nth-child(5){transition-delay:.34s;}
+.promo-popup-overlay.show .promo-popup-inner > *:nth-child(6){transition-delay:.4s;}
+.promo-popup-overlay.show .promo-popup-inner > *:nth-child(7){transition-delay:.46s;}
 .promo-tag{
   display:inline-flex;align-items:center;gap:8px;
   font:700 10px/1 'JetBrains Mono',monospace;letter-spacing:.14em;text-transform:uppercase;
@@ -135,6 +163,31 @@
 .promo-popup-overlay.position-bottom-right .promo-popup-card{max-width:410px;}
 .promo-popup-overlay.position-bottom-center{align-items:flex-end;justify-content:center;padding:28px;}
 .promo-popup-overlay.position-bottom-center .promo-popup-card{max-width:410px;}
+
+/* ---------- exit animation (dismiss) ---------- */
+.promo-popup-overlay.closing{opacity:0;}
+.promo-popup-overlay.closing .promo-popup-card{
+  animation:promoOut .42s cubic-bezier(.5,0,.75,.4) both;
+}
+.promo-popup-overlay.closing .promo-popup-inner > *{
+  opacity:0;transform:translateY(12px);
+  transition:opacity .22s ease, transform .22s ease;
+}
+.promo-popup-overlay.closing .promo-close{
+  opacity:0;transform:scale(.5) rotate(120deg);
+  transition:opacity .25s ease, transform .32s ease;
+}
+@keyframes promoOut{
+  from{opacity:1;transform:scale(1) translateY(0) rotateX(0);}
+  to{opacity:0;transform:scale(.9) translateY(32px) rotateX(6deg);}
+}
+
+@media (prefers-reduced-motion: reduce){
+  .promo-popup-overlay,.promo-popup-card,.promo-popup-inner > *,.promo-close{
+    animation:none !important;transition:none !important;
+  }
+  .promo-popup-card,.promo-close,.promo-popup-inner > *{opacity:1;transform:none;}
+}
 
 @media(max-width:640px){
   .promo-close{top:12px;right:12px;width:34px;height:34px;}
