@@ -26,7 +26,7 @@ window.YC = window.YC || {};
   var apiBase = API.replace(/\/+$/, '') + '/api';
   var COLLECTIONS = [
     'bookings','customers','prompts','templates','videoTemplates',
-    'thumbnailTemplates','psdTemplates','promotions','settings','admins','files',
+    'thumbnailTemplates','psdTemplates','promotions','settings','users','files',
     'categories','services'
   ];
 

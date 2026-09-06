@@ -95,6 +95,50 @@ YC.auth = {
   }
 };
 
+/* ---------- role metadata + page permissions ------------ */
+YC.admin.roleMeta = {
+  owner:      { label: 'Owner',       tone: 'owner' },
+  webmaster:  { label: 'Webmaster',   tone: 'webmaster' },
+  marketing:  { label: 'Marketing',   tone: 'marketing' },
+  callcenter: { label: 'Call Center', tone: 'callcenter' },
+  comptable:  { label: 'Comptable',   tone: 'comptable' }
+};
+YC.admin.roleLabel = function(role){
+  var m = YC.admin.roleMeta[String(role || '')];
+  return m ? m.label : (String(role || 'Staff').replace(/^./, function(c){ return c.toUpperCase(); }));
+};
+YC.admin.roleTone = function(role){
+  var m = YC.admin.roleMeta[String(role || '')];
+  return m ? m.tone : 'neutral';
+};
+
+/* page (data-page value) -> roles allowed to open it. Owner implies
+   everything; login/dashboard are open to every signed-in user. */
+YC.admin.pagePerms = {
+  'bookings': ['owner', 'callcenter'],
+  'customers': ['owner', 'callcenter'],
+  'content': ['owner', 'webmaster'],
+  'ai-prompts': ['owner', 'webmaster'],
+  'templates': ['owner', 'webmaster'],
+  'video-templates': ['owner', 'webmaster'],
+  'thumbnail-templates': ['owner', 'webmaster'],
+  'psd-templates': ['owner', 'webmaster'],
+  'files': ['owner', 'webmaster'],
+  'promotions': ['owner', 'marketing'],
+  'categories': ['owner', 'webmaster', 'marketing'],
+  'analytics': ['owner', 'comptable'],
+  'users': ['owner'],
+  'settings': ['owner']
+};
+YC.admin.canView = function(page){
+  if(page === 'login' || page === 'dashboard' || !page) return true;
+  var u = YC.auth.user();
+  if(!u) return false;
+  if(String(u.role) === 'owner') return true;
+  var p = YC.admin.pagePerms[page];
+  return !!p && p.indexOf(String(u.role)) >= 0;
+};
+
 /* ---------- sidebar ---------- */
 YC.admin.navItems = [
   {
@@ -106,35 +150,35 @@ YC.admin.navItems = [
   {
     section: 'Operations',
     items: [
-      { page: 'bookings', file: 'bookings.html', label: 'Bookings', icon: 'bookings', count: 'bookings-pending' },
-      { page: 'customers', file: 'customers.html', label: 'Customers', icon: 'customers', count: 'customers-total' }
+      { page: 'bookings', file: 'bookings.html', label: 'Bookings', icon: 'bookings', count: 'bookings-pending', roles: ['owner', 'callcenter'] },
+      { page: 'customers', file: 'customers.html', label: 'Customers', icon: 'customers', count: 'customers-total', roles: ['owner', 'callcenter'] }
     ]
   },
   {
     section: 'Content Library',
     items: [
-      { page: 'content', file: 'content.html', label: 'Content Hub', icon: 'content' },
-      { page: 'ai-prompts', file: 'ai-prompts.html', label: 'AI Prompts', icon: 'prompts', count: 'prompts-published' },
-      { page: 'templates', file: 'templates.html', label: 'Templates', icon: 'templates', count: 'templates-published' },
-      { page: 'video-templates', file: 'video-templates.html', label: 'Video Templates', icon: 'video', count: 'video-published' },
-      { page: 'thumbnail-templates', file: 'thumbnail-templates.html', label: 'Thumbnail Templates', icon: 'thumbnail', count: 'thumb-published' },
-      { page: 'psd-templates', file: 'psd-templates.html', label: 'PSD Templates', icon: 'layers', count: 'psd-published' },
-      { page: 'files', file: 'files.html', label: 'Files', icon: 'files' }
+      { page: 'content', file: 'content.html', label: 'Content Hub', icon: 'content', roles: ['owner', 'webmaster'] },
+      { page: 'ai-prompts', file: 'ai-prompts.html', label: 'AI Prompts', icon: 'prompts', count: 'prompts-published', roles: ['owner', 'webmaster'] },
+      { page: 'templates', file: 'templates.html', label: 'Templates', icon: 'templates', count: 'templates-published', roles: ['owner', 'webmaster'] },
+      { page: 'video-templates', file: 'video-templates.html', label: 'Video Templates', icon: 'video', count: 'video-published', roles: ['owner', 'webmaster'] },
+      { page: 'thumbnail-templates', file: 'thumbnail-templates.html', label: 'Thumbnail Templates', icon: 'thumbnail', count: 'thumb-published', roles: ['owner', 'webmaster'] },
+      { page: 'psd-templates', file: 'psd-templates.html', label: 'PSD Templates', icon: 'layers', count: 'psd-published', roles: ['owner', 'webmaster'] },
+      { page: 'files', file: 'files.html', label: 'Files', icon: 'files', roles: ['owner', 'webmaster'] }
     ]
   },
   {
     section: 'Growth',
     items: [
-      { page: 'promotions', file: 'promotions.html', label: 'Promotions', icon: 'promotions' },
-      { page: 'categories', file: 'categories.html', label: 'Categories', icon: 'categories' },
-      { page: 'analytics', file: 'analytics.html', label: 'Analytics', icon: 'analytics' }
+      { page: 'promotions', file: 'promotions.html', label: 'Promotions', icon: 'promotions', roles: ['owner', 'marketing'] },
+      { page: 'categories', file: 'categories.html', label: 'Categories', icon: 'categories', roles: ['owner', 'webmaster', 'marketing'] },
+      { page: 'analytics', file: 'analytics.html', label: 'Analytics', icon: 'analytics', roles: ['owner', 'comptable'] }
     ]
   },
   {
     section: 'System',
     items: [
-      { page: 'users', file: 'users.html', label: 'Users', icon: 'users', count: 'admins-total' },
-      { page: 'settings', file: 'settings.html', label: 'Settings', icon: 'settings' }
+      { page: 'users', file: 'users.html', label: 'Users', icon: 'users', count: 'users-total', roles: ['owner'] },
+      { page: 'settings', file: 'settings.html', label: 'Settings', icon: 'settings', roles: ['owner'] }
     ]
   }
 ];
@@ -149,7 +193,7 @@ YC.admin.counts = function(){
     c['video-published'] = YC.services.videoTemplates.all().filter(function(t){ return t.published; }).length;
     c['thumb-published'] = YC.services.thumbnailTemplates.all().filter(function(t){ return t.published; }).length;
     if(YC.services.psdTemplates) c['psd-published'] = YC.services.psdTemplates.all().filter(function(t){ return t.published; }).length;
-    if(YC.services.admins) c['admins-total'] = YC.services.admins.all().length;
+    if(YC.services.users) c['users-total'] = YC.services.users.all().length;
   }catch(e){}
   return c;
 };
@@ -165,9 +209,17 @@ YC.admin.buildSidebar = function(){
 
   var currentFile = location.pathname.split('/').pop() || 'index.html';
   var counts = YC.admin.counts();
+  var me = YC.auth.user();
+  var isOwner = !!(me && String(me.role) === 'owner');
+
+  function allowed(item){
+    if(isOwner) return true;
+    if(!item.roles) return false;
+    return item.roles.indexOf(String(me ? me.role : '')) >= 0;
+  }
 
   var html = YC.admin.navItems.map(function(group){
-    var rows = group.items.map(function(item){
+    var rows = group.items.filter(allowed).map(function(item){
       var active = item.file === currentFile ? ' class="active"' : '';
       var count = '';
       if(item.count && counts[item.count] > 0){
@@ -176,7 +228,7 @@ YC.admin.buildSidebar = function(){
       return '<a class="nav-item' + (item.file === currentFile ? ' active' : '') + '" href="' + item.file + '" data-icon="' + item.icon + '" title="' + item.label + '">' +
         '<span class="ic">' + YC.icons.get(item.icon) + '</span><span>' + item.label + '</span>' + count + '</a>';
     }).join('');
-    return '<div class="admin-nav-section">' + group.section + '</div>' + rows;
+    return rows ? '<div class="admin-nav-section">' + group.section + '</div>' + rows : '';
   }).join('');
 
   html += '<a class="nav-item logout" href="javascript:;" data-logout title="Log out"><span class="ic">' + YC.icons.get('logout') + '</span><span>Log out</span></a>';
@@ -204,7 +256,7 @@ YC.admin.buildTopbar = function(opts){
     u.innerHTML =
       '<span class="au-avatar">' + YC.avatar(user.name || 'YC') + '</span>' +
       '<span class="au-meta"><span class="au-name">' + YC.esc(user.name || 'Admin') + '</span>' +
-      '<span class="au-role">' + (user.role === 'owner' ? 'Owner' : 'Administrator') + '</span></span>';
+      '<span class="au-role role-' + YC.admin.roleTone(user.role) + '">' + YC.esc(YC.admin.roleLabel(user.role)) + '</span></span>';
   }
 };
 
@@ -587,6 +639,17 @@ YC.admin.boot = function(opts){
     YC.admin.initPageFx();
     YC.admin.initPalette();
     YC.undoStack.bind();
+
+    /* page-level access gate: a signed-in user opening an area that is
+       not theirs is bounced back to the dashboard with a clear toast. */
+    var pageNode = document.body ? document.body.getAttribute('data-page') : null;
+    if(pageNode && opts.guard !== false && !YC.admin.canView(pageNode)){
+      setTimeout(function(){
+        try{ YC.toast.error('That area is restricted to ' + (YC.admin.pagePerms[pageNode] && YC.admin.pagePerms[pageNode].join(', ')) + ' accounts.'); }
+        catch(e){}
+        location.href = 'index.html';
+      }, 400);
+    }
   });
 
   /* a stale/invalid token (401) ends every signed call with

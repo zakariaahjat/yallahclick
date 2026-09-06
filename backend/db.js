@@ -6,7 +6,7 @@
      data/prompts.json           data/templates.json
      data/video-templates.json   data/thumbnail-templates.json
      data/psd-templates.json     data/promotions.json
-     data/settings.json          data/admins.json
+     data/settings.json          data/users.json
      data/files.json             data/categories.json
      data/services.json
 
@@ -45,7 +45,7 @@ const COLLECTION_FILES = {
   psdTemplates: 'psd-templates.json',
   promotions: 'promotions.json',
   settings: 'settings.json',
-  admins: 'admins.json',
+  users: 'users.json',
   files: 'files.json',
   categories: 'categories.json',
   services: 'services.json'
@@ -291,7 +291,7 @@ function loadSeeds(){
     'services.js', 'categories.js', 'bookings.js', 'customers.js',
     'aiPrompts.js', 'templates.js', 'videoTemplates.js',
     'thumbnailTemplates.js', 'psdTemplates.js', 'promotions.js',
-    'settings.js', 'files.js', 'admins.js'
+    'settings.js', 'files.js', 'users.js'
   ];
 
   for (const f of seedFileOrder){

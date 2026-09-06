@@ -24,7 +24,7 @@ YC.data.psdTemplates = [
     price: "free",
     featured: true,
     published: true,
-    downloads: 1820,
+    downloads: 0,
     createdAt: "2026-06-10T09:00:00Z"
   },
   {
@@ -46,7 +46,7 @@ YC.data.psdTemplates = [
     price: "pro",
     featured: true,
     published: true,
-    downloads: 1205,
+    downloads: 0,
     createdAt: "2026-06-18T11:00:00Z"
   },
   {
@@ -68,7 +68,7 @@ YC.data.psdTemplates = [
     price: "free",
     featured: false,
     published: true,
-    downloads: 986,
+    downloads: 0,
     createdAt: "2026-06-25T14:00:00Z"
   },
   {
@@ -90,7 +90,7 @@ YC.data.psdTemplates = [
     price: "pro",
     featured: true,
     published: true,
-    downloads: 754,
+    downloads: 0,
     createdAt: "2026-07-02T09:00:00Z"
   },
   {
@@ -110,7 +110,7 @@ YC.data.psdTemplates = [
     price: "free",
     featured: false,
     published: true,
-    downloads: 1633,
+    downloads: 0,
     createdAt: "2026-07-09T11:00:00Z"
   },
   {
@@ -132,7 +132,7 @@ YC.data.psdTemplates = [
     price: "pro",
     featured: false,
     published: false,
-    downloads: 402,
+    downloads: 0,
     createdAt: "2026-07-15T15:00:00Z"
   },
   {
@@ -154,7 +154,7 @@ YC.data.psdTemplates = [
     price: "free",
     featured: false,
     published: true,
-    downloads: 871,
+    downloads: 0,
     createdAt: "2026-07-22T10:00:00Z"
   },
   {
@@ -176,7 +176,7 @@ YC.data.psdTemplates = [
     price: "free",
     featured: false,
     published: true,
-    downloads: 643,
+    downloads: 0,
     createdAt: "2026-07-30T09:30:00Z"
   }
 ];

@@ -47,12 +47,14 @@
           <h2>Dashboard</h2>
           <p>Studio pulse - bookings, customers, promotions and library health at a glance.</p>
         </div>
-        <div style="display:flex;gap:10px;flex-wrap:wrap">
+        <div style="display:flex;gap:10px;flex-wrap:wrap" id="introActions">
           <button type="button" class="btn btn-ghost" id="resetDataBtn">Reset demo data</button>
-          <a class="btn btn-ghost" href="bookings.html">Bookings</a>
-          <a class="btn btn-primary" href="bookings.html?new=1">+ New booking</a>
+          <a class="btn btn-ghost" href="bookings.html" data-gated="bookings">Bookings</a>
+          <a class="btn btn-primary" href="bookings.html?new=1" data-gated="bookings">+ New booking</a>
         </div>
       </div>
+
+      <div class="welcome-strip" id="welcomeStrip"></div>
 
       <div class="kpi-grid" id="kpiGrid" aria-label="Key metrics"></div>
 

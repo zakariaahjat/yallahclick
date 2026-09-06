@@ -76,10 +76,20 @@ YC.services = YC.services || {};
         return this.update(id, { featured: !p.featured });
       },
 
+      /* Record a real view: POSTs to the public /api/prompts/:id/view
+         endpoint (no session needed) so the count persists server-side
+         and is shared across all visitors. The local number is bumped
+         optimistically so the open card updates instantly; the next
+         hydrate re-bases it on the server's true count. Only this
+         "crowd" counter is used - seed numbers are zeroed. */
       incrementViews: function(id){
         var p = this.getById(id);
         if(!p) return;
-        this.update(id, { views: (p.views || 0) + 1 });
+        p.views = (Number(p.views) || 0) + 1;
+        if(window.YC && YC.backend && typeof YC.backend.request === 'function'){
+          try{ YC.backend.request('POST', '/prompts/' + encodeURIComponent(id) + '/view').then(null, function(){}); }
+          catch(e){}
+        }
       },
 
       popular: function(limit){

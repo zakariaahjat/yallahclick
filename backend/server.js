@@ -15,7 +15,7 @@ const cors = require('cors');
 const db = require('./db');
 const genericRouter = require('./routes/generic');
 const authRouter = require('./routes/auth');
-const { requireAuth, optionalAuth } = require('./routes/middleware');
+const { requireAuth, requireRole, optionalAuth } = require('./routes/middleware');
 
 const ROOT = path.join(__dirname, '..');
 const PORT = process.env.PORT || 3000;
@@ -53,17 +53,15 @@ api.get('/meta/counts', (req, res) => {
   res.json({ data: s.collections, total: s.total });
 });
 
-api.post('/auth/reset', requireAuth, async (req, res, next) => {
+api.post('/auth/reset', requireRole(['owner']), async (req, res, next) => {
   try{
     await db.dropAll();
     res.json({ data: { ok: true, message: 'Database reset to seed data.' } });
   }catch(e){ next(e); }
 });
 
-api.post('/auth/reset-public', requireAuth, async (req, res, next) => {
-  // Reset is now admin-only. The generic POST /auth/reset already covers
-  // authenticated resets; this alias is kept for the dashboard reset button
-  // but no longer exposed unauthenticated.
+api.post('/auth/reset-public', requireRole(['owner']), async (req, res, next) => {
+  // Reset is owner-only. Kept for the dashboard reset button.
   try{
     await db.dropAll();
     res.json({ data: { ok: true } });

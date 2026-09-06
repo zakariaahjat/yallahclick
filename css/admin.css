@@ -679,3 +679,57 @@ body.is-ready.login-body .login-split{opacity:1;transform:none;transition:opacit
 }
 .toolbar .btn-export:hover{border-color:var(--red);color:var(--red);}
 .toolbar .btn-export svg{width:15px;height:15px;}
+
+/* ========== ROLE BADGES / PILLS ========== */
+.au-role.role-owner{color:#ffd76a;}
+.au-role.role-webmaster{color:#7db7ff;}
+.au-role.role-marketing{color:#ff9ad5;}
+.au-role.role-callcenter{color:#6fe0b0;}
+.au-role.role-comptable{color:#d9a7ff;}
+
+.pill-role{font:700 10px/1 'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:.06em;}
+.pill-role.role-owner{color:#ffd76a;background:rgba(255,215,106,.1);border:1px solid rgba(255,215,106,.28);}
+.pill-role.role-webmaster{color:#7db7ff;background:rgba(125,183,255,.1);border:1px solid rgba(125,183,255,.26);}
+.pill-role.role-marketing{color:#ff9ad5;background:rgba(255,154,213,.1);border:1px solid rgba(255,154,213,.26);}
+.pill-role.role-callcenter{color:#6fe0b0;background:rgba(111,224,176,.1);border:1px solid rgba(111,224,176,.26);}
+.pill-role.role-comptable{color:#d9a7ff;background:rgba(217,167,255,.1);border:1px solid rgba(217,167,255,.26);}
+
+/* ========== WELCOME STRIP (dashboard) ========== */
+.welcome-strip{
+  display:flex;align-items:center;gap:16px;flex-wrap:wrap;
+  margin:0 0 20px;padding:16px 20px;border-radius:16px;
+  background:linear-gradient(120deg,rgba(255,51,68,.09),rgba(255,255,255,.02) 55%),var(--glass);
+  border:1px solid var(--line);
+}
+.welcome-strip .ws-avatar{
+  width:46px;height:46px;border-radius:14px;flex-shrink:0;
+  background:linear-gradient(135deg,var(--red),var(--red-dark,#d61826));
+  color:#fff;display:flex;align-items:center;justify-content:center;
+  font-weight:800;font-size:17px;box-shadow:0 8px 20px rgba(255,51,68,.25);
+}
+.welcome-strip .ws-main{flex:1;min-width:180px;}
+.welcome-strip .ws-title{font-size:15px;font-weight:800;color:var(--white);}
+.welcome-strip .ws-sub{font-size:12px;color:var(--gray);margin-top:2px;}
+.welcome-strip .ws-chips{display:flex;gap:8px;flex-wrap:wrap;}
+.welcome-strip .welcome-chip{
+  font-size:12px;font-weight:700;color:var(--white);
+  background:var(--glass-2,rgba(255,255,255,.05));border:1px solid var(--line);
+  padding:7px 13px;border-radius:99px;transition:all .2s;text-decoration:none;
+}
+.welcome-strip .welcome-chip:hover{border-color:var(--red);color:var(--red);background:rgba(255,51,68,.08);}
+
+/* ========== ANALYTICS SNAPSHOT ========== */
+.snapshot-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;padding:18px 20px;}
+.snap-item{
+  display:flex;flex-direction:column;gap:4px;padding:14px;border-radius:12px;
+  background:var(--glass);border:1px solid var(--line);transition:border-color .2s,transform .2s;
+}
+.snap-item:hover{border-color:rgba(255,51,68,.3);transform:translateY(-1px);}
+.snap-item .snap-ico{color:var(--red);}
+.snap-item .snap-ico svg{width:17px;height:17px;}
+.snap-item .snap-v{font-size:16px;font-weight:800;color:var(--white);}
+.snap-item .snap-l{font-size:10.5px;color:var(--gray);text-transform:uppercase;letter-spacing:.06em;font-family:'JetBrains Mono',monospace;}
+
+/* ========== FORM FIELD NOTES ========== */
+.field-note{font-size:11px;color:var(--gray);margin-top:6px;line-height:1.55;}
+.field.error .field-note{color:var(--gray);}

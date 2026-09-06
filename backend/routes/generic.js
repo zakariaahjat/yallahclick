@@ -14,6 +14,29 @@
 
 const express = require('express');
 const db = require('../db');
+const { requireRole } = require('./middleware');
+
+/* ---- server-side role permissions --------------------------
+   Which roles may WRITE (POST / PUT / PATCH / DELETE) each
+   collection. Owner always passes. Reads (GET) stay public so
+   the site/library can render before any login; analytics reads
+   for the comptable are covered by the public GETs. */
+const PERMISSIONS = {
+  prompts: ['owner', 'webmaster'],
+  templates: ['owner', 'webmaster'],
+  videoTemplates: ['owner', 'webmaster'],
+  thumbnailTemplates: ['owner', 'webmaster'],
+  psdTemplates: ['owner', 'webmaster'],
+  files: ['owner', 'webmaster'],
+  categories: ['owner', 'webmaster', 'marketing'],
+  services: ['owner', 'webmaster'],
+  promotions: ['owner', 'marketing'],
+  bookings: ['owner', 'callcenter'],   // POST stays public (site inquiry form)
+  customers: ['owner', 'callcenter'],
+  settings: ['owner'],
+  users: ['owner'],
+  admins: ['owner'],
+};
 
 /* ---- server-side validation -----------------------------------
    Each known collection has an optional validate(record) that throws
@@ -62,6 +85,13 @@ const validators = {
   },
   services(s){
     if (!s || !String(s.name || '').trim()) return 'name is required';
+    return null;
+  },
+  users(u){
+    if (!u || !String(u.name || '').trim()) return 'name is required';
+    if (!String(u.email || '').trim()) return 'email is required';
+    if (u.email && !validEmail(u.email)) return 'email is not a valid address';
+    if (!String(u.role || '').trim()) return 'role is required';
     return null;
   },
   admins(a){
@@ -165,6 +195,7 @@ function applyQuery(list, req){
 
 function routerFor(name){
   const router = express.Router();
+  const writeRoles = PERMISSIONS[name] ? PERMISSIONS[name].slice() : ['owner'];
 
   // NOTE: auth + parent-facing reads stay anonymous (GET allowed without token)
   // so the public site/library can show content before any login.
@@ -176,21 +207,15 @@ function routerFor(name){
     }catch(e){ next(e); }
   });
 
-  // POST is admin-only EXCEPT for `bookings`, which the public inquiry
+  // POST is role-gated EXCEPT for `bookings`, which the public inquiry
   // form submits to (no token). Bookings are normalized server-side.
-  router.post('/', async (req, res, next) => {
+  router.post('/', (req, res, next) => {
+    if (name === 'bookings') return next();
+    return requireRole(writeRoles)(req, res, next);
+  }, async (req, res, next) => {
     try{
       if (await db.refresh(name) === 'error'){
         return res.status(503).json({ error: 'kv_unavailable', message: 'Durable store temporarily unreachable; edit not applied.' });
-      }
-      if (name !== 'bookings'){
-        // admin-only: 401 unless a valid session token is present
-        const auth = require('./middleware');
-        const payload = await db.verifyToken(auth.bearerToken(req));
-        if (!payload || !payload.email){
-          return res.status(401).json({ error: 'unauthorized', message: 'Missing or invalid session token.' });
-        }
-        req.user = payload;
       }
       const b = Object.assign({}, req.body || {});
       if (name === 'bookings'){
@@ -224,7 +249,34 @@ function routerFor(name){
     }catch(e){ next(e); }
   });
 
-  router.put('/:id', async (req, res, next) => {
+  /* Public crowd counters (views / downloads): the site's library records
+     a real count every time a prompt/template is opened or downloaded.
+     Deliberately NOT role-gated (like the bookings POST) so anonymous
+     visitors drive the real numbers. */
+  const CROWD_ALLOWED = ['prompts', 'templates', 'videoTemplates', 'thumbnailTemplates', 'psdTemplates'];
+  const CROWD_FIELD = { view: 'views', download: 'downloads' };
+  if (CROWD_ALLOWED.indexOf(name) >= 0){
+    for (const action of ['view', 'download']){
+      router.post('/:id/' + action, async (req, res, next) => {
+        try{
+          if (await db.refresh(name) === 'error'){
+            return res.status(503).json({ error: 'kv_unavailable', message: 'Durable store temporarily unreachable; count not recorded.' });
+          }
+          const item = db.getById(name, req.params.id);
+          if (!item) return res.status(404).json({ error: 'not found' });
+          const field = CROWD_FIELD[action];
+          if (!(field in item)) item[field] = 0;
+          const patch = {};
+          patch[field] = (Number(item[field]) || 0) + 1;
+          const rec = db.update(name, req.params.id, patch);
+          await db.persist(name);
+          res.json({ data: { id: req.params.id, [field]: rec && rec[field] } });
+        }catch(e){ next(e); }
+      });
+    }
+  }
+
+  router.put('/:id', requireRole(writeRoles), async (req, res, next) => {
     try{
       if (await db.refresh(name) === 'error'){
         return res.status(503).json({ error: 'kv_unavailable', message: 'Durable store temporarily unreachable; edit not applied.' });
@@ -237,7 +289,7 @@ function routerFor(name){
     }catch(e){ next(e); }
   });
 
-  router.patch('/:id', async (req, res, next) => {
+  router.patch('/:id', requireRole(writeRoles), async (req, res, next) => {
     try{
       if (await db.refresh(name) === 'error'){
         return res.status(503).json({ error: 'kv_unavailable', message: 'Durable store temporarily unreachable; edit not applied.' });
@@ -250,7 +302,7 @@ function routerFor(name){
     }catch(e){ next(e); }
   });
 
-  router.delete('/:id', async (req, res, next) => {
+  router.delete('/:id', requireRole(writeRoles), async (req, res, next) => {
     try{
       if (await db.refresh(name) === 'error'){
         return res.status(503).json({ error: 'kv_unavailable', message: 'Durable store temporarily unreachable; deletion not applied.' });

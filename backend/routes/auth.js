@@ -1,7 +1,7 @@
 /* ============================================================
    YallahClick - Auth router (/api/auth)
    Server-side admin login issues an HMAC-signed session token.
-   Passwords are hashed when admins are created/updated.
+   Passwords are stored from the `users` collection seed when created/updated.
    ============================================================ */
 'use strict';
 
@@ -21,8 +21,8 @@ router.post('/login', async (req, res, next) => {
     const email = String((req.body && req.body.email) || '').trim().toLowerCase();
     const password = String((req.body && req.body.password) || '');
 
-    const admins = db.getAll('admins');
-    const admin = admins.find((a) => String(a.email || '').toLowerCase() === email);
+    const users = db.getAll('users');
+    const admin = users.find((a) => String(a.email || '').toLowerCase() === email);
 
     const valid = admin &&
       String(admin.status) !== 'disabled' &&
@@ -51,7 +51,7 @@ router.post('/login', async (req, res, next) => {
 
 router.get('/me', requireAuth, (req, res) => {
   const payload = req.user;
-  const admin = db.getById('admins', payload.sub) || db.getAll('admins').find((a) => String(a.email).toLowerCase() === String(payload.email).toLowerCase());
+  const admin = db.getById('users', payload.sub) || db.getAll('users').find((a) => String(a.email).toLowerCase() === String(payload.email).toLowerCase());
   if (!admin) return res.status(404).json({ error: 'not found' });
   res.json({ data: publicAdmin(admin) });
 });

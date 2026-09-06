@@ -23,7 +23,7 @@ YC.data.videoTemplates = [
     fileSize: "124 MB",
     featured: true,
     published: true,
-    downloads: 2910,
+    downloads: 0,
     createdAt: "2026-06-14T09:00:00Z"
   },
   {
@@ -44,7 +44,7 @@ YC.data.videoTemplates = [
     fileSize: "96 MB",
     featured: false,
     published: true,
-    downloads: 1540,
+    downloads: 0,
     createdAt: "2026-06-20T11:00:00Z"
   },
   {
@@ -65,7 +65,7 @@ YC.data.videoTemplates = [
     fileSize: "44 MB",
     featured: true,
     published: true,
-    downloads: 3870,
+    downloads: 0,
     createdAt: "2026-07-01T13:00:00Z"
   },
   {
@@ -86,7 +86,7 @@ YC.data.videoTemplates = [
     fileSize: "31 MB",
     featured: false,
     published: true,
-    downloads: 2090,
+    downloads: 0,
     createdAt: "2026-07-08T10:00:00Z"
   },
   {
@@ -107,7 +107,7 @@ YC.data.videoTemplates = [
     fileSize: "210 MB",
     featured: true,
     published: true,
-    downloads: 1320,
+    downloads: 0,
     createdAt: "2026-07-18T15:00:00Z"
   },
   {
@@ -128,7 +128,7 @@ YC.data.videoTemplates = [
     fileSize: "72 MB",
     featured: false,
     published: true,
-    downloads: 1750,
+    downloads: 0,
     createdAt: "2026-07-25T09:00:00Z"
   },
   {
@@ -149,7 +149,7 @@ YC.data.videoTemplates = [
     fileSize: "58 MB",
     featured: false,
     published: false,
-    downloads: 610,
+    downloads: 0,
     createdAt: "2026-08-02T10:00:00Z"
   },
   {
@@ -170,7 +170,7 @@ YC.data.videoTemplates = [
     fileSize: "1.2 GB",
     featured: true,
     published: true,
-    downloads: 2210,
+    downloads: 0,
     createdAt: "2026-08-10T12:00:00Z"
   }
 ];

@@ -1,14 +1,20 @@
 /* ============================================================
-   YallahClick - Admin accounts service
-   Used by the admin Users page (CRUD) and by the login flow.
+   YallahClick - Staff accounts service (users)
+   Powers the admin Users page (CRUD), the login flow and the
+   role labels used across the admin shell. Reads/writes go
+   through the API-backed store (collection `users`), so account
+   management here is exactly what /api/auth/login enforces.
    ============================================================ */
 window.YC = window.YC || {};
 YC.services = YC.services || {};
 
 (function(){
-  var seed = function(){ return JSON.parse(JSON.stringify(YC.data.admins)); };
+  var seed = function(){
+    var src = YC.data.users || YC.data.admins || [];
+    return JSON.parse(JSON.stringify(src));
+  };
 
-  YC.services.admins = YC.createService('yc:admins', seed, {
+  YC.services.users = YC.createService('yc:users', seed, {
     extend: {
       byEmail: function(email){
         var e = String(email || '').trim().toLowerCase();
@@ -31,10 +37,10 @@ YC.services = YC.services || {};
       },
 
       firstName: function(name){
-        return String(name || 'Admin').split(/\s+/)[0];
+        return String(name || 'Staff').split(/\s+/)[0];
       }
     }
   });
 
-  YC.services.admins.seed();
+  YC.services.users.seed();
 })();

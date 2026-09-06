@@ -5,11 +5,37 @@ window.YC = window.YC || {};
 YC.services = YC.services || {};
 
 (function(){
-  function factory(key, seedData, typeLabel){
+  function factory(key, seedData, typeLabel, apiName){
     var seed = function(){ return JSON.parse(JSON.stringify(seedData)); };
     return YC.createService(key, seed, {
       extend: {
         TYPE_LABEL: typeLabel,
+        $api: apiName,
+
+        /* Real counters: bump locally for the live view and fire the public
+           server endpoint (no token) so the count persists & is shared.
+           Seed numbers are zeroed - only genuine opens/downloads count. */
+        incrementViews: function(id){
+          var t = this.getById(id);
+          if(!t) return;
+          t.views = (Number(t.views) || 0) + 1;
+          this._crowd(id, 'view');
+        },
+
+        incrementDownloads: function(id){
+          var t = this.getById(id);
+          if(!t) return;
+          t.downloads = (Number(t.downloads) || 0) + 1;
+          this._crowd(id, 'download');
+        },
+
+        _crowd: function(id, action){
+          if(window.YC && YC.backend && typeof YC.backend.request === 'function'){
+            try{
+              YC.backend.request('POST', '/' + this.$api + '/' + encodeURIComponent(id) + '/' + action).then(null, function(){});
+            }catch(e){}
+          }
+        },
 
         search: function(q){
           q = (q || '').trim().toLowerCase();
@@ -87,13 +113,8 @@ YC.services = YC.services || {};
         incrementDownloads: function(id){
           var t = this.getById(id);
           if(!t) return;
-          this.update(id, { downloads: (t.downloads || 0) + 1 });
-        },
-
-        incrementViews: function(id){
-          var t = this.getById(id);
-          if(!t) return;
-          this.update(id, { views: (t.views || 0) + 1 });
+          t.downloads = (Number(t.downloads) || 0) + 1;
+          this._crowd(id, 'download');
         },
 
         popular: function(limit){
@@ -111,10 +132,10 @@ YC.services = YC.services || {};
     });
   }
 
-  YC.services.templates = factory('yc:templates', YC.data.templates, 'Template');
-  YC.services.videoTemplates = factory('yc:video-templates', YC.data.videoTemplates, 'Video Template');
-  YC.services.thumbnailTemplates = factory('yc:thumbnail-templates', YC.data.thumbnailTemplates, 'Thumbnail Template');
-  YC.services.psdTemplates = factory('yc:psd-templates', (YC.data.psdTemplates || []), 'PSD Template');
+  YC.services.templates = factory('yc:templates', YC.data.templates, 'Template', 'templates');
+  YC.services.videoTemplates = factory('yc:video-templates', YC.data.videoTemplates, 'Video Template', 'videoTemplates');
+  YC.services.thumbnailTemplates = factory('yc:thumbnail-templates', YC.data.thumbnailTemplates, 'Thumbnail Template', 'thumbnailTemplates');
+  YC.services.psdTemplates = factory('yc:psd-templates', (YC.data.psdTemplates || []), 'PSD Template', 'psdTemplates');
 
   YC.services.templates.seed();
   YC.services.videoTemplates.seed();

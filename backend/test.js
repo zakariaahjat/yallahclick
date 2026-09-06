@@ -185,7 +185,97 @@ async function main(){
   });
   ok(assetReq.status === 200 && assetReq.headers['content-type'] === 'image/png' && assetReq.bytes.length === pngBytes.length, 'GET uploads/name serves the stored bytes');
 
-  // 12) reset to seed (requires auth)
+  // 11d) ROLE-BASED ACCESS CONTROL
+  // webmaster (sarah) may manage content but not staff/owner areas
+  r = await request(port, 'POST', '/api/auth/login', { email: 'sarah@yallahclick.com', password: 'yallah123' });
+  ok(r.status === 200 && r.body.data && r.body.data.token && r.body.data.user.role === 'webmaster', 'webmaster login');
+  const webmaster = r.body.data.token;
+  r = await request(port, 'POST', '/api/prompts', { title: 'Role Test', category: 'Test', prompt: 'role test body' }, webmaster);
+  ok(r.status === 201, 'webmaster can create prompts (content)');
+  r = await request(port, 'POST', '/api/users', { name: 'Sneaky', email: 'sneaky@x.com', role: 'owner' }, webmaster);
+  ok(r.status === 403, 'webmaster cannot create users -> 403');
+  r = await request(port, 'POST', '/api/auth/reset-public', undefined, webmaster);
+  ok(r.status === 403, 'webmaster cannot reset -> 403');
+  r = await request(port, 'PATCH', '/api/promotions/1', { title: 'Hijack' }, webmaster);
+  ok(r.status === 403, 'webmaster cannot edit promotions -> 403');
+  // callcenter (lina) may manage bookings + customers but not promotions
+  r = await request(port, 'POST', '/api/auth/login', { email: 'lina@yallahclick.com', password: 'yallah123' });
+  ok(r.status === 200 && r.body.data.user.role === 'callcenter', 'callcenter login');
+  const callcenter = r.body.data.token;
+  r = await request(port, 'POST', '/api/bookings', { customerName: 'CC Test', serviceId: 'motion-design' }, callcenter);
+  ok(r.status === 201, 'callcenter can create bookings');
+  r = await request(port, 'POST', '/api/customers', { name: 'CC Customer' }, callcenter);
+  ok(r.status === 201, 'callcenter can create customers');
+  r = await request(port, 'POST', '/api/promotions', { title: 'Steal' }, callcenter);
+  ok(r.status === 403, 'callcenter cannot create promotions -> 403');
+  // marketing (omar) may manage promotions but not bookings
+  r = await request(port, 'POST', '/api/auth/login', { email: 'omar@yallahclick.com', password: 'yallah123' });
+  ok(r.status === 200 && r.body.data.user.role === 'marketing', 'marketing login');
+  const marketing = r.body.data.token;
+  r = await request(port, 'POST', '/api/promotions', { title: 'Flash 24H', startDate: '2026-09-01', endDate: '2026-09-02' }, marketing);
+  ok(r.status === 201, 'marketing can create promotions');
+  r = await request(port, 'PATCH', '/api/bookings/1', { status: 'confirmed' }, marketing);
+  ok(r.status === 403, 'marketing cannot edit bookings -> 403');
+  // comptable (hicham) can read analytics data but never write
+  r = await request(port, 'POST', '/api/auth/login', { email: 'hicham@yallahclick.com', password: 'yallah123' });
+  ok(r.status === 200 && r.body.data.user.role === 'comptable', 'comptable login');
+  const comptable = r.body.data.token;
+  r = await request(port, 'GET', '/api/bookings');
+  ok(r.status === 200 && Array.isArray(r.body.data), 'comptable can read bookings (analytics)');
+  r = await request(port, 'POST', '/api/customers', { name: 'Hack' }, comptable);
+  ok(r.status === 403, 'comptable is read-only -> 403');
+  // writes without ANY token are now rejected everywhere except bookings POST
+  r = await request(port, 'PATCH', '/api/prompts/1', { title: 'X' });
+  ok(r.status === 401, 'unauthenticated PATCH rejected -> 401');
+  r = await request(port, 'DELETE', '/api/customers/1');
+  ok(r.status === 401, 'unauthenticated DELETE rejected -> 401');
+  // owner can disable a freshly created user; that user is locked out instantly
+  r = await request(port, 'POST', '/api/users', { name: 'Temp Guy', email: 'temp@yallahclick.com', password: 'temp123', role: 'callcenter', status: 'active' }, token);
+  ok(r.status === 201, 'owner can create a user');
+  const tempId = r.body.data && r.body.data.id;
+  r = await request(port, 'POST', '/api/auth/login', { email: 'temp@yallahclick.com', password: 'temp123' });
+  ok(r.status === 200 && r.body.data.token, 'new user can sign in');
+  const tempTok = r.body.data.token;
+  r = await request(port, 'PATCH', '/api/users/' + tempId, { status: 'disabled' }, token);
+  ok(r.status === 200 && r.body.data.status === 'disabled', 'owner disables the user');
+  r = await request(port, 'GET', '/api/auth/me', undefined, tempTok);
+  ok(r.status === 401, 'disabled user token immediately invalidated -> 401');
+  r = await request(port, 'POST', '/api/auth/login', { email: 'temp@yallahclick.com', password: 'temp123' });
+  ok(r.status === 401, 'disabled user cannot sign in -> 401');
+
+  // 11e) REAL prompt view counter - public endpoint, no token required
+  r = await request(port, 'GET', '/api/prompts/1');
+  ok(r.status === 200, 'read prompt 1 (for view baseline)');
+  const baseViews = r.body.data ? Number(r.body.data.views) || 0 : 0;
+  r = await request(port, 'POST', '/api/prompts/1/view');
+  ok(r.status === 200 && r.body.data && Number(r.body.data.views) === baseViews + 1, 'public view increments to ' + (baseViews + 1));
+  r = await request(port, 'POST', '/api/prompts/1/view');
+  ok(r.status === 200 && r.body.data && Number(r.body.data.views) === baseViews + 2, 'second public view increments again');
+  r = await request(port, 'GET', '/api/prompts/1');
+  ok(r.status === 200 && Number(r.body.data.views) === baseViews + 2, 'incremented views persist on read');
+  r = await request(port, 'POST', '/api/prompts/99999/view');
+  ok(r.status === 404, 'view on unknown prompt -> 404');
+
+  // 11f) REAL template counters - views and downloads (also public)
+  r = await request(port, 'GET', '/api/templates/1');
+  ok(r.status === 200, 'read template 1 (for counter baseline)');
+  const tViews = r.body.data ? Number(r.body.data.views) || 0 : 0;
+  const tDls = r.body.data ? Number(r.body.data.downloads) || 0 : 0;
+  r = await request(port, 'POST', '/api/templates/1/view');
+  ok(r.status === 200 && r.body.data && Number(r.body.data.views) === tViews + 1, 'public template view -> ' + (tViews + 1));
+  r = await request(port, 'POST', '/api/templates/1/download');
+  ok(r.status === 200 && r.body.data && Number(r.body.data.downloads) === tDls + 1, 'public template download -> ' + (tDls + 1));
+  r = await request(port, 'GET', '/api/templates/1');
+  ok(r.status === 200 && Number(r.body.data.views) === tViews + 1 && Number(r.body.data.downloads) === tDls + 1,
+    'template view+download persist on read');
+  r = await request(port, 'POST', '/api/videoTemplates/1/view');
+  ok(r.status === 200 && r.body.data && !isNaN(Number(r.body.data.views)), 'video-template view counter works');
+  r = await request(port, 'POST', '/api/psd-templates/1/download');
+  ok(r.status === 200 && r.body.data && !isNaN(Number(r.body.data.downloads)), 'psd-template download counter works (alias)');
+  r = await request(port, 'POST', '/api/templates/99999/download');
+  ok(r.status === 404, 'download on unknown template -> 404');
+
+  // 12) reset to seed (requires owner)
   r = await request(port, 'POST', '/api/auth/reset-public', undefined, token);
   ok(r.status === 200 && r.body.data.ok === true, 'reset to seed (authed)');
   r = await request(port, 'GET', '/api/bookings');

@@ -84,6 +84,7 @@ YC.app.fld = {
       (o.placeholder ? ' placeholder="' + YC.esc(o.placeholder) + '"' : '') +
       (o.required ? ' required' : '') + (o.step ? ' step="' + o.step + '"' : '') + (o.min != null ? ' min="' + o.min + '"' : '') +
       (o.max != null ? ' max="' + o.max + '"' : '') + '>' +
+      (o.note ? '<div class="field-note">' + YC.esc(o.note) + '</div>' : '') +
       '<div class="field-error">' + YC.esc(o.errorMsg || 'This field is required.') + '</div></div>';
   },
   area: function(o){
@@ -101,6 +102,7 @@ YC.app.fld = {
     }).join('');
     return '<div class="field"><label>' + YC.esc(o.label || '') + (o.required ? ' <span class="req">*</span>' : '') + '</label>' +
       '<select name="' + o.name + '"' + (o.required ? ' required' : '') + '>' + opts + '</select>' +
+      (o.note ? '<div class="field-note">' + YC.esc(o.note) + '</div>' : '') +
       '<div class="field-error">' + YC.esc(o.errorMsg || 'Please choose an option.') + '</div></div>';
   },
   sw: function(o){
@@ -517,6 +519,46 @@ YC.app.pages_dashboard = function(){
 
   var today = new Date();
 
+  /* ---- welcome strip: greeting + role + quick chip shortcuts ---- */
+  var ws = YC.app.$('#welcomeStrip');
+  if(ws){
+    var me = YC.auth.user();
+    function greeting(){
+      var h = new Date().getHours();
+      return h < 12 ? 'Good morning' : h < 18 ? 'Good afternoon' : 'Good evening';
+    }
+    var dateStr = today.toLocaleDateString('en', { weekday: 'long', month: 'long', day: 'numeric' });
+    var chips = [
+      { page: 'bookings', label: 'Bookings' },
+      { page: 'promotions', label: 'Promotions' },
+      { page: 'analytics', label: 'Analytics' },
+      { page: 'users', label: 'Users' }
+    ].filter(function(c){ return YC.admin.canView(c.page); }).map(function(c){
+      return '<a class="welcome-chip" href="' + c.page + '.html">' + YC.esc(c.label) + '</a>';
+    }).join('');
+    ws.innerHTML =
+      '<span class="ws-avatar">' + YC.avatar(me ? me.name : 'Staff') + '</span>' +
+      '<div class="ws-main">' +
+        '<div class="ws-title">' + greeting() + ', ' + YC.esc(me ? String(me.name || 'there').split(/\s+/)[0] : 'there') + '.</div>' +
+        '<div class="ws-sub">' + dateStr + ' &middot; Signed in as ' + YC.esc(YC.admin.roleLabel(me && me.role)) + '</div>' +
+      '</div>' +
+      '<div class="ws-chips">' + chips + '</div>';
+  }
+
+  /* role-gate the intro buttons + reset (only owner may reset data) */
+  var introActions = YC.app.$('#introActions');
+  if(introActions){
+    introActions.querySelectorAll('[data-gated]').forEach(function(el){
+      var page = el.getAttribute('data-gated');
+      if(!YC.admin.canView(page)) el.style.display = 'none';
+    });
+  }
+  var resetBtn = YC.app.$('#resetDataBtn');
+  if(resetBtn){
+    var me2 = YC.auth.user();
+    if(!(me2 && String(me2.role) === 'owner')) resetBtn.style.display = 'none';
+  }
+
   function monthSpan(offset){
     var first = new Date(today.getFullYear(), today.getMonth() - offset, 1);
     var last = new Date(first.getFullYear(), first.getMonth() + 1, 0);
@@ -637,19 +679,20 @@ YC.app.pages_dashboard = function(){
     ], { label: 'Bookings' });
   }
 
-  /* ---- Quick actions ---- */
+  /* ---- Quick actions (role-aware) ---- */
   var qa = YC.app.$('#quickActions');
   if(qa){
     var actions = [
-      { href: 'bookings.html?new=1', ico: 'plus', t: 'New booking', s: 'Capture a new client request' },
-      { href: 'bookings.html', ico: 'calendar', t: 'Pending approvals', s: statuses.pending + ' need your attention' },
-      { href: 'ai-prompts.html', ico: 'prompts', t: 'Add AI prompt', s: 'Publish a new prompt' },
-      { href: 'templates.html', ico: 'templates', t: 'Add template', s: 'Upload a new pack' },
-      { href: 'customers.html', ico: 'customers', t: 'Customers', s: activeCustomers + ' active' },
-      { href: 'promotions.html', ico: 'promotions', t: 'Promotions', s: activePro + ' live' },
-      { href: 'analytics.html', ico: 'analytics', t: 'Analytics', s: 'Full report' },
-      { href: 'settings.html', ico: 'settings', t: 'Settings', s: 'Site & branding' }
-    ];
+      { href: 'bookings.html?new=1', ico: 'plus', t: 'New booking', s: 'Capture a new client request', page: 'bookings' },
+      { href: 'bookings.html', ico: 'calendar', t: 'Pending approvals', s: statuses.pending + ' need your attention', page: 'bookings' },
+      { href: 'ai-prompts.html', ico: 'prompts', t: 'Add AI prompt', s: 'Publish a new prompt', page: 'ai-prompts' },
+      { href: 'templates.html', ico: 'templates', t: 'Add template', s: 'Upload a new pack', page: 'templates' },
+      { href: 'customers.html', ico: 'customers', t: 'Customers', s: activeCustomers + ' active', page: 'customers' },
+      { href: 'promotions.html', ico: 'promotions', t: 'Promotions', s: activePro + ' live', page: 'promotions' },
+      { href: 'analytics.html', ico: 'analytics', t: 'Analytics', s: 'Full report', page: 'analytics' },
+      { href: 'settings.html', ico: 'settings', t: 'Settings', s: 'Site & branding', page: 'settings' },
+      { href: 'users.html', ico: 'users', t: 'Team', s: 'Manage staff access', page: 'users' }
+    ].filter(function(a){ return YC.admin.canView(a.page); });
     qa.innerHTML = actions.map(function(a){
       return '<a class="qa-card" href="' + a.href + '"><span class="qa-ico">' + YC.icons.get(a.ico) + '</span><span class="qa-t">' + a.t + '</span><span class="qa-s">' + a.s + '</span></a>';
     }).join('');
@@ -2069,6 +2112,12 @@ YC.app.pages_categories = function(){
    ============================================================ */
 YC.app.pages_analytics = function(){
   var bookings = YC.services.bookings.all();
+
+  /* hide links to areas the current role cannot open */
+  document.querySelectorAll('[data-gated]').forEach(function(el){
+    if(!YC.admin.canView(el.getAttribute('data-gated'))) el.style.display = 'none';
+  });
+
   var statuses = { pending: 0, confirmed: 0, cancelled: 0, completed: 0 };
   bookings.forEach(function(b){ statuses[b.status] = (statuses[b.status] || 0) + 1; });
   var totalViews = YC.services.prompts.all().reduce(function(s, p){ return s + (p.views || 0); }, 0);
@@ -2132,6 +2181,31 @@ YC.app.pages_analytics = function(){
     YC.charts.hbar(r2, tops.map(function(t, i){
       return { rank: i + 1, label: t.title, value: t.downloads || 0 };
     }));
+  }
+
+  /* ---- live snapshot mini-KPIs ---- */
+  var snap = YC.app.$('#snapshotStats');
+  if(snap){
+    var PRICE = { 'video-production': 450, 'motion-design': 350, 'graphic-design': 180, 'marketing': 300, 'full-creative': 900 };
+    function amount(b){ return ((PRICE[b.serviceId] || 250) * (b.people || 1)); }
+    var rev = bookings.filter(function(b){ return b.status === 'confirmed' || b.status === 'completed'; }).reduce(function(s, b){ return s + amount(b); }, 0);
+    var completed = statuses.completed;
+    var bySvcRank = YC.data.services.map(function(s){
+      return { id: s.id, short: s.short, count: bookings.filter(function(b){ return b.serviceId === s.id; }).length };
+    }).sort(function(a, b){ return b.count - a.count; })[0];
+    var avgService = bookings.length ? Math.round(rev / bookings.length) : 0;
+    var convRate = bookings.length ? Math.round((statuses.confirmed + statuses.completed) / bookings.length * 100) : 0;
+    var top = bySvcRank && bySvcRank.count ? bySvcRank.short : '—';
+    snap.innerHTML = [
+      { ic: 'analytics', v: YC.esc('$' + YC.abbrNum(rev)), l: 'Est. revenue' },
+      { ic: 'bookings', v: bookings.length, l: 'Total bookings' },
+      { ic: 'check', v: convRate + '%', l: 'Confirmed rate' },
+      { ic: 'layers', v: YC.esc('$' + avgService), l: 'Avg booking value' },
+      { ic: 'star', v: top, l: 'Top service' },
+      { ic: 'users', v: YC.services.customers.all().length, l: 'Customers' }
+    ].map(function(k){
+      return '<div class="snap-item"><span class="snap-ico">' + YC.icons.get(k.ic) + '</span><span class="snap-v">' + k.v + '</span><span class="snap-l">' + k.l + '</span></div>';
+    }).join('');
   }
 };
 
@@ -2241,7 +2315,7 @@ YC.app.pages_settings = function(){
    USERS (admin accounts)
    ============================================================ */
 YC.app.pages_users = function(){
-  var svc = YC.services.admins;
+  var svc = YC.services.users;
 
   function activeCount(){
     return svc.all().filter(function(a){ return String(a.status) !== 'disabled'; }).length;
@@ -2250,14 +2324,23 @@ YC.app.pages_users = function(){
     var u = YC.auth.user();
     return !!u && String(u.email).toLowerCase() === String(row.email).toLowerCase();
   }
+  function isOwner(){
+    var u = YC.auth.user();
+    return !!u && String(u.role) === 'owner';
+  }
+  function roleFmt(r){
+    return '<span class="pill pill-role role-' + YC.admin.roleTone(r) + '">' + YC.esc(YC.admin.roleLabel(r) || r) + '</span>';
+  }
 
   function stats(){
     var all = svc.all();
+    var distinctRoles = {};
+    all.forEach(function(a){ distinctRoles[String(a.role || '')] = true; });
     YC.app.renderStats([
       { icon: 'users', num: all.length, label: 'Total users' },
       { icon: 'check', num: activeCount(), label: 'Active' },
       { icon: 'close', num: all.filter(function(a){ return String(a.status) === 'disabled'; }).length, label: 'Disabled' },
-      { icon: 'star', num: all.filter(function(a){ return a.role === 'owner'; }).length, label: 'Owners' }
+      { icon: 'star', num: Object.keys(distinctRoles).length, label: 'Roles' }
     ]);
   }
   stats();
@@ -2269,15 +2352,13 @@ YC.app.pages_users = function(){
     sortKey: 'createdAt',
     data: function(){ return svc.all(); },
     columns: [
-      { title: 'Admin', key: 'name',
+      { title: 'Staff', key: 'name',
         render: function(r){
           return '<span style="display:inline-flex;align-items:center;gap:10px"><span class="list-avatar">' + YC.avatar(r.name) + '</span>' +
             '<span>' + YC.esc(r.name) + '<div class="cell-sub">' + YC.esc(r.email) + '</div></span></span>';
         } },
       { title: 'Role', key: 'role',
-        render: function(r){
-          return '<span class="pill ' + (r.role === 'owner' ? 'active' : 'neutral') + '">' + YC.esc(r.role) + '</span>';
-        } },
+        render: function(r){ return roleFmt(r.role); } },
       { title: 'Status', key: 'status',
         render: function(r){ return YC.pill(r.status); } },
       { title: 'Added', key: 'createdAt',
@@ -2293,6 +2374,7 @@ YC.app.pages_users = function(){
         } }
     ],
     onAction: function(act, id, row){
+      if(!isOwner()){ YC.toast.error('Only the owner can manage staff accounts.'); return; }
       if(act === 'edit'){ editUser(row); return; }
       if(act === 'enable'){
         svc.update(id, { status: 'active' });
@@ -2327,6 +2409,13 @@ YC.app.pages_users = function(){
   function editUser(row){
     var editing = !!row;
     var v = function(k){ return editing && row[k] != null ? row[k] : ''; };
+    var roles = [
+      { value: 'owner', label: 'Owner - everything, incl. staff & settings' },
+      { value: 'webmaster', label: 'Webmaster - website listings & content' },
+      { value: 'marketing', label: 'Marketing - promotions & categories' },
+      { value: 'callcenter', label: 'Call Center - customers & bookings' },
+      { value: 'comptable', label: 'Comptable - analytics (read-only)' }
+    ];
     YC.app.openForm({
       title: editing ? 'Edit user' : 'Add user',
       eyebrow: 'Users',
@@ -2335,7 +2424,9 @@ YC.app.pages_users = function(){
         { t: 'text', name: 'email', label: 'Email address', value: v('email'), type: 'email', required: true },
         { t: 'text', name: 'password', label: editing ? 'Password (blank to keep current)' : 'Password',
           value: '', type: 'password', placeholder: editing ? '••••••••' : 'Set a password', required: !editing },
-        { t: 'select', name: 'role', label: 'Role', value: v('role') || 'admin', options: ['admin', 'owner'] },
+        { t: 'select', name: 'role', label: 'Role', value: v('role') || 'webmaster',
+          options: roles,
+          note: 'Users sign in with their email + this password. Roles control which areas they can open and edit.' },
         { t: 'select', name: 'status', label: 'Status', value: v('status') || 'active', options: ['active', 'disabled'] }
       ],
       onSubmit: function(data, form){
@@ -2352,11 +2443,17 @@ YC.app.pages_users = function(){
             YC.toast.error('You cannot disable your own account.');
             return;
           }
+          if(isSelf(row) && data.role !== v('role') && data.role !== 'owner'){
+            YC.toast.error('You cannot remove your own owner access.');
+            return;
+          }
           var patch = { name: data.name, email: data.email, role: data.role, status: data.status };
           if(String(data.password || '').trim() !== '') patch.password = data.password;
           svc.update(row.id, patch);
           YC.toast.success('User updated.');
         }else{
+          data.id = data.id || YC.uid();
+          data.createdAt = data.createdAt || new Date().toISOString();
           svc.create(data);
           YC.toast.success('User added - they can now sign in.');
         }

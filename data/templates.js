@@ -23,7 +23,7 @@ YC.data.templates = [
     compatible: ["Photoshop"],
     featured: true,
     published: true,
-    downloads: 1820,
+    downloads: 0,
     createdAt: "2026-06-10T09:00:00Z"
   },
   {
@@ -44,7 +44,7 @@ YC.data.templates = [
     compatible: ["Premiere Pro", "DaVinci Resolve", "Final Cut"],
     featured: true,
     published: true,
-    downloads: 2440,
+    downloads: 0,
     createdAt: "2026-06-12T10:00:00Z"
   },
   {
@@ -65,7 +65,7 @@ YC.data.templates = [
     compatible: ["Canva"],
     featured: false,
     published: true,
-    downloads: 986,
+    downloads: 0,
     createdAt: "2026-06-20T12:00:00Z"
   },
   {
@@ -86,7 +86,7 @@ YC.data.templates = [
     compatible: ["Figma"],
     featured: false,
     published: true,
-    downloads: 754,
+    downloads: 0,
     createdAt: "2026-06-25T14:00:00Z"
   },
   {
@@ -107,7 +107,7 @@ YC.data.templates = [
     compatible: ["After Effects"],
     featured: true,
     published: true,
-    downloads: 1633,
+    downloads: 0,
     createdAt: "2026-07-02T09:00:00Z"
   },
   {
@@ -128,7 +128,7 @@ YC.data.templates = [
     compatible: ["Premiere Pro"],
     featured: false,
     published: true,
-    downloads: 1210,
+    downloads: 0,
     createdAt: "2026-07-09T11:00:00Z"
   },
   {
@@ -149,7 +149,7 @@ YC.data.templates = [
     compatible: ["CapCut"],
     featured: false,
     published: true,
-    downloads: 3075,
+    downloads: 0,
     createdAt: "2026-07-15T15:00:00Z"
   },
   {
@@ -170,7 +170,7 @@ YC.data.templates = [
     compatible: ["PowerPoint", "Google Slides"],
     featured: false,
     published: true,
-    downloads: 871,
+    downloads: 0,
     createdAt: "2026-07-22T10:00:00Z"
   },
   {
@@ -191,7 +191,7 @@ YC.data.templates = [
     compatible: ["Illustrator"],
     featured: false,
     published: true,
-    downloads: 643,
+    downloads: 0,
     createdAt: "2026-07-30T09:30:00Z"
   },
   {
@@ -212,7 +212,7 @@ YC.data.templates = [
     compatible: ["All editors"],
     featured: true,
     published: true,
-    downloads: 4120,
+    downloads: 0,
     createdAt: "2026-08-05T13:00:00Z"
   },
   {
@@ -233,7 +233,7 @@ YC.data.templates = [
     compatible: ["All NLEs"],
     featured: false,
     published: false,
-    downloads: 402,
+    downloads: 0,
     createdAt: "2026-08-12T10:00:00Z"
   },
   {
@@ -252,7 +252,7 @@ YC.data.templates = [
     compatible: ["All editors"],
     featured: false,
     published: true,
-    downloads: 788,
+    downloads: 0,
     createdAt: "2026-08-20T09:00:00Z"
   }
 ];
