@@ -1,77 +1,107 @@
 /* ============================================================
    YallahClick - Promo popup card styles (standalone)
-   Used by public pages that do NOT load css/shared.css (the
-   homepage). Defines its own dark theme tokens scoped to the
-   overlay so the popup renders identically to shared.css pages.
+   Single source of truth for all promo popup styling. Linked on
+   every page that runs the promo engine. Self-contained: defines
+   its own dark theme tokens scoped to the overlay so it renders
+   identically regardless of whether shared.css is loaded.
+   When a promo has an image it is applied as a full-bleed card
+   background (via .has-image) under a readability scrim.
    ============================================================ */
 
 .promo-popup-overlay{
-  --scrim-bg:rgba(0,0,0,.6);
+  --scrim-bg:rgba(0,0,0,.62);
+  --black:#070708;
   --black-soft:#0e0e10;
-  --card-border:rgba(255,255,255,.1);
+  --card-border:rgba(255,255,255,.12);
   --white:#f8f7f4;
-  --gray:#98979d;
-  --line:rgba(255,255,255,.09);
+  --gray:#a2a0a7;
+  --line:rgba(255,255,255,.1);
   --red:#ff3344;
   --red-dark:#d81427;
-  --red-glow:rgba(255,51,68,.28);
-  --form-input-bg:#0e0e10;
-  --glass:rgba(255,255,255,.025);
-  --filter-active-bg:rgba(255,51,68,.1);
-  --shadow-pop:0 30px 90px -20px rgba(0,0,0,.7);
+  --red-glow:rgba(255,51,68,.3);
+  --form-input-bg:rgba(255,255,255,.04);
+  --glass:rgba(255,255,255,.03);
+  --filter-active-bg:rgba(255,51,68,.12);
+  --shadow-pop:0 50px 140px -30px rgba(0,0,0,.85);
 
   position:fixed;inset:0;z-index:9000;
   background:var(--scrim-bg);
-  -webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);
+  -webkit-backdrop-filter:blur(12px) saturate(120%);backdrop-filter:blur(12px) saturate(120%);
   display:flex;align-items:center;justify-content:center;padding:20px;
   opacity:0;pointer-events:none;transition:opacity .4s ease;
 }
 .promo-popup-overlay.show{opacity:1;pointer-events:auto;}
 .promo-popup-card{
-  width:100%;max-width:420px;
-  background:var(--black-soft);
-  border:1px solid var(--card-border);border-radius:24px;
-  box-shadow:var(--shadow-pop), inset 0 1px 0 rgba(255,255,255,.05);
+  width:100%;max-width:460px;
+  background-color:var(--black-soft);
+  background-image:
+    radial-gradient(120% 85% at 100% 0%, rgba(255,51,68,.18) 0%, transparent 52%),
+    radial-gradient(110% 80% at 0% 100%, rgba(255,138,116,.12) 0%, transparent 55%),
+    linear-gradient(165deg,#16161a 0%,var(--black-soft) 55%,#0a0a0c 100%);
+  border:1px solid var(--card-border);border-radius:28px;
+  box-shadow:var(--shadow-pop), inset 0 1px 0 rgba(255,255,255,.09);
   position:relative;overflow:hidden;
-  transform:scale(.86) translateY(30px);
-  transition:transform .5s cubic-bezier(.22,1,.36,1);
+  transform:scale(.88) translateY(28px);
+  transition:transform .55s cubic-bezier(.22,1,.36,1);
   max-height:calc(100vh - 40px);
+}
+.promo-popup-card.has-image{
+  background-size:cover;background-position:center;background-repeat:no-repeat;
 }
 .promo-popup-overlay.show .promo-popup-card{transform:scale(1) translateY(0);}
 .promo-popup-card::before{
-  content:"";position:absolute;top:-80px;right:-80px;width:280px;height:280px;
+  content:"";position:absolute;top:-90px;right:-90px;width:320px;height:320px;
   background:radial-gradient(circle,var(--red-glow),transparent 70%);pointer-events:none;
 }
-.promo-popup-inner{padding:34px 30px 28px;position:relative;overflow-y:auto;}
+.promo-popup-card::after{
+  content:"";position:absolute;left:-70px;bottom:-70px;width:240px;height:240px;
+  background:radial-gradient(circle,rgba(255,138,116,.12),transparent 70%);pointer-events:none;
+  border:none !important;
+}
+.promo-popup-inner{padding:38px 34px 30px;position:relative;overflow-y:auto;}
 .promo-close{
-  position:absolute;top:16px;right:16px;z-index:5;
-  width:32px;height:32px;border-radius:50%;border:1px solid var(--line);
-  background:var(--glass);color:var(--gray);cursor:pointer;
-  display:flex;align-items:center;justify-content:center;font-size:15px;
-  transition:all .2s;
+  position:absolute;top:16px;right:16px;z-index:6;
+  width:36px;height:36px;border-radius:50%;
+  border:1px solid rgba(255,255,255,.16);
+  background:rgba(10,10,12,.55);
+  -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);
+  color:var(--white);cursor:pointer;
+  display:flex;align-items:center;justify-content:center;font-size:18px;line-height:1;
+  transition:all .22s;
 }
-.promo-close:hover{border-color:var(--red);background:var(--red);color:#fff;transform:rotate(90deg);}
+.promo-close:hover{border-color:var(--red);background:var(--red);color:#fff;transform:rotate(90deg) scale(1.05);}
 .promo-tag{
-  display:inline-flex;align-items:center;gap:7px;
-  font:700 10px/1 'JetBrains Mono',monospace;letter-spacing:.12em;text-transform:uppercase;
-  color:var(--red);border:1px solid rgba(255,51,68,.3);
-  background:rgba(255,51,68,.08);padding:7px 12px;border-radius:99px;margin-bottom:18px;
+  display:inline-flex;align-items:center;gap:8px;
+  font:700 10px/1 'JetBrains Mono',monospace;letter-spacing:.14em;text-transform:uppercase;
+  color:#ff6b78;border:1px solid rgba(255,51,68,.4);
+  background:rgba(255,51,68,.12);padding:8px 13px;border-radius:99px;margin-bottom:20px;
 }
-.promo-service{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--gray);text-transform:uppercase;letter-spacing:.1em;margin-bottom:8px;}
+.promo-tag::before{
+  content:"";width:6px;height:6px;border-radius:50%;background:var(--red);
+  box-shadow:0 0 0 0 rgba(255,51,68,.55);animation:promoPulse 1.8s infinite;
+}
+@keyframes promoPulse{
+  0%{box-shadow:0 0 0 0 rgba(255,51,68,.45);}
+  70%{box-shadow:0 0 0 7px rgba(255,51,68,0);}
+  100%{box-shadow:0 0 0 0 rgba(255,51,68,0);}
+}
+.promo-service{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--gray);text-transform:uppercase;letter-spacing:.12em;margin-bottom:9px;}
 .promo-discount{
-  font-family:'Anton',sans-serif;font-size:44px;text-transform:uppercase;line-height:1;
+  font-family:'Anton',sans-serif;font-size:52px;text-transform:uppercase;line-height:1;
   background:linear-gradient(110deg,var(--red) 0%,#ff8a74 55%,var(--red) 100%);
   -webkit-background-clip:text;background-clip:text;
   -webkit-text-fill-color:transparent;
-  margin-bottom:12px;
+  margin-bottom:14px;
+  filter:drop-shadow(0 6px 24px rgba(255,51,68,.28));
 }
-.promo-desc{font-size:14px;color:var(--gray);line-height:1.6;margin-bottom:20px;}
+.promo-desc{font-size:14px;color:var(--gray);line-height:1.7;margin-bottom:22px;}
 .promo-code-box{
   display:flex;align-items:center;gap:10px;
   background:var(--form-input-bg);border:1px solid var(--line);
-  border-radius:12px;padding:12px 14px;margin-bottom:18px;
+  border-radius:14px;padding:13px 15px;margin-bottom:18px;
+  -webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);
 }
-.promo-code-label{font:600 10px/1 'JetBrains Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:var(--gray);}
+.promo-code-label{font:600 10px/1 'JetBrains Mono',monospace;letter-spacing:.1em;text-transform:uppercase;color:var(--gray);}
 .promo-code{
   font-family:'JetBrains Mono',monospace;font-weight:700;font-size:16px;letter-spacing:.14em;
   color:var(--white);
@@ -81,47 +111,34 @@
   color:var(--red);background:none;border:none;cursor:pointer;
   display:inline-flex;align-items:center;gap:6px;transition:opacity .2s;
 }
-.promo-copy:hover{opacity:.7;}
+.promo-copy:hover{opacity:.75;}
 .promo-cta{
-  width:100%;padding:16px;font-size:14px;
-  background:var(--red);color:#fff;
-  font-family:'Inter',sans-serif;font-weight:800;letter-spacing:.05em;text-transform:uppercase;
-  border-radius:11px;border:none;cursor:pointer;
+  width:100%;padding:17px;font-size:14px;
+  background:linear-gradient(135deg,#ff5264 0%,#ff1f32 100%);color:#fff;
+  font-family:'Inter',sans-serif;font-weight:800;letter-spacing:.06em;text-transform:uppercase;
+  border-radius:14px;border:none;cursor:pointer;
   display:inline-flex;align-items:center;justify-content:center;gap:9px;text-decoration:none;
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.25),0 9px 24px rgba(255,51,68,.18);
-  transition:background .2s, transform .2s, box-shadow .2s;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.28),0 14px 34px -8px rgba(255,51,68,.55);
+  transition:filter .2s, transform .2s, box-shadow .2s;
 }
-.promo-cta:hover{background:var(--red-dark);transform:translateY(-2px);box-shadow:0 12px 30px rgba(255,51,68,.3);}
-.promo-countdown{display:flex;align-items:center;justify-content:center;gap:8px;margin-top:18px;}
-.promo-countdown .cd-title{font:600 10px/1 'JetBrains Mono',monospace;letter-spacing:.1em;text-transform:uppercase;color:var(--gray);margin-right:4px;}
+.promo-cta:hover{filter:brightness(1.08);transform:translateY(-2px);box-shadow:inset 0 1px 0 rgba(255,255,255,.28),0 20px 44px -10px rgba(255,51,68,.65);}
+.promo-countdown{display:flex;align-items:center;justify-content:center;gap:8px;margin-top:20px;}
+.promo-countdown .cd-title{font:600 10px/1 'JetBrains Mono',monospace;letter-spacing:.12em;text-transform:uppercase;color:var(--gray);margin-right:4px;}
 .promo-countdown .cd-cell{
-  font-family:'JetBrains Mono',monospace;font-weight:700;font-size:18px;
-  background:var(--form-input-bg);border:1px solid var(--line);border-radius:9px;
-  padding:8px 10px;min-width:42px;text-align:center;
+  font-family:'JetBrains Mono',monospace;font-weight:700;font-size:19px;color:var(--white);
+  background:rgba(10,10,12,.6);border:1px solid var(--line);border-radius:10px;
+  padding:9px 11px;min-width:44px;text-align:center;
+  -webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);
 }
 .promo-countdown .cd-sep{color:var(--red);font-weight:700;}
 .promo-popup-overlay.position-bottom-right{align-items:flex-end;justify-content:flex-end;padding:28px;}
-.promo-popup-overlay.position-bottom-right .promo-popup-card{max-width:390px;}
+.promo-popup-overlay.position-bottom-right .promo-popup-card{max-width:410px;}
 .promo-popup-overlay.position-bottom-center{align-items:flex-end;justify-content:center;padding:28px;}
-.promo-popup-overlay.position-bottom-center .promo-popup-card{max-width:390px;}
-
-/* banner image (optional) - full-bleed across the card top */
-.promo-popup-inner > .promo-banner:first-child{
-  height:clamp(120px,25vh,190px);
-  overflow:hidden;
-  margin:-34px -30px 22px;
-  border-radius:24px 24px 0 0;
-}
-.promo-popup-inner > .promo-banner:first-child img{
-  width:100%;height:100%;object-fit:cover;display:block;
-}
+.promo-popup-overlay.position-bottom-center .promo-popup-card{max-width:410px;}
 
 @media(max-width:640px){
-  .promo-close{top:12px;right:12px;width:30px;height:30px;}
-  .promo-popup-inner{padding:28px 22px 24px;}
-  .promo-discount{font-size:36px;}
-  .promo-popup-inner > .promo-banner:first-child{
-    margin:-28px -22px 18px;
-    border-radius:24px 24px 0 0;
-  }
+  .promo-close{top:12px;right:12px;width:34px;height:34px;}
+  .promo-popup-inner{padding:30px 22px 24px;}
+  .promo-discount{font-size:40px;}
+  .promo-popup-card{border-radius:24px;}
 }

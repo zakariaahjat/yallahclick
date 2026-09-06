@@ -103,16 +103,11 @@ YC.PromoPopup = (function(){
     var card = div('promo-popup-card' + (p.image ? ' has-image' : ''));
     var inner = div('promo-popup-inner');
 
-    /* optional banner image */
-    var imgWrap = null;
+    /* optional promo image becomes a full-bleed card background */
     if(p.image){
-      imgWrap = div('promo-banner');
-      var img = document.createElement('img');
-      img.src = p.image;
-      img.alt = p.title || 'Promotion';
-      img.addEventListener('error', function(){ imgWrap && imgWrap.remove(); });
-      imgWrap.appendChild(img);
-      inner.appendChild(imgWrap);
+      card.style.backgroundImage =
+        'linear-gradient(180deg, rgba(8,8,10,.45) 0%, rgba(8,8,10,.66) 46%, rgba(8,8,10,.94) 100%),' +
+        'url("' + p.image + '")';
     }
 
     /* tag + service + discount */
