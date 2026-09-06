@@ -275,6 +275,15 @@ async function main(){
   r = await request(port, 'POST', '/api/templates/99999/download');
   ok(r.status === 404, 'download on unknown template -> 404');
 
+  // 11g) email notifications: digest is callable & safe; test email is
+  // owner-only and 501s when SMTP is not configured (test env)
+  r = await request(port, 'GET', '/api/cron/digest');
+  ok(r.status === 200 && r.body.sent === false, 'digest endpoint callable without mail config');
+  r = await request(port, 'POST', '/api/notify/test');
+  ok(r.status === 401, 'test email requires login');
+  r = await request(port, 'POST', '/api/notify/test', {}, token);
+  ok(r.status === 501 && r.body.error === 'mail_not_configured', 'test email 501 without SMTP config');
+
   // 12) reset to seed (requires owner)
   r = await request(port, 'POST', '/api/auth/reset-public', undefined, token);
   ok(r.status === 200 && r.body.data.ok === true, 'reset to seed (authed)');

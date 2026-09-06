@@ -15,6 +15,7 @@
 const express = require('express');
 const db = require('../db');
 const { requireRole } = require('./middleware');
+const mailer = require('../mailer');
 
 /* ---- server-side role permissions --------------------------
    Which roles may WRITE (POST / PUT / PATCH / DELETE) each
@@ -236,6 +237,10 @@ function routerFor(name){
       // serverless instances never report success for a record that wasn't
       // yet written to the durable store.
       await db.persist(name);
+      if (name === 'bookings' && mailer.configured()){
+        // Instant notification, never block or fail the booking.
+        mailer.notifyBooking(rec).then(null, () => {});
+      }
       res.status(201).json({ data: rec });
     }catch(e){ next(e); }
   });
@@ -270,6 +275,9 @@ function routerFor(name){
           patch[field] = (Number(item[field]) || 0) + 1;
           const rec = db.update(name, req.params.id, patch);
           await db.persist(name);
+          if (name !== 'prompts' || action === 'view'){
+            mailer.recordActivity(name, action, item.title || (item.id + ' (' + name + ')')).then(null, () => {});
+          }
           res.json({ data: { id: req.params.id, [field]: rec && rec[field] } });
         }catch(e){ next(e); }
       });

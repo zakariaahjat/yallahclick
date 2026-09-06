@@ -79,6 +79,9 @@ for (const name of db.collections()){
   if (alias && alias !== name) api.use('/' + alias, router);
 }
 
+/* ---------- email notifications (digest cron + test) ---------- */
+api.use(require('./routes/notify'));
+
 /* ---------- file upload (multipart/form-data, single file) ---------- */
 api.post('/upload', requireAuth, (req, res, next) => {
   try{
