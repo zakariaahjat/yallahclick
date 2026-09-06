@@ -136,7 +136,7 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
    cold starts). Content is stored base64 in KV, chunked so each
    per-key payload stays well under the REST API's ~1 MB limit. --- */
 const ASSET_CHUNK_BYTES = 512 * 1024;      // 512 KB raw -> ~683 KB base64
-const ASSET_MAX_BYTES = 3 * 1024 * 1024;   // ~3 MB (Vercel hobby req limit)
+const ASSET_MAX_BYTES = 4 * 1024 * 1024;   // ~4 MB (Vercel function request ceiling)
 
 function assetKeys(name){
   return {

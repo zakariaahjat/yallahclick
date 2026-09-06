@@ -134,8 +134,17 @@ YC.app.fld = {
           '<span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg></span>Upload</button>' +
       '</div>' +
       '<input type="file" style="display:none" accept="' + (o.accept || 'image/*,.mp4,.webm,.zip,.pdf') + '">' +
+      (o.note ? '<div class="field-note"><span class="ic">' + YC.icons.get('download') + '</span> ' + YC.esc(o.note) + '</div>' : '') +
       '<div class="field-error">' + YC.esc(o.errorMsg || 'Provide a URL or upload a file.') + '</div></div>';
   }
+};
+
+/* True when an item carries an actual downloadable URL (public link or a
+   /uploads/... path). Bare demo filenames never count, so nothing on the
+   live site triggers a broken download. */
+YC.app.hasRealFile = function(x){
+  var f = x && (x.file || x.url);
+  return !!f && /^(https?:|data:|\/)/i.test(f);
 };
 
 YC.app.parseForm = function(form){
@@ -1271,7 +1280,8 @@ YC.app.pages_prompts = function(){
         { t: 'upload', name: 'preview', label: 'Image (upload a file or paste a link)', value: v('preview'), folder: 'prompts', accept: 'image/*' },
         { t: 'text', name: 'previewEmoji', label: 'Fallback emoji', value: v('previewEmoji') || '✨' },
         { t: 'text', name: 'previewColor', label: 'Fallback color', value: v('previewColor') || '#101216', type: 'color' },
-        { t: 'upload', name: 'file', label: 'Download file (any file type: zip, rar, mp4, pdf...)', value: v('file'), folder: 'prompts', accept: '*/*' },
+        { t: 'upload', name: 'file', label: 'Download file (any type: zip, rar, mp4, pdf...)', value: v('file'), folder: 'prompts', accept: '*/*',
+          note: 'Small files upload directly. Bigger files: paste a public download link (Google Drive / Dropbox, "Anyone with the link"). Leave empty to hide downloading.' },
         { t: 'text', name: 'watchUrl', label: 'Watch link (YouTube video, Vimeo or a .mp4 URL)', value: v('watchUrl'), placeholder: 'https://www.youtube.com/watch?v=...' },
         { t: 'sw', name: 'featured', label: 'Featured on homepage', value: v('featured') },
         { t: 'sw', name: 'published', label: 'Published', value: editing ? v('published') : true }
@@ -1452,7 +1462,10 @@ function templatesPage(svc, cfg){
     ],
     onAction: function(act, id, row){
       if(act === 'view') viewTemplate(row);
-      else if(act === 'download'){ svc.incrementDownloads(id); YC.downloadFile(row); YC.toast.success('Downloading file...'); table.refresh(); stats(); }
+      else if(act === 'download'){
+        if(!YC.app.hasRealFile(row)){ YC.toast.info('No file attached yet. Edit it and add a download file or a public link first.'); return; }
+        svc.incrementDownloads(id); YC.downloadFile(row); YC.toast.success('Downloading file...'); table.refresh(); stats();
+      }
       else if(act === 'edit') editTemplate(row);
       else if(act === 'delete'){
         YC.app.confirm('Delete this template?', function(){
@@ -1510,8 +1523,10 @@ function templatesPage(svc, cfg){
       );
     }
     fields.push(
-      { t: 'upload', name: 'file', label: 'Download file (any file type: zip, rar, mp4, pdf...)', value: v('file'), folder: cfg.folder || 'content', accept: '*/*' },
-      { t: 'text', name: 'watchUrl', label: 'Watch link (YouTube video, Vimeo or a .mp4 URL)', value: v('watchUrl'), placeholder: 'https://www.youtube.com/watch?v=...' },
+      { t: 'upload', name: 'file', label: 'Download file (any type: zip, rar, mp4, pdf, psd...)', value: v('file'), folder: cfg.folder || 'content', accept: '*/*',
+        note: 'Small files (under ~4 MB) can be uploaded directly. Bigger files: paste a public download link (Google Drive / Dropbox set to "Anyone with the link", or any direct file URL). Leave empty to hide the Download button on the site.' },
+      { t: 'text', name: 'watchUrl', label: 'Watch link (YouTube video, Vimeo or a .mp4 URL)', value: v('watchUrl'), placeholder: 'https://www.youtube.com/watch?v=...',
+        note: 'Leave empty to hide the Watch button until you add a video link.' },
       { t: 'text', name: 'fileSize', label: 'File size', value: v('fileSize'), placeholder: '24 MB' },
       isVideo || isThumb ? { t: 'text', name: 'software', label: 'Software', value: v('software'), required: true } : { t: 'text', name: 'fileSizeFake', label: '', value: '' },
       { t: 'sw', name: 'featured', label: 'Featured', value: v('featured') },
@@ -1540,7 +1555,6 @@ function templatesPage(svc, cfg){
           YC.toast.success('Template updated.');
         }else{
           data.downloads = 0;
-          data.file = data.file || YC.slugify(data.title) + '.zip';
           svc.create(data);
           YC.toast.success('Template created.');
         }
@@ -1569,12 +1583,12 @@ function templatesPage(svc, cfg){
           (row.dimensions ? '<div class="kv"><span>Dimensions</span><b>' + YC.esc(row.dimensions) + '</b></div>' : '') +
           '<div class="kv"><span>Software</span><b>' + YC.esc(row.software || '-') + '</b></div>' +
           '<div class="kv"><span>Version</span><b>' + YC.esc(row.version || '-') + '</b></div>' +
-          '<div class="kv"><span>File</span><b>' + YC.esc(row.file || '-') + '</b></div>' +
+          '<div class="kv"><span>File</span><b>' + (YC.app.hasRealFile(row) ? YC.esc(row.file) : 'No file attached yet') + '</b></div>' +
           '<div class="kv"><span>Size</span><b>' + YC.esc(row.fileSize || '-') + '</b></div>' +
           '<div class="kv"><span>Downloads</span><b>' + YC.esc(row.downloads || 0) + '</b></div>' +
           '<div class="kv"><span>Created</span><b>' + YC.fmtDate(row.createdAt) + '</b></div>' +
         '</div>',
-      footer: '<button type="button" class="btn btn-primary" data-dl>Download</button>' +
+      footer: (YC.app.hasRealFile(row) ? '<button type="button" class="btn btn-primary" data-dl>Download</button>' : '') +
         '<button type="button" class="btn btn-ghost" data-close-modal>Close</button>',
       onMount: function(card){
         card.querySelector('[data-dl]').addEventListener('click', function(){
@@ -1660,7 +1674,10 @@ YC.app.pages_files = function(){
         } }
     ],
     onAction: function(act, id, row){
-      if(act === 'download'){ YC.downloadFile(row); YC.toast.success('Downloading file...'); }
+      if(act === 'download'){
+        if(!YC.app.hasRealFile(row)){ YC.toast.info('No file attached yet. Edit it and add a download file or a public link first.'); return; }
+        YC.downloadFile(row); YC.toast.success('Downloading file...');
+      }
       else if(act === 'edit') editFile(row);
       else if(act === 'delete'){
         YC.app.confirm('Delete file ' + row.name + '?', function(){
@@ -1689,7 +1706,8 @@ YC.app.pages_files = function(){
         { t: 'select', name: 'category', label: 'Category', value: v('category'), required: true, options: cats },
         { t: 'select', name: 'status', label: 'Visibility', value: v('status') || 'public', options: ['public', 'private'] },
         { t: 'text', name: 'preview', label: 'Preview image URL (optional)', value: v('preview') },
-        { t: 'text', name: 'url', label: 'Storage URL', value: v('url'), placeholder: 'https://storage.yallahclick.com/files/...' }
+        { t: 'upload', name: 'url', label: 'File (any type: zip, rar, mp4, pdf...)', value: v('url'), folder: 'files', accept: '*/*',
+          note: 'Uploads work for any file type up to ~4 MB. Bigger files: paste a public link (Google Drive / Dropbox, "Anyone with the link").' }
       ],
       onSubmit: function(data, form){
         var missing = YC.app.required(data, ['name', 'type', 'category']);
@@ -1699,9 +1717,9 @@ YC.app.pages_files = function(){
           YC.toast.success('File updated.');
         }else{
           data.date = YC.app.iso(new Date());
-          data.url = data.url || 'https://storage.yallahclick.com/files/' + YC.slugify(data.name);
+          data.url = data.url || '';
           svc.create(data);
-          YC.toast.success('File uploaded (demo).');
+          YC.toast.success('File added.');
         }
         YC.modal.close(); table.refresh(); stats();
       }

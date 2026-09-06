@@ -103,8 +103,8 @@ api.post('/upload', requireAuth, (req, res, next) => {
         const safe = (s) => String(s || '').replace(/[^a-z0-9._-]/gi, '_');
         const ext = path.extname(parsed.file.filename || '').toLowerCase();
         const uName = 'u_' + crypto.randomBytes(6).toString('hex') + ext;
-        if (parsed.file.data.length > 3 * 1024 * 1024){
-          return res.status(413).json({ error: 'file_too_large', message: 'Files over ~3 MB are not supported yet. Use a hosted link (Google Drive, Dropbox...) and paste it here instead.' });
+        if (parsed.file.data.length > 4 * 1024 * 1024){
+          return res.status(413).json({ error: 'file_too_large', message: 'File too large for direct hosting (about 4 MB max). Any file type is fine. For bigger files (PSD, ZIP, video...) paste a public download link instead - Google Drive / Dropbox set to "Anyone with the link", or any direct file URL.' });
         }
         let stored = false;
         if (db.KV_ENABLED){
