@@ -3,12 +3,29 @@
    Public sites call YC.PromoPopup.init(); admin calls
    YC.PromoPopup.preview(promo) to preview a card.
    localStorage holds ONLY display prefs (dismissed / last seen).
+   Positions: center (modal hero), bottom-right (compact corner),
+   bottom-center (wide bar). repeatEvery re-opens the popup on
+   an interval (seconds) while repeat is enabled; showEveryVisit
+   keeps it appearing on every refresh.
    ============================================================ */
 window.YC = window.YC || {};
 YC.PromoPopup = (function(){
   var PREFS_LAST = 'yc-popup-last';
+  var repeatTimer = null;
+  var autoTimer = null;
 
-  /* ---------- markup ---------- */
+  function clearT(){
+    clearTimeout(repeatTimer); clearTimeout(autoTimer);
+    repeatTimer = autoTimer = null;
+  }
+
+  /* ---------- markup helpers ---------- */
+  function div(className){
+    var e = document.createElement('div');
+    e.className = className;
+    return e;
+  }
+
   function span(t, className){
     var e = document.createElement('span');
     e.className = className;
@@ -59,125 +76,49 @@ YC.PromoPopup = (function(){
     return 'index.html?svc=' + encodeURIComponent(id || 'all') + '#book';
   }
 
-  function buildCard(p){
-    var card = document.createElement('div');
-    card.className = 'promo-popup-card' + (p.image ? ' has-image' : '');
-    var inner = document.createElement('div');
-    inner.className = 'promo-popup-inner';
-
-    /* hero: banner image when set, otherwise a branded gradient block */
-    if(p.image){
-      var banner = document.createElement('div');
-      banner.className = 'promo-banner';
-      var bImg = document.createElement('img');
-      bImg.src = p.image;
-      bImg.alt = p.title || 'Promotion';
-      bImg.addEventListener('error', function(){ banner && banner.remove(); });
-      var shade = document.createElement('div');
-      shade.className = 'promo-banner-shade';
-      var heroBadge = span(discountGlyph(p), 'promo-hero-badge');
-      banner.appendChild(bImg);
-      banner.appendChild(shade);
-      banner.appendChild(heroBadge);
-      inner.appendChild(banner);
-    }else{
-      var hero = document.createElement('div');
-      hero.className = 'promo-hero';
-      var heroGlyph = document.createElement('div');
-      heroGlyph.className = 'promo-hero-glyph';
-      heroGlyph.textContent = discountGlyph(p);
-      var heroLine = span(p.promoType === 'discount' ? 'Auto-applied discount' : 'Use this promo code', 'promo-hero-line');
-      hero.appendChild(heroGlyph);
-      hero.appendChild(heroLine);
-      inner.appendChild(hero);
-    }
-
-    /* tag + service + title */
-    var tag = span('Limited-time offer', 'promo-tag');
-    var svc = span(serviceName(p), 'promo-service');
-    var titleEl = span(p.title || '', 'promo-title');
-    var disc = span(discountLabel(p), 'promo-discount');
-    var desc = span(p.description || '', 'promo-desc');
-
-    /* code box or auto-applied note */
-    var codeBox = document.createElement('div');
+  function codeBox(p){
+    var codeBox = div('promo-code-box');
     if(p.promoType === 'discount'){
-      codeBox.className = 'promo-code-box auto';
+      codeBox.className += ' auto';
       codeBox.appendChild(span('No code needed', 'promo-code-label'));
       codeBox.appendChild(span('Applied automatically', 'promo-code'));
     }else{
-      codeBox.className = 'promo-code-box';
       codeBox.appendChild(span('Use code', 'promo-code-label'));
       var codeEl = span(p.promoCode || '', 'promo-code');
       var copyBtn = document.createElement('button');
       copyBtn.className = 'promo-copy';
       copyBtn.innerHTML = '<span class="ic">' + YC.icons.get('copy') + '</span>Copy';
-      copyBtn.addEventListener('click', function(){
-        YC.copyText(p.promoCode || '');
-      });
+      copyBtn.addEventListener('click', function(){ YC.copyText(p.promoCode || ''); });
       codeBox.appendChild(codeEl);
       codeBox.appendChild(copyBtn);
     }
+    return codeBox;
+  }
 
-    /* CTA */
+  function ctaLink(p, className){
     var cta = document.createElement('a');
-    cta.className = 'btn btn-primary promo-cta';
+    cta.className = className;
     cta.href = ctaDest(p);
     cta.textContent = p.ctaText || 'Get This Offer';
-
-    inner.appendChild(tag);
-    inner.appendChild(svc);
-    inner.appendChild(titleEl);
-    inner.appendChild(disc);
-    inner.appendChild(desc);
-    inner.appendChild(codeBox);
-    inner.appendChild(cta);
-
-    if(p.countdownEnabled && p.endDate){
-      inner.appendChild(countdown(p));
-    }
-
-    var ring1 = document.createElement('span');
-    ring1.className = 'promo-orb orb-a';
-    var ring2 = document.createElement('span');
-    ring2.className = 'promo-orb orb-b';
-    card.appendChild(ring1);
-    card.appendChild(ring2);
-    card.appendChild(inner);
-
-    if(p.closeButton !== false){
-      var close = document.createElement('button');
-      close.className = 'promo-close';
-      close.setAttribute('aria-label', 'Close');
-      close.innerHTML = '&times;';
-      close.addEventListener('click', function(){ dismiss(); });
-      card.appendChild(close);
-    }
-    return card;
+    return cta;
   }
 
   function countdown(p){
-    var box = document.createElement('div');
-    box.className = 'promo-countdown';
-    var head = document.createElement('div');
-    head.className = 'cd-head';
+    var box = div('promo-countdown');
+    var head = div('cd-head');
     head.appendChild(span('Offer ends in', 'cd-title'));
     box.appendChild(head);
 
     var cells = { d: null, h: null, m: null, s: null };
-    var cellsRow = document.createElement('div');
-    cellsRow.className = 'cd-cells';
+    var cellsRow = div('cd-cells');
     var defs = [['d', 'Days'], ['h', 'Hours'], ['m', 'Mins'], ['s', 'Secs']];
     defs.forEach(function(def, i){
       if(i) cellsRow.appendChild(span(':', 'cd-sep'));
-      var c = document.createElement('div');
-      c.className = 'cd-cell';
+      var c = div('cd-cell');
       var num = document.createElement('b');
       num.dataset.cell = def[0];
       num.textContent = '00';
-      var lab = document.createElement('span');
-      lab.className = 'cd-unit';
-      lab.textContent = def[1];
+      var lab = span(def[1], 'cd-unit');
       c.appendChild(num);
       c.appendChild(lab);
       cells[def[0]] = num;
@@ -203,6 +144,138 @@ YC.PromoPopup = (function(){
     return box;
   }
 
+  /* ---------- layout builders ---------- */
+
+  /* full marketing modal (center) */
+  function buildCenter(p){
+    var inner = div('promo-popup-inner');
+    if(p.image){
+      var banner = div('promo-banner');
+      var bImg = document.createElement('img');
+      bImg.src = p.image;
+      bImg.alt = p.title || 'Promotion';
+      bImg.addEventListener('error', function(){ banner && banner.remove(); });
+      var shade = div('promo-banner-shade');
+      var heroBadge = span(discountGlyph(p), 'promo-hero-badge');
+      banner.appendChild(bImg);
+      banner.appendChild(shade);
+      banner.appendChild(heroBadge);
+      inner.appendChild(banner);
+    }else{
+      var hero = div('promo-hero');
+      var heroGlyph = div('promo-hero-glyph');
+      heroGlyph.textContent = discountGlyph(p);
+      var heroLine = span(p.promoType === 'discount' ? 'Auto-applied discount' : 'Use this promo code', 'promo-hero-line');
+      hero.appendChild(heroGlyph);
+      hero.appendChild(heroLine);
+      inner.appendChild(hero);
+    }
+
+    inner.appendChild(span('Limited-time offer', 'promo-tag'));
+    inner.appendChild(span(serviceName(p), 'promo-service'));
+    inner.appendChild(span(p.title || '', 'promo-title'));
+    inner.appendChild(span(discountLabel(p), 'promo-discount'));
+    inner.appendChild(span(p.description || '', 'promo-desc'));
+    inner.appendChild(codeBox(p));
+    inner.appendChild(ctaLink(p, 'btn btn-primary promo-cta'));
+    if(p.countdownEnabled && p.endDate) inner.appendChild(countdown(p));
+    return inner;
+  }
+
+  /* compact corner card (bottom-right) */
+  function buildCorner(p){
+    var wrap = div('promo-corner');
+    var thumb = div('promo-corner-thumb');
+    if(p.image){
+      var img = document.createElement('img');
+      img.src = p.image;
+      img.alt = p.title || 'Promotion';
+      img.addEventListener('error', function(){ thumb.className = 'promo-corner-thumb ph'; thumb.textContent = discountGlyph(p); });
+      thumb.appendChild(img);
+    }else{
+      thumb.className = 'promo-corner-thumb ph';
+      var g = document.createElement('b');
+      g.textContent = discountGlyph(p);
+      thumb.appendChild(g);
+    }
+    wrap.appendChild(thumb);
+
+    var body = div('promo-corner-body');
+    var top = div('promo-corner-top');
+    top.appendChild(span('Limited-time offer', 'promo-tag'));
+    body.appendChild(top);
+    body.appendChild(span(p.title || '', 'promo-title'));
+    if(p.description) body.appendChild(span(p.description, 'promo-corner-desc'));
+
+    var row = div('promo-corner-row');
+    row.appendChild(codeBox(p));
+    row.appendChild(ctaLink(p, 'btn btn-primary promo-cta-sm'));
+    body.appendChild(row);
+
+    if(p.countdownEnabled && p.endDate) body.appendChild(countdown(p));
+    wrap.appendChild(body);
+    return wrap;
+  }
+
+  /* wide bar (bottom-center) */
+  function buildBar(p){
+    var wrap = div('promo-bar');
+    var glyph = div('promo-bar-glyph');
+    glyph.textContent = discountGlyph(p);
+    wrap.appendChild(glyph);
+
+    var main = div('promo-bar-main');
+    main.appendChild(span('Limited-time offer', 'promo-tag'));
+    main.appendChild(span(p.title || '', 'promo-title'));
+    main.appendChild(span(p.description || (serviceName(p) + ' ' + discountLabel(p)), 'promo-bar-sub'));
+    wrap.appendChild(main);
+
+    var right = div('promo-bar-right');
+    var cd = null;
+    if(p.countdownEnabled && p.endDate){
+      cd = countdown(p);
+      cd.classList.add('inline');
+    }
+    if(cd) right.appendChild(cd);
+    var row = div('promo-bar-code');
+    row.appendChild(codeBox(p));
+    row.appendChild(ctaLink(p, 'btn btn-primary promo-cta-sm'));
+    right.appendChild(row);
+    wrap.appendChild(right);
+    return wrap;
+  }
+
+  function buildCard(p){
+    var pos = p.popupPosition || 'center';
+    var card = div('promo-popup-card pos-' + (pos === 'center' ? 'center' : pos === 'bottom-right' ? 'corner' : 'bar'));
+    if(p.image) card.classList.add('has-image');
+
+    if(p.image){
+      var bg = document.createElement('span');
+      bg.className = 'promo-card-bg';
+      bg.style.backgroundImage = 'url("' + String(p.image).replace(/"/g, '%22') + '")';
+      card.appendChild(bg);
+    }
+
+    var inner = pos === 'center' ? buildCenter(p) : pos === 'bottom-right' ? buildCorner(p) : buildBar(p);
+    card.appendChild(inner);
+
+    var ring1 = span('', 'promo-orb orb-a');
+    var ring2 = span('', 'promo-orb orb-b');
+    card.appendChild(ring1);
+    card.appendChild(ring2);
+
+    if(p.closeButton !== false){
+      var close = document.createElement('button');
+      close.className = 'promo-close';
+      close.setAttribute('aria-label', 'Close');
+      close.innerHTML = '&times;';
+      close.addEventListener('click', function(){ dismiss(); });
+      card.appendChild(close);
+    }
+    return card;
+  }
+
   /* ---------- show / hide ---------- */
   var overlay = null;
   var onDismiss = null;
@@ -210,8 +283,9 @@ YC.PromoPopup = (function(){
   function dismiss(){
     if(!overlay) return;
     overlay.classList.remove('show');
-    setTimeout(function(){ if(overlay) overlay.remove(); }, 400);
-    if(onDismiss) onDismiss();
+    setTimeout(function(){ if(overlay && overlay.parentNode) overlay.remove(); }, 380);
+    overlay = null;
+    if(onDismiss){ var cb = onDismiss; onDismiss = null; cb(); }
   }
 
   function fire(overlayEl){
@@ -223,16 +297,33 @@ YC.PromoPopup = (function(){
 
   function showCard(p, onClose){
     if(document.querySelector('.promo-popup-overlay')) return;
-    var ov = document.createElement('div');
-    ov.className = 'promo-popup-overlay' + (p.popupPosition && p.popupPosition !== 'center'
-      ? ' position-' + p.popupPosition : '');
+    var ov = div('promo-popup-overlay');
+    if(p.popupPosition && p.popupPosition !== 'center') ov.classList.add('position-' + p.popupPosition);
     ov.appendChild(buildCard(p));
     document.body.appendChild(ov);
-    ov.addEventListener('click', function(e){
-      if(e.target === ov) dismiss();
-    });
+    ov.addEventListener('click', function(e){ if(e.target === ov) dismiss(); });
     onDismiss = onClose || null;
     setTimeout(function(){ fire(ov); }, 60);
+    return ov;
+  }
+
+  function holdMs(p){
+    if(!(p.repeatEvery > 0)) return 0;
+    return Math.min(9000, Math.max(4000, p.repeatEvery * 1000 * 0.8));
+  }
+
+  /* one show + (optional) auto-close + schedule next repeat */
+  function cycle(p){
+    clearT();
+    if(document.querySelector('.promo-popup-overlay')) return;
+    if(p.popupEnabled === false || p.active === false) return;
+    showCard(p, null);
+    markShown(p.id);
+    var hold = holdMs(p);
+    if(hold > 0) autoTimer = setTimeout(function(){ dismiss(); }, hold);
+    if(p.repeatEvery > 0){
+      repeatTimer = setTimeout(function(){ cycle(p); }, p.repeatEvery * 1000);
+    }
   }
 
   /* ---------- prefs ---------- */
@@ -269,14 +360,9 @@ YC.PromoPopup = (function(){
       p = YC.services.promotions.getActiveForPopup();
     }
     if(!p) return;
-    var fireTime = Date.now();
-    if(!shouldShow(p, fireTime)) return;
+    if(!shouldShow(p, Date.now())) return;
     var delay = (typeof p.popupDelay === 'number' ? p.popupDelay : 5) * 1000;
-    setTimeout(function(){
-      if(document.querySelector('.promo-popup-overlay')) return;
-      showCard(p, function(){ onDismiss = null; });
-      markShown(p.id);
-    }, delay);
+    setTimeout(function(){ cycle(p); }, delay);
   }
 
   /* ---------- admin preview (no prefs, no delay) ---------- */
@@ -285,19 +371,29 @@ YC.PromoPopup = (function(){
   }
 
   function close(){
+    clearT();
     dismiss();
   }
 
   return { init: init, preview: preview, close: close };
 })();
 
-document.addEventListener('DOMContentLoaded', function(){
-  if(document.body && document.body.hasAttribute('data-promo-auto')){
-    var boot = function(){ YC.PromoPopup.init(); };
-    if(window.YC && YC.backend && YC.backend.ready){
-      YC.backend.ready.finally(boot);
-    }else{
-      boot();
-    }
+/* ---------- auto boot on pages flagged data-promo-auto ----------
+   Race hydrate() against a 6.5s cap so the popup ALWAYS appears on
+   every refresh (cold starts never delay it indefinitely). */
+(function(){
+  function boot(){
+    try{
+      if(!document.body || !document.body.hasAttribute('data-promo-auto')) return;
+      var readyP = (window.YC && YC.backend && YC.backend.ready) ? YC.backend.ready : Promise.resolve(true);
+      Promise.race([readyP, new Promise(function(res){ setTimeout(res, 6500); })])
+        .then(function(){ YC.PromoPopup.init(); })
+        .catch(function(){ YC.PromoPopup.init(); });
+    }catch(_e){}
   }
-});
+  if(document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', boot);
+  }else{
+    boot();
+  }
+})();

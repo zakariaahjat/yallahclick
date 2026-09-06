@@ -107,6 +107,18 @@ YC.app.fld = {
     return '<div class="field"><label class="switch"><input type="checkbox" name="' + o.name + '"' +
       (o.value ? ' checked' : '') + '><span class="track"></span><span class="switch-label">' + YC.esc(o.label || '') + '</span></label></div>';
   },
+  radio: function(o){
+    var opts = (o.options || []).map(function(op){
+      var val = typeof op === 'object' && op != null ? op.value : op;
+      var lbl = typeof op === 'object' && op != null ? op.label : op;
+      var sel = String(o.value) === String(val) ? ' checked' : '';
+      return '<label class="radio"><input type="radio" name="' + o.name + '" value="' + YC.esc(val) + '"' + sel +
+        '><span class="dot"></span><span class="radio-label">' + YC.esc(lbl) + '</span></label>';
+    }).join('');
+    return '<div class="field radio-field"><label>' + YC.esc(o.label || '') + (o.required ? ' <span class="req">*</span>' : '') + '</label>' +
+      '<div class="radio-group">' + opts + '</div>' +
+      '<div class="field-error">' + YC.esc(o.errorMsg || 'Please choose an option.') + '</div></div>';
+  },
   /* Image/file URL with an "Upload" button. The uploaded file lands in
      /uploads/... and its public URL is inserted into the sibling input, so
      the URL (not base64) is what gets stored in JSON and sent over the API. */
@@ -131,6 +143,8 @@ YC.app.parseForm = function(form){
     if(!el.name) continue;
     if(el.type === 'checkbox'){
       out[el.name] = el.checked;
+    }else if(el.type === 'radio'){
+      if(el.checked) out[el.name] = el.value;
     }else if(el.type === 'number'){
       out[el.name] = el.value === '' ? null : Number(el.value);
     }else{
@@ -1744,6 +1758,7 @@ YC.app.pages_promotions = function(){
     if(p.featured) meta.push('<span class="pill active">Featured</span>');
     if(p.countdownEnabled) meta.push('<span class="pill neutral">Countdown</span>');
     if(p.showOnce) meta.push('<span class="pill neutral">Show once</span>');
+    if(p.repeatEvery > 0) meta.push('<span class="pill neutral">Repeat ' + YC.esc(p.repeatEvery) + 's</span>');
     meta.push('<span class="pill neutral">' + (p.popupPosition || 'center') + '</span>');
     var codeRow = p.promoType === 'discount'
       ? '<div class="code-row"><span class="pc-code">No code &middot; auto-applied</span></div>'
@@ -1893,8 +1908,13 @@ YC.app.pages_promotions = function(){
         { t: 'sw', name: 'showEveryVisit', label: 'Show on every visit / refresh', value: editing ? v('showEveryVisit') : true },
         { t: 'sw', name: 'closeButton', label: 'Show close button', value: v('closeButton') !== false },
         { t: 'text', name: 'popupDelay', label: 'Popup delay (seconds)', value: v('popupDelay') || 5, type: 'number', min: 0 },
-        { t: 'select', name: 'popupPosition', label: 'Popup position', value: v('popupPosition') || 'center',
-          options: ['center', 'bottom-right', 'bottom-center'] },
+        { t: 'text', name: 'repeatEvery', label: 'Repeat every N seconds (10, 20, 30... 0 = once)', value: v('repeatEvery') || 0, type: 'number', min: 0, step: 1 },
+        { t: 'radio', name: 'popupPosition', label: 'Popup design & position', value: v('popupPosition') || 'center',
+          options: [
+            { value: 'center', label: 'Center - big marketing modal' },
+            { value: 'bottom-right', label: 'Bottom right - compact mini card' },
+            { value: 'bottom-center', label: 'Bottom center - wide promo bar' }
+          ] },
         { t: 'text', name: 'ctaText', label: 'CTA button text', value: v('ctaText') || 'Get This Offer', required: true },
         { t: 'sw', name: 'featured', label: 'Featured', value: v('featured') },
         { t: 'sw', name: 'active', label: 'Active', value: editing ? v('active') : true }

@@ -4249,14 +4249,6 @@
         }
       }
     }
-    if(window.YC && YC.PromoPopup){
-      var bootPromo = function(){ try{ YC.PromoPopup.init(); }catch(_e){} };
-      if(window.YC && YC.backend && YC.backend.ready){
-        YC.backend.ready.finally(bootPromo);
-      }else{
-        bootPromo();
-      }
-    }
   }catch(err){
     if(window.console) console.error('Extension init failed:', err);
   }
