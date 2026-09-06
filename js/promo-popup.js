@@ -3,10 +3,11 @@
    Public sites call YC.PromoPopup.init(); admin calls
    YC.PromoPopup.preview(promo) to preview a card.
    localStorage holds ONLY display prefs (dismissed / last seen).
-   Positions: center (modal hero), bottom-right (compact corner),
-   bottom-center (wide bar). repeatEvery re-opens the popup on
-   an interval (seconds) while repeat is enabled; showEveryVisit
-   keeps it appearing on every refresh.
+   Positions: center (modal), bottom-right / bottom-center place the
+   same clean card in a corner or bottom bar area.
+   repeatEvery re-opens the popup on an interval (seconds) while
+   repeat is enabled; showEveryVisit keeps it appearing on every
+   refresh.
    ============================================================ */
 window.YC = window.YC || {};
 YC.PromoPopup = (function(){
@@ -43,12 +44,6 @@ YC.PromoPopup = (function(){
     return p.discountLabel || 'Special Offer';
   }
 
-  function discountGlyph(p){
-    if(p.discountType === 'percentage') return p.discountValue ? p.discountValue + '%' : 'SALE';
-    if(p.discountType === 'fixed') return '$' + p.discountValue;
-    return p.discountLabel || 'SALE';
-  }
-
   function serviceName(p){
     if(p.servicesLabel) return p.servicesLabel;
     if(!p.serviceId || p.serviceId === 'all') return 'All Services';
@@ -77,22 +72,22 @@ YC.PromoPopup = (function(){
   }
 
   function codeBox(p){
-    var codeBox = div('promo-code-box');
+    var box = div('promo-code-box');
     if(p.promoType === 'discount'){
-      codeBox.className += ' auto';
-      codeBox.appendChild(span('No code needed', 'promo-code-label'));
-      codeBox.appendChild(span('Applied automatically', 'promo-code'));
+      box.className += ' auto';
+      box.appendChild(span('No code needed', 'promo-code-label'));
+      box.appendChild(span('Applied automatically', 'promo-code'));
     }else{
-      codeBox.appendChild(span('Use code', 'promo-code-label'));
+      box.appendChild(span('Use code', 'promo-code-label'));
       var codeEl = span(p.promoCode || '', 'promo-code');
       var copyBtn = document.createElement('button');
       copyBtn.className = 'promo-copy';
       copyBtn.innerHTML = '<span class="ic">' + YC.icons.get('copy') + '</span>Copy';
       copyBtn.addEventListener('click', function(){ YC.copyText(p.promoCode || ''); });
-      codeBox.appendChild(codeEl);
-      codeBox.appendChild(copyBtn);
+      box.appendChild(codeEl);
+      box.appendChild(copyBtn);
     }
-    return codeBox;
+    return box;
   }
 
   function ctaLink(p, className){
@@ -103,29 +98,59 @@ YC.PromoPopup = (function(){
     return cta;
   }
 
+  /* ---------- clean single-form card ---------- */
+  function buildCard(p){
+    var card = div('promo-popup-card' + (p.image ? ' has-image' : ''));
+    var inner = div('promo-popup-inner');
+
+    /* optional banner image */
+    var imgWrap = null;
+    if(p.image){
+      imgWrap = div('promo-banner');
+      var img = document.createElement('img');
+      img.src = p.image;
+      img.alt = p.title || 'Promotion';
+      img.addEventListener('error', function(){ imgWrap && imgWrap.remove(); });
+      imgWrap.appendChild(img);
+      inner.appendChild(imgWrap);
+    }
+
+    /* tag + service + discount */
+    inner.appendChild(span(p.promoType === 'discount' ? 'Auto-applied discount' : 'Limited-time offer', 'promo-tag'));
+    inner.appendChild(span(serviceName(p), 'promo-service'));
+    inner.appendChild(span(discountLabel(p), 'promo-discount'));
+    inner.appendChild(span(p.description || '', 'promo-desc'));
+
+    /* code box or auto-applied note */
+    inner.appendChild(codeBox(p));
+    inner.appendChild(ctaLink(p, 'btn btn-primary promo-cta'));
+
+    if(p.countdownEnabled && p.endDate) inner.appendChild(countdown(p));
+
+    card.appendChild(inner);
+
+    if(p.closeButton !== false){
+      var close = document.createElement('button');
+      close.className = 'promo-close';
+      close.setAttribute('aria-label', 'Close');
+      close.innerHTML = '&times;';
+      close.addEventListener('click', function(){ dismiss(); });
+      card.appendChild(close);
+    }
+    return card;
+  }
+
   function countdown(p){
     var box = div('promo-countdown');
-    var head = div('cd-head');
-    head.appendChild(span('Offer ends in', 'cd-title'));
-    box.appendChild(head);
-
+    box.appendChild(span('Offer ends in', 'cd-title'));
     var cells = { d: null, h: null, m: null, s: null };
-    var cellsRow = div('cd-cells');
-    var defs = [['d', 'Days'], ['h', 'Hours'], ['m', 'Mins'], ['s', 'Secs']];
-    defs.forEach(function(def, i){
-      if(i) cellsRow.appendChild(span(':', 'cd-sep'));
-      var c = div('cd-cell');
-      var num = document.createElement('b');
-      num.dataset.cell = def[0];
-      num.textContent = '00';
-      var lab = span(def[1], 'cd-unit');
-      c.appendChild(num);
-      c.appendChild(lab);
-      cells[def[0]] = num;
-      cellsRow.appendChild(c);
+    ['d', 'h', 'm', 's'].forEach(function(k, i){
+      if(i) box.appendChild(span(':', 'cd-sep'));
+      var c = span('00', 'cd-cell');
+      c.dataset.cell = k;
+      cells[k] = c;
+      box.appendChild(c);
     });
-    box.appendChild(cellsRow);
-
     var end = new Date(p.endDate + 'T' + (p.endTime || '23:59'));
     var pad = function(n){ return (n < 10 ? '0' : '') + n; };
     function tick(){
@@ -142,138 +167,6 @@ YC.PromoPopup = (function(){
     tick();
     setInterval(tick, 1000);
     return box;
-  }
-
-  /* ---------- layout builders ---------- */
-
-  /* full marketing modal (center) */
-  function buildCenter(p){
-    var inner = div('promo-popup-inner');
-    if(p.image){
-      var banner = div('promo-banner');
-      var bImg = document.createElement('img');
-      bImg.src = p.image;
-      bImg.alt = p.title || 'Promotion';
-      bImg.addEventListener('error', function(){ banner && banner.remove(); });
-      var shade = div('promo-banner-shade');
-      var heroBadge = span(discountGlyph(p), 'promo-hero-badge');
-      banner.appendChild(bImg);
-      banner.appendChild(shade);
-      banner.appendChild(heroBadge);
-      inner.appendChild(banner);
-    }else{
-      var hero = div('promo-hero');
-      var heroGlyph = div('promo-hero-glyph');
-      heroGlyph.textContent = discountGlyph(p);
-      var heroLine = span(p.promoType === 'discount' ? 'Auto-applied discount' : 'Use this promo code', 'promo-hero-line');
-      hero.appendChild(heroGlyph);
-      hero.appendChild(heroLine);
-      inner.appendChild(hero);
-    }
-
-    inner.appendChild(span('Limited-time offer', 'promo-tag'));
-    inner.appendChild(span(serviceName(p), 'promo-service'));
-    inner.appendChild(span(p.title || '', 'promo-title'));
-    inner.appendChild(span(discountLabel(p), 'promo-discount'));
-    inner.appendChild(span(p.description || '', 'promo-desc'));
-    inner.appendChild(codeBox(p));
-    inner.appendChild(ctaLink(p, 'btn btn-primary promo-cta'));
-    if(p.countdownEnabled && p.endDate) inner.appendChild(countdown(p));
-    return inner;
-  }
-
-  /* compact corner card (bottom-right) */
-  function buildCorner(p){
-    var wrap = div('promo-corner');
-    var thumb = div('promo-corner-thumb');
-    if(p.image){
-      var img = document.createElement('img');
-      img.src = p.image;
-      img.alt = p.title || 'Promotion';
-      img.addEventListener('error', function(){ thumb.className = 'promo-corner-thumb ph'; thumb.textContent = discountGlyph(p); });
-      thumb.appendChild(img);
-    }else{
-      thumb.className = 'promo-corner-thumb ph';
-      var g = document.createElement('b');
-      g.textContent = discountGlyph(p);
-      thumb.appendChild(g);
-    }
-    wrap.appendChild(thumb);
-
-    var body = div('promo-corner-body');
-    var top = div('promo-corner-top');
-    top.appendChild(span('Limited-time offer', 'promo-tag'));
-    body.appendChild(top);
-    body.appendChild(span(p.title || '', 'promo-title'));
-    if(p.description) body.appendChild(span(p.description, 'promo-corner-desc'));
-
-    var row = div('promo-corner-row');
-    row.appendChild(codeBox(p));
-    row.appendChild(ctaLink(p, 'btn btn-primary promo-cta-sm'));
-    body.appendChild(row);
-
-    if(p.countdownEnabled && p.endDate) body.appendChild(countdown(p));
-    wrap.appendChild(body);
-    return wrap;
-  }
-
-  /* wide bar (bottom-center) */
-  function buildBar(p){
-    var wrap = div('promo-bar');
-    var glyph = div('promo-bar-glyph');
-    glyph.textContent = discountGlyph(p);
-    wrap.appendChild(glyph);
-
-    var main = div('promo-bar-main');
-    main.appendChild(span('Limited-time offer', 'promo-tag'));
-    main.appendChild(span(p.title || '', 'promo-title'));
-    main.appendChild(span(p.description || (serviceName(p) + ' ' + discountLabel(p)), 'promo-bar-sub'));
-    wrap.appendChild(main);
-
-    var right = div('promo-bar-right');
-    var cd = null;
-    if(p.countdownEnabled && p.endDate){
-      cd = countdown(p);
-      cd.classList.add('inline');
-    }
-    if(cd) right.appendChild(cd);
-    var row = div('promo-bar-code');
-    row.appendChild(codeBox(p));
-    row.appendChild(ctaLink(p, 'btn btn-primary promo-cta-sm'));
-    right.appendChild(row);
-    wrap.appendChild(right);
-    return wrap;
-  }
-
-  function buildCard(p){
-    var pos = p.popupPosition || 'center';
-    var card = div('promo-popup-card pos-' + (pos === 'center' ? 'center' : pos === 'bottom-right' ? 'corner' : 'bar'));
-    if(p.image) card.classList.add('has-image');
-
-    if(p.image){
-      var bg = document.createElement('span');
-      bg.className = 'promo-card-bg';
-      bg.style.backgroundImage = 'url("' + String(p.image).replace(/"/g, '%22') + '")';
-      card.appendChild(bg);
-    }
-
-    var inner = pos === 'center' ? buildCenter(p) : pos === 'bottom-right' ? buildCorner(p) : buildBar(p);
-    card.appendChild(inner);
-
-    var ring1 = span('', 'promo-orb orb-a');
-    var ring2 = span('', 'promo-orb orb-b');
-    card.appendChild(ring1);
-    card.appendChild(ring2);
-
-    if(p.closeButton !== false){
-      var close = document.createElement('button');
-      close.className = 'promo-close';
-      close.setAttribute('aria-label', 'Close');
-      close.innerHTML = '&times;';
-      close.addEventListener('click', function(){ dismiss(); });
-      card.appendChild(close);
-    }
-    return card;
   }
 
   /* ---------- show / hide ---------- */
