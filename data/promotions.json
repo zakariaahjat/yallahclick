@@ -1,7 +1,7 @@
 {
   "_meta": {
     "version": 1,
-    "updatedAt": "2026-09-04T20:26:37.336Z",
+    "updatedAt": "2026-09-10T20:43:55.106Z",
     "collection": "promotions"
   },
   "data": [
@@ -17,20 +17,23 @@
       "promoCode": "",
       "destPage": "templates.html",
       "startDate": "2026-09-05",
-      "endDate": "2026-09-07",
+      "endDate": "2026-09-11",
       "startTime": "00:00",
       "endTime": "23:59",
       "popupEnabled": true,
       "countdownEnabled": true,
-      "popupDelay": 5,
-      "showOnce": true,
-      "showEveryVisit": false,
+      "popupDelay": 1,
+      "showOnce": false,
+      "showEveryVisit": true,
       "closeButton": true,
       "ctaText": "Claim 40% Off",
       "popupPosition": "center",
       "featured": true,
       "active": true,
-      "createdAt": "2026-08-30T10:00:00Z"
+      "createdAt": "2026-08-30T10:00:00Z",
+      "updatedAt": "2026-09-10T20:43:55.106Z",
+      "image": "/uploads/promotions/u_9e421a7a3949.jpg",
+      "repeatEvery": null
     },
     {
       "id": 2,
@@ -70,7 +73,7 @@
       "endDate": "2026-09-25",
       "startTime": "09:00",
       "endTime": "23:59",
-      "popupEnabled": true,
+      "popupEnabled": false,
       "countdownEnabled": false,
       "popupDelay": 4,
       "showOnce": true,
@@ -80,7 +83,8 @@
       "popupPosition": "bottom-right",
       "featured": false,
       "active": true,
-      "createdAt": "2026-08-15T09:00:00Z"
+      "createdAt": "2026-08-15T09:00:00Z",
+      "updatedAt": "2026-09-10T20:34:47.028Z"
     },
     {
       "id": 4,

@@ -64,4 +64,47 @@ function optionalAuth(req, res, next){
   }).catch(() => { req.user = null; next(); });
 }
 
-module.exports = { requireAuth, requireRole, optionalAuth, bearerToken };
+/* ---- in-memory sliding-window rate limiter -------------------
+   Guards public, abuse-prone endpoints (login, booking form,
+   newsletter signup) that don't require an auth token. Keyed by
+   client IP (req.ip, falling back to the raw socket address).
+   Returns 429 with a Retry-After header when the window is full. */
+function rateLimit(opts){
+  opts = opts || {};
+  const windowMs = opts.windowMs || 60 * 1000;
+  const max = opts.max || 20;
+  const label = opts.name || 'request';
+  const buckets = new Map();
+  let lastSweep = Date.now();
+
+  return (req, res, next) => {
+    const key = req.ip || (req.socket && req.socket.remoteAddress) || 'unknown';
+
+    // periodic housekeeping so the map never grows unbounded
+    if (Date.now() - lastSweep > windowMs){
+      lastSweep = Date.now();
+      for (const [k, arr] of buckets){
+        const fresh = arr.filter((t) => Date.now() - t < windowMs);
+        if (fresh.length === 0) buckets.delete(k);
+        else buckets.set(k, fresh);
+      }
+    }
+
+    const now = Date.now();
+    const hits = (buckets.get(key) || []).filter((t) => now - t < windowMs);
+    if (hits.length >= max){
+      const retryAfter = Math.max(1, Math.ceil((windowMs - (now - hits[0])) / 1000));
+      res.setHeader('Retry-After', String(retryAfter));
+      return res.status(429).json({
+        error: 'rate_limited',
+        message: 'Too many ' + label + 's. Please wait a moment and try again.'
+      });
+    }
+
+    hits.push(now);
+    buckets.set(key, hits);
+    next();
+  };
+}
+
+module.exports = { requireAuth, requireRole, optionalAuth, bearerToken, rateLimit };

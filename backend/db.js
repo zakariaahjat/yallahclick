@@ -48,7 +48,8 @@ const COLLECTION_FILES = {
   users: 'users.json',
   files: 'files.json',
   categories: 'categories.json',
-  services: 'services.json'
+  services: 'services.json',
+  newsletters: 'newsletters.json'
 };
 const COLLECTIONS = Object.keys(COLLECTION_FILES);
 
@@ -291,7 +292,7 @@ function loadSeeds(){
     'services.js', 'categories.js', 'bookings.js', 'customers.js',
     'aiPrompts.js', 'templates.js', 'videoTemplates.js',
     'thumbnailTemplates.js', 'psdTemplates.js', 'promotions.js',
-    'settings.js', 'files.js', 'users.js'
+    'settings.js', 'files.js', 'users.js', 'newsletters.js'
   ];
 
   for (const f of seedFileOrder){

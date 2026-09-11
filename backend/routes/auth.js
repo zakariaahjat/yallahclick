@@ -7,7 +7,7 @@
 
 const express = require('express');
 const db = require('../db');
-const { requireAuth } = require('./middleware');
+const { requireAuth, rateLimit } = require('./middleware');
 
 const router = express.Router();
 
@@ -16,7 +16,7 @@ function publicAdmin(a){
   return safe;
 }
 
-router.post('/login', async (req, res, next) => {
+router.post('/login', rateLimit({ windowMs: 10 * 60 * 1000, max: 10, name: 'login attempt' }), async (req, res, next) => {
   try{
     const email = String((req.body && req.body.email) || '').trim().toLowerCase();
     const password = String((req.body && req.body.password) || '');

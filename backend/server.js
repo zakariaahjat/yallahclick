@@ -195,13 +195,23 @@ app.get('/uploads/:name', async (req, res, next) => {
 app.use('/uploads', express.static(UPLOAD_DIR, { fallthrough: true }));
 
 /* ---- static site (root = repo root so relative html/css/img resolve) ---- */
+const STATIC_MAX_AGE = {
+  html: 'public, max-age=0',
+  css: 'public, max-age=86400',
+  js: 'public, max-age=86400',
+  img: 'public, max-age=86400',
+  ico: 'public, max-age=86400',
+  svg: 'public, max-age=86400',
+  woff: 'public, max-age=86400',
+  woff2: 'public, max-age=86400',
+  ttf: 'public, max-age=86400',
+};
 app.use(express.static(ROOT, {
   extensions: ['html'],
   index: false,
   setHeaders(res, filePath){
-    if (filePath.endsWith('.html')){
-      res.setHeader('Cache-Control', 'public, max-age=0');
-    }
+    const ext = path.extname(filePath).replace(/^\./, '').toLowerCase();
+    res.setHeader('Cache-Control', STATIC_MAX_AGE[ext] || STATIC_MAX_AGE.html);
   }
 }));
 

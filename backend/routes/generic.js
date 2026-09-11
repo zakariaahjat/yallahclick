@@ -14,7 +14,7 @@
 
 const express = require('express');
 const db = require('../db');
-const { requireRole } = require('./middleware');
+const { requireRole, rateLimit } = require('./middleware');
 const mailer = require('../mailer');
 
 /* ---- server-side role permissions --------------------------
@@ -37,6 +37,7 @@ const PERMISSIONS = {
   settings: ['owner'],
   users: ['owner'],
   admins: ['owner'],
+  newsletters: ['owner', 'marketing'],  // POST stays public (site subscribe form)
 };
 
 /* ---- server-side validation -----------------------------------
@@ -64,6 +65,18 @@ const validators = {
   templates(t){ return validateTemplate(t, 'template'); },
   bookings(b){
     if (!b || (!String(b.customerName || b.name || '').trim())) return 'customer name is required';
+    const email = String(b.email || '').trim();
+    if (email && !validEmail(email)) return 'email is not a valid address';
+    const phone = String(b.phone || '').trim();
+    if (phone && !/^[+\d][\d\s().-]{6,}$/.test(phone)) return 'phone is not a valid number';
+    if (String(b.customerName || b.name || '').length > 120) return 'customer name is too long';
+    if (String(b.notes || '').length > 2000) return 'notes are too long (max 2000 characters)';
+    return null;
+  },
+  newsletters(n){
+    if (!n || !String(n.email || '').trim()) return 'email is required';
+    if (!validEmail(n.email)) return 'email is not a valid address';
+    if (String(n.email).length > 254) return 'email is too long';
     return null;
   },
   customers(c){
@@ -208,10 +221,16 @@ function routerFor(name){
     }catch(e){ next(e); }
   });
 
-  // POST is role-gated EXCEPT for `bookings`, which the public inquiry
-  // form submits to (no token). Bookings are normalized server-side.
+  // POST is role-gated EXCEPT for `bookings` and `newsletters`, which the
+  // public inquiry / subscribe forms submit to (no token). Both are
+  // rate-limited so they can't be spammed. Bookings are normalized server-side.
   router.post('/', (req, res, next) => {
-    if (name === 'bookings') return next();
+    if (name === 'bookings'){
+      return rateLimit({ windowMs: 60 * 60 * 1000, max: 8, name: 'booking submission' })(req, res, next);
+    }
+    if (name === 'newsletters'){
+      return rateLimit({ windowMs: 60 * 60 * 1000, max: 10, name: 'newsletter signup' })(req, res, next);
+    }
     return requireRole(writeRoles)(req, res, next);
   }, async (req, res, next) => {
     try{
@@ -230,6 +249,10 @@ function routerFor(name){
           }, 1000);
           b.id = 'YC-' + (max + 1);
         }
+      }
+      if (name === 'newsletters'){
+        b.status = b.status || 'active';
+        b.subscribedAt = b.subscribedAt || new Date().toISOString();
       }
       validate(name, b);
       const rec = db.create(name, b);

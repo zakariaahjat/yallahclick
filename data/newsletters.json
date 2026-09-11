@@ -1,0 +1,25 @@
+{
+  "_meta": {
+    "version": 1,
+    "updatedAt": "2026-09-10T20:08:21.359Z",
+    "collection": "newsletters"
+  },
+  "data": [
+    {
+      "id": 1,
+      "email": "creator@example.com",
+      "source": "index.html",
+      "source_page": "https://yallah-click.vercel.app/",
+      "subscribedAt": "2026-08-20T09:10:00Z",
+      "status": "active"
+    },
+    {
+      "id": 2,
+      "email": "editor.demo@gmail.com",
+      "source": "index.html",
+      "source_page": "https://yallah-click.vercel.app/",
+      "subscribedAt": "2026-08-21T15:42:00Z",
+      "status": "active"
+    }
+  ]
+}
